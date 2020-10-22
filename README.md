@@ -1,0 +1,1 @@
+Aplicação construída com MERN.

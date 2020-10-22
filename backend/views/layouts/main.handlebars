@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-br" dir="ltr">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	<title>Painel Administrativo &bull; {{title}} &bull; Imob App</title>
+
+	<link rel="stylesheet" href="/app.min.css" type="text/css">
+	<link rel="shortcut icon" href="/favicon.png">
+</head>
+
+<body>
+<main>
+	<header class="fixed-top">
+		<div class="container-fluid">
+			<nav class="nav">
+				<a class="nav-link active small bg-success" href="/">Início</a>
+				<a class="nav-link small" href="/dashboard/posts">Publicações</a>
+				<a class="nav-link small" href="/dashboard/products">Produtos</a>
+				<a class="nav-link small" href="/dashboard/usuarios">Usuários</a>
+				<a class="nav-link small" href="/dashboard/clientes">Clientes</a>
+				<a class="nav-link small" href="/dashboard/config">Configurações</a>
+				<a class="nav-link small text-right" href="/dashboard/logout">Sair</a>
+			</nav>
+		</div>
+	</header>
+
+	<section>
+		<div class="container pt-4">
+			{{{body}}}		
+		</div>
+	</section>
+
+	<footer class="fixed-bottom">
+		<div class="container">
+			<p class="p-0 m-0 pt-1 pb-1">Aplicação construída com Node.js e Express.</p>
+		</div>
+	</footer>
+</main>
+</body>
+</html>

@@ -1,0 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap')
+$enable-rounded: false
+@import '../node_modules/bootstrap/scss/bootstrap'
+
+
+body
+	font-family: 'Poppins', sans-serif
+	color: #333
+	font-size: 12pt
+	background: #5c574d
+
+header
+	background: #8e8c82
+	.container
+		display: flex
+		align-items: center
+		justify-content: space-between
+		a
+			color: #333
+			&:hover
+				color: #666
+				text-decoration: none
+				outline: 0
+	h1
+		font-size: 16pt
+		font-family: Georgia, 'Times New Roman', Times, serif
+		font-weight: bold
+.nav
+	font-weight: 800
+	padding: 0
+	margin: 0
+	display: flex
+	justify-content: space-between
+	a
+		padding: 0
+		color: #333
+		&:hover
+			color:#000
+section
+	color: #FFF
+	padding-bottom: 73px
+	.card
+		color: #000
+footer
+	font-size: 0.8em
+	background: #110907
+	color: #d5d6d5
+	font-size: 0.7em
+
+[data-id="produtos"]
+	display: flex
+	align-items: normal
+	justify-content: space-evenly
+
+.Product
+	padding: 25px
+
+@media screen and (max-width: 576px)
+	footer
+		height: 75px
+	[data-id="produtos"]
+		display: block
+	.hamburger
+		width: 80%
+		height: 100vh
+		z-index: 1100
+		background: green
+		position: absolute
+		top: 0
+		right: 0
+		transform: translateX(0%)
+		&.toggle
+			transform: translateX(100%)
+		button
+			width: 2.5em
+			height: 2.5em
+			transform: translateX(-2.5em)
+			background: green

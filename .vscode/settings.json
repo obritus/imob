@@ -1,0 +1,8 @@
+{
+	"compile-hero": {
+		"disable-compile-files-on-did-save-code": false,
+		"notification-toggle": false,
+		"sass-output-directory": "./public/css",
+		"sass-output-toggle": true,
+	}
+}

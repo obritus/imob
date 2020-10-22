@@ -1,0 +1,45 @@
+/* Color Theme Swatches in Hex */
+$dark1: #302E37
+$dark2: #3e3a4d
+$cinza: #A0A0A0
+$white: #FFFFFF
+$verde: #04D361
+
+$theme-colors: ("primary": $dark2, "success": $verde)
+$enable-responsive-font-sizes: true
+$enable-rounded: false
+$enable-gradients: false
+$enable-responsive-font-sizes: true
+
+@import "node_modules/bootstrap/scss/bootstrap"
+@import url('https://fonts.googleapis.com/css2?family=Oxygen+Mono&family=Source+Sans+Pro:wght@900&display=swap')
+
+html, body
+	font-family: 'Oxygen Mono', monospace
+	background: $dark1
+	color: $white
+header
+	background: $dark2
+	color: $white
+	column-gap: 1
+.nav-link
+	color: $white
+section
+	padding: 35px 0 0 64px
+footer
+	background: $dark2
+	font-size: 0.8em
+h1, h2, h3, h4
+	font-family: 'Source Sans Pro', sans-serif
+	font-weight: 900
+
+.card
+	color: $dark1
+
+div[data-id="flex-home"]
+	display: flex
+	flex-wrap: wrap
+	align-items: stretch
+	align-content: flex-start
+	.card
+		max-width: 320px
