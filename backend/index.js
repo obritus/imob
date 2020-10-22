@@ -5,12 +5,15 @@ const path = require('path')
 
 const app = express()
 const port = 4000
+const tessss = process.env
 const pages = require('./routes')
 const api = require('./routes/api')
 const mongoose = require('mongoose')
 const session = require('express-session')
 const flash = require('connect-flash')
 const { Redirect } = require('react-router-dom')
+
+console.log(tessss)
 
 // DEFINIÇÕES
 	// SESSIONS

@@ -10,6 +10,7 @@ var path = require('path');
 
 var app = express();
 var port = 4000;
+var tessss = process.env;
 
 var pages = require('./routes');
 
@@ -22,9 +23,10 @@ var session = require('express-session');
 var flash = require('connect-flash');
 
 var _require = require('react-router-dom'),
-    Redirect = _require.Redirect; // DEFINIÇÕES
-// SESSIONS
+    Redirect = _require.Redirect;
 
+console.log(tessss); // DEFINIÇÕES
+// SESSIONS
 
 app.use(session({
   secret: "hash",
