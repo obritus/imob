@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Container } from 'reactstrap'
+import { Container, Spinner } from 'reactstrap'
 import Product from '../Product'
 import api from '../../api'
 
@@ -30,7 +30,7 @@ export default class Section extends Component {
 					<h1 className="pb-3">Nossos produtos</h1>
 					<div data-id="produtos">
 						{isLoading
-							? <h2 className="display">Carregando produtos...</h2>
+							? <Spinner style={{ width: '3rem', height: '3rem' }} />
 							: products.map(data =>
 								<Product data={data}/>
 							)

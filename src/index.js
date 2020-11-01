@@ -1,14 +1,14 @@
-import React from 'react'
+import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import { BrowserRouter, Switch, Route } from 'react-router-dom'
 import './public/css/app.css'
 
-import App from './App'
-import Sobre from './Sobre'
-import Produtos from './Produtos'
-import Produto from './Produto'
-import NotFound from './NotFound'
-import Contato from './Contato'
+	import App from './App'
+	import Sobre from './Sobre'
+	import Produtos from './Produtos'
+	import Produto from './Produto'
+	import NotFound from './NotFound'
+	import Contato from './Contato'
 
 ReactDOM.render(
 	<React.StrictMode>

@@ -3,10 +3,11 @@ const Schema = mongoose.Schema
 
 const Product = new Schema(
 	{
-		name: { type: String, required: true},
-		price: { type: Number, required: true},
-		status: {type: Boolean, required: true},
-		details: {type: String}
+		name: { type: String, required: true },
+		price: { type: Number, required: true },
+		status: { type: Boolean, required: true },
+		details: { type: String },
+		images: { type: Array}
 	},
 	{timestamps: true}
 )

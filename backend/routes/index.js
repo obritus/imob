@@ -173,9 +173,9 @@ const Product = require('../models/Product') //ESTRUTURA DOS USUÁRIOS NO DB
 			datails: req.body.details
 		}
 		new Product(produto).save().then(() => {
-			res.send('Adicionado com sucesso')
+			res.sendStatus(200)
 		}).catch(err => {
-			res.send('Erro na requisição')
+			res.sendStatus(404)
 			console.log(err)
 		})
 	})
@@ -188,7 +188,7 @@ const Product = require('../models/Product') //ESTRUTURA DOS USUÁRIOS NO DB
 			datails: req.body.details
 		}
 		Product.updateOne({_id: req.params.id}, req.body).then(() => {
-			res.send('Atualizado com sucesso')
+			res.sendStatus(200)
 		}).catch(err => {
 			res.send('Erro na atualização')
 			console.log(err)

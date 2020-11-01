@@ -21,10 +21,14 @@ header
 				color: #666
 				text-decoration: none
 				outline: 0
-	h1
-		font-size: 16pt
-		font-family: Georgia, 'Times New Roman', Times, serif
-		font-weight: bold
+	[data-js="logotipo"]
+		width: 52px
+		height: 40px
+		background: url('/images/logo.svg') no-repeat 50% 50%
+		background-size: contain
+		span
+			display: none
+
 .nav
 	font-weight: 800
 	padding: 0
@@ -55,7 +59,16 @@ footer
 .Product
 	padding: 25px
 
+.card
+	border: none
+	outline: 0
+
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
 @media screen and (max-width: 576px)
+	#main
+		overflow: hidden
 	footer
 		height: 75px
 	[data-id="produtos"]
@@ -69,10 +82,12 @@ footer
 		top: 0
 		right: 0
 		transform: translateX(0%)
+		transition: .5s
 		&.toggle
 			transform: translateX(100%)
+			transition: .5s
 		button
 			width: 2.5em
 			height: 2.5em
 			transform: translateX(-2.5em)
-			background: green
+			background: yellow

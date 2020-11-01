@@ -3,35 +3,34 @@ import { Container, Nav } from 'reactstrap'
 import { Link } from 'react-router-dom'
 import MainMenu from './MainMenu'
 
-const itens = [
-	{
-		to: '/',
-		name: 'Home',
-		title: 'Página inicial'
-	},
-	{
-		to: '/sobre',
-		name: 'Sobre',
-		title: 'Sobre a gente'
-	},
-	{
-		to: '/produtos',
-		name: 'Produtos',
-		title: 'Nossos produtos'
-	},
-	{
-		to: '/contact',
-		name: 'Contato',
-		title: 'Entre em contato com a gente'
-	}
-]
-
 export default class Header extends React.Component {
 	constructor(props) {
 		super(props)
-	}
-	toggleHamburger() {
-		
+		this.state = {
+			MenuItens: [
+				{
+					to: '/',
+					name: 'Home',
+					title: 'Página inicial'
+				},
+				{
+					to: '/sobre',
+					name: 'Sobre',
+					title: 'Sobre a gente'
+				},
+				{
+					to: '/produtos',
+					name: 'Produtos',
+					title: 'Nossos produtos'
+				},
+				{
+					to: '/contact',
+					name: 'Contato',
+					title: 'Entre em contato com a gente'
+				}
+			],
+			isLoading: false
+		}
 	}
 	render() {
 		return (
@@ -39,16 +38,18 @@ export default class Header extends React.Component {
 				<Container>
 					<div>
 						<Link to="/">
-							<h1 data-js="logotipo">Lojs</h1>
+							<h1 data-js="logotipo">
+								<span>Lojs</span>
+							</h1>
 						</Link>
 					</div>
 					<div>
-						<MainMenu itens={itens} className="d-none d-sm-block" />
+						<MainMenu itens={this.state.MenuItens} className="d-none d-sm-block" />
 						<div id="hamburger" className="hamburger d-sm-none toggle">
 							<button
-								onClick={() => this.toggleHamburger()}
+								onClick={() => document.getElementById('hamburger').classList.toggle('toggle')}
 								className="btn btn-dark"></button>
-							<MainMenu itens={itens} />
+							<MainMenu itens={this.state.MenuItens} />
 						</div>
 					</div>
 				</Container>

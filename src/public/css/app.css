@@ -9673,10 +9673,14 @@ header .container a:hover {
   text-decoration: none;
   outline: 0;
 }
-header h1 {
-  font-size: 16pt;
-  font-family: Georgia, "Times New Roman", Times, serif;
-  font-weight: bold;
+header [data-js=logotipo] {
+  width: 52px;
+  height: 40px;
+  background: url("/images/logo.svg") no-repeat 50% 50%;
+  background-size: contain;
+}
+header [data-js=logotipo] span {
+  display: none;
 }
 
 .nav {
@@ -9719,7 +9723,16 @@ footer {
   padding: 25px;
 }
 
+.card {
+  border: none;
+  outline: 0;
+}
+
 @media screen and (max-width: 576px) {
+  #main {
+    overflow: hidden;
+  }
+
   footer {
     height: 75px;
   }
@@ -9737,14 +9750,16 @@ footer {
     top: 0;
     right: 0;
     transform: translateX(0%);
+    transition: 0.5s;
   }
   .hamburger.toggle {
     transform: translateX(100%);
+    transition: 0.5s;
   }
   .hamburger button {
     width: 2.5em;
     height: 2.5em;
     transform: translateX(-2.5em);
-    background: green;
+    background: yellow;
   }
 }

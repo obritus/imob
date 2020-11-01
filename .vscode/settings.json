@@ -4,5 +4,20 @@
 		"notification-toggle": false,
 		"sass-output-directory": "./public/css",
 		"sass-output-toggle": true,
-	}
+	},
+	"compile-hero.generate-minified-css": true,
+	"compile-hero.disable-compile-files-on-did-save-code": false,
+	"compile-hero.jade-output-directory": "",
+	"compile-hero.jade-output-toggle": false,
+	"compile-hero.javascript-output-directory": "",
+	"compile-hero.javascript-output-toggle": false,
+	"compile-hero.less-output-toggle": false,
+	"compile-hero.less-output-directory": "",
+	"compile-hero.pug-output-directory": "",
+	"compile-hero.pug-output-toggle": false,
+	"compile-hero.scss-output-directory": "./public/css",
+	"compile-hero.typescript-output-directory": "",
+	"compile-hero.typescript-output-toggle": false,
+	"compile-hero.typescriptx-output-toggle": false,
+	"compile-hero.typescriptx-output-directory": ""
 }
