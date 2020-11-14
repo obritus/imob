@@ -5,7 +5,7 @@
 				<div class="col-4">
 					<h2 class="mb-3">Adicionar</h2>
 					{{>_msgs}}
-					<form action="/admin/clientes/add" method="post">
+					<form method="POST" action="#">
 						<div class="form-group">
 							<label for="nome">Nome:</label>
 							<input type="text" class="form-control" id="nome" aria-describedby="emailHelp" name="nome">
@@ -22,17 +22,12 @@
 			</div><!-- .row -->
 
 			<script>
-				$('form').submit(() => {
-					$.ajax({
-						method: "POST",
-						url: $('form').prop('action'),
-						data: {
-							nome: $('input[name="nome"]').val(),
-							email: $('input[name="email"]').val()
+				document.querySelector('form').addEventListener('submit', function (e) {
+					e.preventDefault()
+					fetch('/dashboard/clientes').then(response => {
+						if (response.status == 200) {
+							alert('Cliente adicionado com sucesso')
 						}
-					}).done(function(msg) {
-						location.reload()
 					})
-					return false
-				})
+				})			
 			</script>

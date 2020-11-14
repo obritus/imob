@@ -16,19 +16,37 @@ $enable-responsive-font-sizes: true
 
 html, body
 	font-family: 'Segoe UI', monospace
-	background: $dark1
+	background: $dark
 	color: $white
 header
-	background: $dark2
+	background: darken($dark, 4%)
 	color: $white
 	column-gap: 1
+	.nav
+		justify-content: center
+		align-items: baseline
+		a
+			align-items: baseline
+			&:hover
+				background: darken($dark, 14%)
+				color: $light
+		.active
+			background: $verde
+			color: $dark
+			&:hover
+				background: darken($verde, 7%)
+				color: $dark
 .nav-link
 	color: $white
+
 section
 	padding: 35px 0 0 64px
+
 footer
-	background: $dark2
+	background: darken($dark, 4%)
 	font-size: 0.8em
+	text-align: center
+
 h1, h2, h3, h4
 	font-family: 'Source Sans Pro', sans-serif
 	font-weight: 900

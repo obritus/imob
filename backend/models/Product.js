@@ -7,7 +7,7 @@ const Product = new Schema(
 		price: { type: Number, required: true },
 		status: { type: Boolean, required: true },
 		details: { type: String },
-		images: { type: Array}
+		images: { type: Object}
 	},
 	{timestamps: true}
 )

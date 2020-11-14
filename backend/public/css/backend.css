@@ -9703,14 +9703,33 @@ h3 {
 }
 html, body {
   font-family: "Segoe UI", monospace;
-  background: #302E37;
+  background: #343a40;
   color: #FFFFFF;
 }
 
 header {
-  background: #3e3a4d;
+  background: #2b3035;
   color: #FFFFFF;
   column-gap: 1;
+}
+header .nav {
+  justify-content: center;
+  align-items: baseline;
+}
+header .nav a {
+  align-items: baseline;
+}
+header .nav a:hover {
+  background: #141619;
+  color: #f8f9fa;
+}
+header .nav .active {
+  background: #04D361;
+  color: #343a40;
+}
+header .nav .active:hover {
+  background: #03b051;
+  color: #343a40;
 }
 
 .nav-link {
@@ -9722,8 +9741,9 @@ section {
 }
 
 footer {
-  background: #3e3a4d;
+  background: #2b3035;
   font-size: 0.8em;
+  text-align: center;
 }
 
 h1, h2, h3, h4 {

@@ -54,9 +54,7 @@
 					e.addEventListener('click', event => {
 						event.preventDefault()
 						const id = e.dataset.id
-						fetch(`/dashboard/usuarios/${id}/delete`).then(response => {
-
-						}).catch(err => {
+						fetch(`/dashboard/usuarios/${id}/delete`).then().catch(err => {
 							console.log(err)
 						})
 					})

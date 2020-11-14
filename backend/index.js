@@ -35,6 +35,7 @@ const flash = require('connect-flash')
 		
 		// ROTAS
 		app.use(express.static('public'))
+		app.use(express.static(path.join(__dirname, 'uploads')))
 		app.use('/api/', api)
 		app.use('/dashboard', pages)
 		app.get('/', (req, res) => res.redirect('/dashboard'))

@@ -1,9 +1,10 @@
 const express = require('express')
 const router = express.Router()
-const mongoose = require('mongoose')
+
 const Usuario = require('../models/Usuario') //ESTRUTURA DOS USUÁRIOS NO DB
 const Product = require('../models/Product') //ESTRUTURA DOS PRODUTOS NO DB
 const Message = require('../models/Message') //ESTRUTURA DAS MENSAGENS NO DB
+const Config = require('../models/Config') //ESTRUTURA DAS CONFIGURAÇÕES NO DB
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
@@ -40,17 +41,29 @@ const Message = require('../models/Message') //ESTRUTURA DAS MENSAGENS NO DB
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-	.get('/messages', (req, res) => {
-		Message.find()
+	.get('/carousel', (req, res) => {
+		Config.find()
 			.then(data => res.json(data))
 			.catch(err => console.log(err))
 	})
-	.get('/messages/:id', (req, res) => {
-		Message.findOne({_id: req.params.id})
+
+	
+	.get('/messages', (req, res) => {
+		Message.find()
 			.then(data => res.json(data))
 			.catch(err => console.log(err))
 	})
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
+
+	.post('/messages/send', (req, res) => {
+		new Message(req.body).save().then(
+			res.sendStatus(200)
+		).catch(err => console.error(err))
+	})
+
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
 module.exports = router

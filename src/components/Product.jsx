@@ -20,15 +20,16 @@ export default props => {
 		)
 	} else {
 		return(
-			<div className="card mr-3" key={props.data._id}>
-				<img src={thumb(props.data._id + '@0,25x')} className="card-img-top" alt="" />
-				<div className="card-body">
-					<h5 className="card-title">{props.data.name}</h5>
-					<p className="card-text"><h1 className="display">R$ {props.data.price}</h1></p>
-					<p className="card-text">{props.data.details}</p>
-					<Link to={`/produtos/${props.data._id}`} className="card-link">Ver detalhes</Link>
+			<Link to={`/produtos/${props.data._id}`} className="card-link">
+				<div className="card mr-3" key={props.data._id}>
+					<img src={thumb(props.data._id + '@0,25x')} className="card-img-top" alt="" />
+					<div className="card-body">
+						<h5 className="card-title">{props.data.name}</h5>
+						<p className="card-text"><h1 className="display">R$ {props.data.price}</h1></p>
+						<p className="card-text">{props.data.details}</p>
+					</div>
 				</div>
-			</div>
+			</Link>
 		)
 	}
 }

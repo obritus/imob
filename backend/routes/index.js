@@ -1,21 +1,62 @@
 const express = require('express')
 const router = express.Router()
 const crypto = require('crypto')
-const mongoose = require('mongoose')
+const multer = require('multer')
+const path = require('path')
+
+
+const multerConfigs = {
+	dest: path.resolve(__dirname, '..', 'tmp', 'uploads'),
+	storage: multer.diskStorage({
+		destination: (req, file, cb) => {
+			cb(null, multerConfigs.dest)
+		},
+		filename: (req, file, cb) => {
+			crypto.randomBytes(16, (err, hash) => {
+				if(err) cb(err)
+				let extension = file.originalname.slice(-4)
+				let filename = `${hash.toString('hex') + extension}`
+				cb(null, filename)
+			})
+		}
+	}),
+	limits: {
+		fileSize: 2 * 1024 * 1024,
+	},
+	fileFilter: (req, file, cb) => {
+		const allowedMimes = [
+			'image/jpeg',
+			'image/png'
+		]
+		if(allowedMimes.includes(file.mimetype)) {
+			cb(null, true)
+		} else {
+			cb(new Error("Tipo de arquivo inválido"))
+		}
+	}
+}
+
+const Config = require('../models/Config') //CONFIGURAÇÕES DO APP
 const Usuario = require('../models/Usuario') //ESTRUTURA DOS USUÁRIOS NO DB
 const Product = require('../models/Product') //ESTRUTURA DOS USUÁRIOS NO DB
+const Message = require('../models/Message')
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
 	router.get('/', async (req, res) => {
-		const total_users = await Usuario.find().then(res => res.length)
-		const total_products = await Product.find().then(res => res.length)
+		const users = await Usuario.find().then(res => res.length)
+		const products = await Product.find().then(res => res.length)
+		const messages = await Message.find().then(res => res.length)
+		const read_messages = await Message.find({read: false}).then(res => res.length)
 
 		res.render('index', {
 			title: 'Página Inicial',
-			users_number: total_users,
-			products_number: total_products
+			users_number: users,
+			products_number: products,
+			messages_number: messages,
+			messages_read_number: read_messages,
+			home: true
 		})
 	})
 
@@ -26,22 +67,28 @@ const Product = require('../models/Product') //ESTRUTURA DOS USUÁRIOS NO DB
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-	.get('/:page', (req, res) => {
+	.get('/:page', async (req, res) => {
 		const data = {}
 		const page = req.params.page
 		const titulos = {
 			usuarios: 'Usuários',
 			clientes: 'Clientes',
 			posts: 'Publicações',
+			messages: 'Mensagens',
 			config: 'Configurações',
 			login: 'Entrar',
 		}
 		const titulo = titulos[page]
+		const read_messages = await Message.find({read: false}).then(res => res.length)
 
 		const RenderPage = args => {
-			res.render(`${args.page}`, {
-				title: args.titulo, data: args.data
-			})
+			const data = {
+				title: args.titulo,
+				data: args.data,
+				messages_read_number: read_messages
+			}
+			data[page] = true
+			res.render(`${args.page}`, data)
 		}
 		if (page === 'usuarios') {
 			Usuario.find().lean().then(usuarios => {
@@ -51,9 +98,29 @@ const Product = require('../models/Product') //ESTRUTURA DOS USUÁRIOS NO DB
 				}
 				RenderPage({ page, titulo, data })
 			}).catch(err => {
-				console.log(err)
+				console.error(err)
 			})
 		}
+		if (page === 'config') {
+			Config.findOne().lean().then(config => {
+				const data = {
+					config: config
+				}
+				RenderPage({page, titulo, data})
+			}).catch(err => {
+				console.error(err)
+			})
+		}
+		if (page === 'messages') {
+			Message.find().limit().lean()
+				.then(messages => {
+					const data = {
+						messages: messages
+					}
+					RenderPage({page, titulo, data})
+				})
+				.catch(err => console.error(err))
+			}
 		else {
 			RenderPage({ page, titulo, data })
 		}
@@ -64,7 +131,6 @@ const Product = require('../models/Product') //ESTRUTURA DOS USUÁRIOS NO DB
 
 	.post('/usuarios/create', (req, res) => {
 		const rb = req.body
-		console.log(req.body)
 		const erros = []
 
 		if (!rb.nome || typeof rb.nome == undefined || rb.nome == null) {
@@ -144,7 +210,6 @@ const Product = require('../models/Product') //ESTRUTURA DOS USUÁRIOS NO DB
 				rb.senha = crypto.createHash('md5').update(rb.senha).digest("hex")
 			}
 			if (item == 'admin' && rb[item]) {
-				console.log(rb.admin)
 			}
 		}
 
@@ -176,11 +241,10 @@ const Product = require('../models/Product') //ESTRUTURA DOS USUÁRIOS NO DB
 			res.sendStatus(200)
 		}).catch(err => {
 			res.sendStatus(404)
-			console.log(err)
+			console.error(err)
 		})
 	})
 	.put('/products/:id', async (req, res) => {
-		console.log(req.params.id)
 		const produto = {
 			name: req.body.name,
 			price: req.body.price,
@@ -191,7 +255,7 @@ const Product = require('../models/Product') //ESTRUTURA DOS USUÁRIOS NO DB
 			res.sendStatus(200)
 		}).catch(err => {
 			res.send('Erro na atualização')
-			console.log(err)
+			console.error(err)
 		})
 	})
 	.delete('/products/:id', (req, res) => {
@@ -205,8 +269,70 @@ const Product = require('../models/Product') //ESTRUTURA DOS USUÁRIOS NO DB
 			req.flash('error_msg', 'Houve um erro ao tentar excluir o produto.')
 		})
 	})
+	.post('/upload/', multer(multerConfigs).single('file') ,(req, res) => {
+		res.sendStatus(200)
+	})
+
+	// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
+	.get('/messages/:id', (req, res) => {
+		Message.updateOne({_id: req.params.id}, {read: true}).then(() => {
+			Message.findOne({_id: req.params.id})
+				.then(data => res.json(data))
+				.catch(err => console.error(err))
+		}).catch(err => console.error(err))
+	})
+	.put('/messages/:id', (req, res) => {
+		//MARCAR MENSAGEM COMO LIDA
+		Message.updateOne({_id: req.params.id}, {read: false})
+			.then(() => res.sendStatus(200))
+			.catch(err => console.error(err))
+	})
+	.delete('/messages/:id', (req, res) => {
+		//EXCLUIR MENSAGEM
+		Message.deleteOne({_id: req.params.id})
+			.then(() => res.sendStatus(200))
+			.catch(err => console.error(err))
+	})
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
+
+	.post('/config', (req, res) => {
+		// res.json(req.body)
+		const status = req.body.carousel.status === 'on' ? true : false
+		const dados = {
+			$set: {
+				"site_title": req.body.site_title,
+				"carousel.status": req.body.carousel.status,
+				"carousel.itens": req.body.carousel.itens		
+			}
+		}
+		Config.updateOne({_id: '5fa0412d48b94e17a8f1ea6a'}, dados)
+			.then(() => {
+				res.sendStatus(200)
+			}).catch(err => {
+				res.sendStatus(404)
+				console.error(err)
+			})
+	})
+	.put('/config', (req, res) => {
+		const data = {
+			$set: {
+				"carousel.status": req.body.status
+			}
+		}
+		Config.updateOne({_id: '5fa0412d48b94e17a8f1ea6a'}, data)
+			.then(() => res.sendStatus(200))
+			.catch(err => console.error(err))
+	})
+
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
+	.post('/clientes', (req, res) => {
+		res.sendStatus(200)
+	})
 
 module.exports = router
