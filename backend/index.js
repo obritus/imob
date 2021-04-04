@@ -4,7 +4,7 @@ const handlebars = require('express-handlebars')
 const path = require('path')
 
 const app = express()
-const port = 4000
+const port = 3001
 const pages = require('./routes')
 const api = require('./routes/api')
 const mongoose = require('mongoose')

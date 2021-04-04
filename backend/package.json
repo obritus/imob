@@ -1,8 +1,8 @@
 {
-  "name": "backend",
+  "name": "imobjs",
   "version": "1.0.0",
-  "description": "",
-  "main": "App.js",
+  "description": "Backend da aplicação ImobJS.",
+  "main": "index.js",
   "scripts": {
     "start": "nodemon index",
     "test": "echo \"Error: no test specified\" && exit 1"

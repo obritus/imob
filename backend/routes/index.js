@@ -38,22 +38,22 @@ const multerConfigs = {
 
 const Config = require('../models/Config') //CONFIGURAÇÕES DO APP
 const Usuario = require('../models/Usuario') //ESTRUTURA DOS USUÁRIOS NO DB
-const Product = require('../models/Product') //ESTRUTURA DOS USUÁRIOS NO DB
-const Message = require('../models/Message')
+const Empreendimento = require('../models/Empreendimento') //EMPREENDIMENTOS
+const Message = require('../models/Message') //MENSAGENS
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
 	router.get('/', async (req, res) => {
 		const users = await Usuario.find().then(res => res.length)
-		const products = await Product.find().then(res => res.length)
+		const empreendimentos = await Empreendimento.find().then(res => res.length)
 		const messages = await Message.find().then(res => res.length)
 		const read_messages = await Message.find({read: false}).then(res => res.length)
 
 		res.render('index', {
 			title: 'Página Inicial',
 			users_number: users,
-			products_number: products,
+			empreendimentos_number: empreendimentos,
 			messages_number: messages,
 			messages_read_number: read_messages,
 			home: true
@@ -230,7 +230,7 @@ const Message = require('../models/Message')
 		console.log('Data do post:', req.body)
 		res.send('teste')
 	})
-	.post('/products', (req, res) => {
+	.post('/empreendimentos', (req, res) => {
 		const produto = {
 			name: req.body.name,
 			price: req.body.price,
@@ -244,7 +244,7 @@ const Message = require('../models/Message')
 			console.error(err)
 		})
 	})
-	.put('/products/:id', async (req, res) => {
+	.put('/empreendimentos/:id', async (req, res) => {
 		const produto = {
 			name: req.body.name,
 			price: req.body.price,
@@ -258,7 +258,7 @@ const Message = require('../models/Message')
 			console.error(err)
 		})
 	})
-	.delete('/products/:id', (req, res) => {
+	.delete('/empreendimentos/:id', (req, res) => {
 		const id = req.params.id
 		Product.deleteOne({
 			_id: id
