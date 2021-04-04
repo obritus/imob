@@ -12,8 +12,8 @@ import './app.sass'
 
 ReactDOM.render(
 	<React.StrictMode>
-		<BrowserRouter>
-			<Switch key={123}>
+		<BrowserRouter keyLength={12}>
+			<Switch>
 				<Route path="/" exact component={App} />
 				<Route path="/sobre" component={Sobre} />
 				<Route path="/empreendimentos" component={Empreendimentos} />
