@@ -13,13 +13,13 @@ import './app.sass'
 ReactDOM.render(
 	<React.StrictMode>
 		<BrowserRouter>
-			<Switch>
-				<Route key="1" path="/" exact component={App} />
-				<Route key="2" path="/sobre" component={Sobre} />
-				<Route key="2" path="/empreendimentos" component={Empreendimentos} />
-				<Route key="2" path="/empreendimentos/:id" component={Empreendimento} />
-				<Route key="5" path="/contact" component={Contato} />
-				<Route key="6" path="*" component={NotFound} />
+			<Switch key={123}>
+				<Route path="/" exact component={App} />
+				<Route path="/sobre" component={Sobre} />
+				<Route path="/empreendimentos" component={Empreendimentos} />
+				<Route path="/empreendimentos/:id" component={Empreendimento} />
+				<Route path="/contact" component={Contato} />
+				<Route path="*" component={NotFound} />
 			</Switch>
 		</BrowserRouter>
 	</React.StrictMode>,

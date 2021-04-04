@@ -24,7 +24,7 @@ export default class SearchBox extends React.Component {
 	}
 
 	render() {
-		const { cidades } = this.state
+		const { cidades, bairros } = this.state
 		return (
 			<>
 				<div id="carousel"></div>
@@ -39,7 +39,7 @@ export default class SearchBox extends React.Component {
 						<form>
 							<div className="row">
 								<div className="col-sm">
-									<select className="form-select">
+									<select className="form-select" name="cidade">
 									{(
 										cidades.length > 0
 										? cidades.map((cidade, index) => ( <option key={index} value={cidade._id}>{cidade.name}</option> ))
@@ -62,10 +62,15 @@ export default class SearchBox extends React.Component {
 									</select>
 								</div>
 								<div className="col-sm">
-									<input type="number" className="form-control" placeholder="Quartos" aria-label="Quartos" min="1" max="7" />
+									<input type="number"
+										className="form-control"
+										placeholder="Quartos"
+										aria-label="Quartos" min="1" max="7" />
 								</div>
 								<div className="col-sm d-grid">
-									<button className="btn btn-warning">Buscar</button>
+									<button
+										className="btn btn-warning"
+									>Buscar</button>
 								</div>
 							</div>
 						</form>
