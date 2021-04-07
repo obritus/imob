@@ -8,6 +8,7 @@ import SearchBar from './SearchBar'
 
 const BannerFull = styled.div`
 	background: #FFF url(${BannerImage}) no-repeat 50% 0;
+	background-size: cover;
 	height: 500px;
 	margin-top: -50px;
 	display: grid;
@@ -34,19 +35,12 @@ const CarouselItem = (props) => {
 }
 export default class Section extends Component {
 	state = { 
-		images: []
+		destaques: []
 	}
 
-	componentDidMount = async () => {
-		await api.getCarousel().then(carousel => {
-			this.setState({
-				images: carousel.data[0].carousel
-			})
-		})
-	}
+	componentDidMount = () => {}
 
 	render () {
-		const { images } = this.state
 		return (
 			<section className="pt-3">
 				<BannerFull className="container p-0">
@@ -65,19 +59,6 @@ export default class Section extends Component {
 							<Destaque/>
 						</div>
 					</div>
-				</Container>
-				<Container fluid>
-					{images.status
-						? <div id="my-carousel" className="carousel slide" data-ride="carousel">
-								<div className="carousel-inner">
-									{images.length > 0
-										? images.imagens.map(data => <CarouselItem data={data} />)
-										: <Spinner style={{ width: '3rem', height: '3rem' }} />
-									}
-								</div>
-							</div>
-						: null
-					}
 				</Container>
 			</section>
 		)

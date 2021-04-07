@@ -1,0 +1,31 @@
+<h2 class="mb-5">Editar empreendimentos</h2>
+
+<div class="row">
+	<div class="col" id="data">
+
+	</div>
+	<div class="col"></div>
+</div>
+
+<script>
+	const Empreendimentos = fetch('http://localhost:3001/api/empreendimentos/{{_id}}')
+	const Div = document.querySelector('#data')
+
+	Empreendimentos.then(data => {
+		data.json().then(empreendimentos => {
+			const { _id, title, price, status, type, quartos } = empreendimentos
+			console.log(_id)
+			const Status = (status ? 'Online' : 'Offline')
+			const Price = `R$ ${price}`
+			const Render = `<tr>
+					<td><a href="empreendimentos/${_id}" title="Editar empreendimento">${title}</a></td>
+					<td>${Price}</td>
+					<td>${Status}</td>
+					<td>${type}</td>
+					<td>${quartos}</td>
+					<td>${_id}</td>
+				</tr>`
+			Div.innerHTML += Render
+		}).catch(err => console.error(err))
+	})
+</script>

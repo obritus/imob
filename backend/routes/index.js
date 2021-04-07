@@ -244,18 +244,9 @@ const Message = require('../models/Message') //MENSAGENS
 			console.error(err)
 		})
 	})
-	.put('/empreendimentos/:id', async (req, res) => {
-		const produto = {
-			name: req.body.name,
-			price: req.body.price,
-			status: true,
-			datails: req.body.details
-		}
-		Product.updateOne({_id: req.params.id}, req.body).then(() => {
-			res.sendStatus(200)
-		}).catch(err => {
-			res.send('Erro na atualização')
-			console.error(err)
+	.get('/empreendimentos/:id', async (req, res) => {
+		res.render('empreendimento', {
+			_id: req.params.id
 		})
 	})
 	.delete('/empreendimentos/:id', (req, res) => {
@@ -273,7 +264,7 @@ const Message = require('../models/Message') //MENSAGENS
 		res.sendStatus(200)
 	})
 
-	// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
 	.get('/messages/:id', (req, res) => {

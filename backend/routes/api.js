@@ -61,6 +61,11 @@ const Config = require('../models/Config') //ESTRUTURA DAS CONFIGURAÇÕES NO DB
 			.then(data => res.json(data))
 			.catch(err => console.log(err))
 	})
+	.get('/empreendimentos/:id', (req, res) => {
+		Empreendimento.findOne({_id: req.params.id })
+			.then(data => res.json(data))
+			.catch(err => console.log(err))
+	})
 	.post('/empreendimentos', (req, res) => {
 		new Empreendimento(req.body).save().then(
 			res.sendStatus(200)

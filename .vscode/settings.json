@@ -5,8 +5,7 @@
 		"sass-output-directory": "./public/css",
 		"sass-output-toggle": true,
 	},
-	"compile-hero.generate-minified-css": true,
-	"compile-hero.disable-compile-files-on-did-save-code": true,
+	"compile-hero.disable-compile-files-on-did-save-code": false,
 	"compile-hero.jade-output-directory": "",
 	"compile-hero.jade-output-toggle": false,
 	"compile-hero.javascript-output-directory": "",
@@ -20,5 +19,7 @@
 	"compile-hero.typescript-output-toggle": false,
 	"compile-hero.typescriptx-output-toggle": false,
 	"compile-hero.typescriptx-output-directory": "",
-	"git.ignoreLimitWarning": true
+	"git.ignoreLimitWarning": true,
+	"compile-hero.generate-minified-css": true,
+	"compile-hero.generate-minified-css-only": true
 }

@@ -6,7 +6,7 @@
 
 	<title>Painel Administrativo &bull; {{title}} &bull; ImobJS</title>
 
-	<link rel="stylesheet" href="/css/backend.min.css" type="text/css">
+	<link rel="stylesheet" href="/css/app.sass.min.css" type="text/css">
 	<link rel="shortcut icon" href="/favicon.png">
 </head>
 
@@ -17,7 +17,7 @@
 			<nav class="nav">
 				<a class="nav-link small {{#if home}}active{{/if}}" href="/">Início</a>
 				<a class="nav-link small {{#if posts}}active{{/if}}" href="/dashboard/posts">Publicações</a>
-				<a class="nav-link small {{#if products}}active{{/if}}" href="/dashboard/products">Empreendimentos</a>
+				<a class="nav-link small {{#if products}}active{{/if}}" href="/dashboard/empreendimentos">Empreendimentos</a>
 				<a class="nav-link small {{#if clientes}}active{{/if}}" href="/dashboard/clientes">Clientes</a>
 				<a class="nav-link small {{#if usuarios}}active{{/if}}" href="/dashboard/usuarios">Usuários</a>
 				<a class="nav-link small {{#if messages}}active{{/if}}" href="/dashboard/messages">Mensagens {{#if messages_read_number}}<span class="badge badge-danger ml-2">{{messages_read_number}}</span>{{/if}}</a>
@@ -28,7 +28,7 @@
 	</header>
 
 	<section>
-		<div class="container pt-4">
+		<div class="container pt-4 pb-4">
 			{{{body}}}		
 		</div>
 	</section>

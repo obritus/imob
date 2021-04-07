@@ -6,7 +6,7 @@ import './app.sass'
 	import App from './App'
 	import Sobre from './Sobre'
 	import Empreendimentos from './components/empreendimentos'
-		import Empreendimento from './components/empreendimentos/Empreendimento'
+		import Empreendimento from './components/empreendimentos/Empreendimento.jsx'
 	import NotFound from './NotFound'
 	import Contato from './Contato'
 
@@ -17,7 +17,7 @@ ReactDOM.render(
 				<Route path="/" exact component={App} />
 				<Route path="/sobre" component={Sobre} />
 				<Route path="/empreendimentos" component={Empreendimentos} />
-				<Route path="/empreendimentos/:id" component={Empreendimento} />
+				<Route path="/empreendimentos/:id" exact children={<Sobre />} />
 				<Route path="/contact" component={Contato} />
 				<Route path="*" component={NotFound} />
 			</Switch>

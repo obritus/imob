@@ -10,6 +10,8 @@ const Empreendimento = new Schema(
 		cidade_id: { type: Schema.Types.ObjectId, ref: "cidades" },
 		bairro_id: { type: Schema.Types.ObjectId, ref: "bairros" },
 		quartos: { type: Number},
+		suites: { type: Number},
+		banheiros: { type: Number},
 		details: { type: String },
 		images: { type: Object}
 	},
