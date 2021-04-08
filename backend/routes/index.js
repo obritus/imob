@@ -226,11 +226,6 @@ const Message = require('../models/Message') //MENSAGENS
 			req.flash('error_msg', 'Houve um erro ao tentar excluir o usuário.')
 		})
 	})
-
-	.post('/teste', (req, res) => {
-		console.log('Data do post:', req.body)
-		res.send('teste')
-	})
 	.post('/empreendimentos', (req, res) => {
 		const produto = {
 			name: req.body.name,
@@ -252,7 +247,7 @@ const Message = require('../models/Message') //MENSAGENS
 	})
 	.delete('/empreendimentos/:id', (req, res) => {
 		const id = req.params.id
-		Product.deleteOne({
+		Empreendimento.deleteOne({
 			_id: id
 		}).then(() => {
 			req.flash('success_msg', 'Erro ao tentar excluir o produto.')

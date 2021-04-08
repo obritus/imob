@@ -123,6 +123,14 @@ const Config = require('../models/Config') //ESTRUTURA DAS CONFIGURAÇÕES NO DB
 	.get('/bairros', (req, res) => {
 		Bairro.find()
 			.populate('cidade', 'name')
+			.skip()
+			.limit(0)
+			.then(data => res.json(data))
+			.catch(err => console.log(err))
+	})
+	.get('/bairros/:id', (req, res) => {
+		Bairro.find({ cidade: req.params.id})
+			.populate('cidade', 'name')
 			.then(data => res.json(data))
 			.catch(err => console.log(err))
 	})

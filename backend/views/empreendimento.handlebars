@@ -1,31 +1,127 @@
-<h2 class="mb-5">Editar empreendimentos</h2>
+<h2 class="mb-5">Editar empreendimento <em><small class="text-muted">{{_id}}</small></em></h2>
 
 <div class="row">
 	<div class="col" id="data">
 
+		<div class="row">
+			<div class="col-md-12">
+				<div class="mb-3">
+					<label for="titleForm" class="form-label">Título do anúncio</label>
+					<input type="text" class="form-control form-control-lg" id="titleForm" name="title" placeholder="" value="">
+				</div>
+			</div>
+
+	
+			<div class="col-md-6">
+				<div class="mb-3">
+					<label for="priceForm" class="form-label">Preço/Aluguel</label>
+					<input type="number" class="form-control" id="priceForm" name="price" placeholder="" min="0">
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="mb-3">
+					<label for="categoriaForm" class="form-label">Categoria</label>
+					<select class="form-control form-select" id="categoriaForm" name="cidade">
+						<option value="1">Aluguel</option>
+						<option value="2">Venda</option>
+					</select>
+				</div>
+			</div>
+
+
+			<div class="col-md-4">
+				<div class="mb-3">
+					<label for="quartosForm" class="form-label">Quartos</label>
+					<input type="number" class="form-control" id="quartosForm" name="quartos" placeholder="" min="0">
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="mb-3">
+					<label for="cidadeForm" class="form-label">Cidade</label>
+					<select class="form-control form-select" id="cidadeForm" name="cidade"></select>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="mb-3">
+					<label for="bairroForm" class="form-label">Bairro</label>
+					<select class="form-control form-select form-control" id="bairroForm" name="bairro"></select>
+				</div>
+			</div>
+
+			<div class="col-md-12">
+				<div class="mb-3">
+					<label for="detailsForm" class="form-label">Detalhes</label>
+					<textarea class="form-control" id="detailsForm" name="details" rows="12"></textarea>
+				</div>
+			</div>
+
+			<div class="col-md-12">
+				<div class="form-check">
+					<input class="form-check-input" type="checkbox" value="" id="statusForm">
+					<label class="form-check-label" for="statusForm">Online</label>
+				</div>
+			</div>
+		</div>
+
+
 	</div>
-	<div class="col"></div>
+	<div class="col">
+
+		<div class="mb-3">
+			<label for="images" class="form-label">Adicionar imagens</label>
+			<input class="form-control" type="file" id="images" multiple>
+		</div>
+
+
+		
+
+	</div>
 </div>
 
-<script>
-	const Empreendimentos = fetch('http://localhost:3001/api/empreendimentos/{{_id}}')
-	const Div = document.querySelector('#data')
+<script type="text/javascript">
+	const Empreendimento = fetch('/api/empreendimentos/{{_id}}')
+	const Cidades = fetch('/api/cidades/')
 
-	Empreendimentos.then(data => {
-		data.json().then(empreendimentos => {
-			const { _id, title, price, status, type, quartos } = empreendimentos
-			console.log(_id)
-			const Status = (status ? 'Online' : 'Offline')
-			const Price = `R$ ${price}`
-			const Render = `<tr>
-					<td><a href="empreendimentos/${_id}" title="Editar empreendimento">${title}</a></td>
-					<td>${Price}</td>
-					<td>${Status}</td>
-					<td>${type}</td>
-					<td>${quartos}</td>
-					<td>${_id}</td>
-				</tr>`
-			Div.innerHTML += Render
+	const GetCidade = cidade_id => {
+		Cidades.then(data => {
+			data.json().then(cidades => {
+				cidades.map(({ _id, name }) => {
+					const Render = `<option value="${_id}">${name}</option>`
+					cidadeForm.innerHTML += Render
+				})
+				//cidadeForm.option.
+			})
+		})
+	}
+
+	const GetBairro = bairro_id => {
+		const Bairro = fetch('/api/bairros/' + bairro_id)
+		Bairro.then(data => {
+			data.json().then(bairros => {
+				bairroForm.innerHTML = null //LIMPA A LISTA ATUAL
+				bairros.map(({ _id, name }) => {
+					const Render = `<option value="${_id}">${name}</option>`
+					bairroForm.innerHTML += Render
+				})
+			})
+		})
+	}
+
+	Empreendimento.then(data => {
+		data.json().then(empreendimento => {
+			const { _id, title, price, status, type, quartos, cidade, bairro, details } = empreendimento
+			titleForm.value = title
+			priceForm.value = price
+			quartosForm.value = quartos
+			detailsForm.value = details
+			statusForm.value = true
+			GetCidade(cidade._id)
 		}).catch(err => console.error(err))
 	})
+
+	cidadeForm.addEventListener('change', function(e) {
+		const bairro_id = this.value
+		GetBairro(bairro_id)
+	})
+
 </script>
