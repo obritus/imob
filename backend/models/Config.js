@@ -4,7 +4,7 @@ const Schema = mongoose.Schema
 const Config = new Schema(
 	{
 		app_title: { type: String },
-		carousel: { type: Object }
+		destaques: { type: Object }
 	},
 	{ timestamps: true }
 )

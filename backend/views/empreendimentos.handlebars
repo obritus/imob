@@ -5,10 +5,11 @@
 		<tr>
 			<td scope="col">Título</td>
 			<td scope="col">Preço</td>
+			<td scope="col">Status</td>
 			<td scope="col">Tipo</td>
 			<td scope="col">Cidade</td>
 			<td scope="col">Bairro</td>
-			<td scope="col">Status</td>
+			<td scope="col">Quartos</td>
 		</tr>
 	</thead>
 	<tbody></tbody>
@@ -20,16 +21,19 @@
 
 	Empreendimentos.then(data => {
 		data.json().then(empreendimentos => {
-			const Result = empreendimentos.map(({ _id, title, price, status, type, quartos }) => {
+			console.log(empreendimentos)
+			const Result = empreendimentos.map(({ _id, title, price, status, type, cidade, bairro, quartos }) => {
 				const Status = (status ? 'Online' : 'Offline')
 				const Price = `R$ ${price}`
+				const Type = type && 'teste'
 				return (`<tr>
 					<td><a href="empreendimentos/${_id}" title="Editar empreendimento">${title}</a></td>
 					<td>${Price}</td>
 					<td>${Status}</td>
-					<td>${type}</td>
+					<td>${Type}</td>
+					<td>${cidade.name}</td>
+					<td>${bairro.name}</td>
 					<td>${quartos}</td>
-					<td>${_id}</td>
 				</tr>`)				
 			}).join('')
 			Tabela.innerHTML += Result

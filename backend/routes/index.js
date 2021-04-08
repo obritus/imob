@@ -1,5 +1,6 @@
 const express = require('express')
 const router = express.Router()
+const api = require('./api')
 const crypto = require('crypto')
 const multer = require('multer')
 const path = require('path')

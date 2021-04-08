@@ -4,7 +4,7 @@ const Schema = mongoose.Schema
 const Bairro = new Schema(
 	{
 		name: { type: String, required: true },
-		cidade_id: { type: Schema.Types.ObjectId, ref: "cidades"  }
+		cidade: { type: Schema.Types.ObjectId, ref: "cidades"  }
 	},
 	{timestamps: true}
 )

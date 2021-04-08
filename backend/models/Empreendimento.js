@@ -6,16 +6,16 @@ const Empreendimento = new Schema(
 		title: { type: String, required: true },
 		price: { type: Number, required: true },
 		status: { type: Boolean, required: true },
-		type: { type: Number},
-		cidade_id: { type: Schema.Types.ObjectId, ref: "cidades" },
-		bairro_id: { type: Schema.Types.ObjectId, ref: "bairros" },
-		quartos: { type: Number},
-		suites: { type: Number},
-		banheiros: { type: Number},
+		type: { type: Number },
+		cidade: { type: Schema.Types.ObjectId, ref: "cidades" },
+		bairro: { type: Schema.Types.ObjectId, ref: "bairros" },
+		quartos: { type: Number },
+		suites: { type: Number },
+		banheiros: { type: Number },
 		details: { type: String },
-		images: { type: Object}
+		images: { type: Schema.Types.ObjectId, ref: "images" }
 	},
-	{timestamps: true}
+	{ timestamps: true }
 )
 
 module.exports = mongoose.model('empreendimentos', Empreendimento)
@@ -35,4 +35,4 @@ Array
 Decimal128
 Map
 
-*/
+*/ 
