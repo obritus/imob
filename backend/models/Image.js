@@ -4,8 +4,8 @@ const Schema = mongoose.Schema
 const Image = new Schema(
 	{
 		title: { type: String },
-		path: { type: String, required: true },
-		empreendimento: { type: Schema.Types.ObjectId, ref: "empreendimentos" }
+		filename: { type: String, required: true },
+		empreendimento: { type: Schema.Types.ObjectId, ref: "empreendimentos", required: true }
 	},
 	{timestamps: true}
 )

@@ -1,0 +1,62 @@
+<h2 class="mb-5">Editar empreendimento <em><small class="text-muted">{{_id}}</small></em></h2>
+
+{{#if success_msg}}
+<div class="alert alert-success" role="alert"><strong>{{success_msg}}</strong></div>
+{{/if}}
+{{#if error_msg}}
+<div class="alert alert-danger" role="alert"><strong>{{error_msg}}</strong></div>
+{{/if}}
+
+{{>_add_empreendimento}}
+
+<script type="text/javascript">
+	const Empreendimento = fetch('/api/empreendimentos/{{_id}}')
+	const Cidades = fetch('/api/cidades/')
+
+	const GetBairro = (cidade_id, bairro_id) => {
+		bairroForm.innerHTML = null //LIMPA A LISTA ATUAL
+		const Bairro = fetch('/api/bairros/' + cidade_id)
+		Bairro.then(data => {
+			data.json().then(bairros => {
+				bairros.map(({ _id, name }) => {
+					const Render = `<option value="${_id}">${name}</option>`
+					bairroForm.innerHTML += Render
+				})
+				bairroForm.value = bairro_id || null
+			})
+		})
+	}
+
+	const GetCidade = (cidade_id, bairro_id) => {
+		Cidades.then(data => {
+			data.json().then(cidades => {
+				cidades.map(({ _id, name }) => {
+					const Render = `<option value="${_id}">${name}</option>`
+					cidadeForm.innerHTML += Render
+				})
+				const GetOption = document.querySelector(`option[value="${cidade_id}"]`)
+				cidadeForm.value = cidade_id || null
+			})
+			return GetBairro(cidade_id, bairro_id)
+		})
+	}
+
+	Empreendimento.then(data => {
+		data.json().then(empreendimento => {
+			const { _id, title, price, status, type, quartos, cidade, bairro, details } = empreendimento
+
+			titleForm.value = title
+			priceForm.value = price
+			quartosForm.value = quartos
+			detailsForm.value = details
+			if (status) statusForm.checked = true
+
+			return GetCidade(cidade, bairro)
+		}).catch(err => console.error(err))
+	})
+
+	cidadeForm.addEventListener('change', function (e) {
+		const cidade_id = this.value
+		GetBairro(cidade_id)
+	})
+</script>

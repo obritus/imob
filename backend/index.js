@@ -49,6 +49,4 @@ const flash = require('connect-flash')
 
 //------------------------- LIGANDO O SERVIDOR ------------------------
 
-app.listen(port, () => {
-	console.log(`Servidor rodando na http://localhost:${port}`)
-})
+app.listen(port)

@@ -1,0 +1,40 @@
+<h2 class="mb-5">Adicionar empreendimento</h2>
+
+{{>_add_empreendimento}}
+
+<script type="text/javscript">
+	const Cidades = fetch('/api/cidades/')
+
+	const GetBairro = (cidade_id, bairro_id) => {
+		bairroForm.innerHTML = null //LIMPA A LISTA ATUAL
+		const Bairro = fetch('/api/bairros/' + cidade_id)
+		Bairro.then(data => {
+			data.json().then(bairros => {
+				bairros.map(({ _id, name }) => {
+					const Render = `<option value="${_id}">${name}</option>`
+					bairroForm.innerHTML += Render
+				})
+				bairroForm.value = bairro_id || null
+			})
+		})
+	}
+
+	const GetCidade = (cidade_id, bairro_id) => {
+		Cidades.then(data => {
+			data.json().then(cidades => {
+				cidades.map(({ _id, name }) => {
+					const Render = `<option value="${_id}">${name}</option>`
+					cidadeForm.innerHTML += Render
+				})
+				const GetOption = document.querySelector(`option[value="${cidade_id}"]`)
+				cidadeForm.value = cidade_id || null
+			})
+			return GetBairro(cidade_id, bairro_id)
+		})
+	}
+
+	cidadeForm.addEventListener('change', function (e) {
+		const cidade_id = this.value
+		GetBairro(cidade_id)
+	})
+</script>

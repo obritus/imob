@@ -1,10 +1,15 @@
 const express = require('express')
 const router = express.Router()
-const api = require('./api')
 const crypto = require('crypto')
 const multer = require('multer')
 const path = require('path')
+const axios = require('axios')
 
+const Config = require('../models/Config') //CONFIGURAÇÕES DO APP
+const Usuario = require('../models/Usuario') //ESTRUTURA DOS USUÁRIOS NO DB
+const Empreendimento = require('../models/Empreendimento') //EMPREENDIMENTOS
+const Message = require('../models/Message') //MENSAGENS
+const Image = require('../models/Image') //IMAGE
 
 const multerConfigs = {
 	dest: path.resolve(__dirname, '..', 'tmp', 'uploads'),
@@ -36,11 +41,7 @@ const multerConfigs = {
 		}
 	}
 }
-
-const Config = require('../models/Config') //CONFIGURAÇÕES DO APP
-const Usuario = require('../models/Usuario') //ESTRUTURA DOS USUÁRIOS NO DB
-const Empreendimento = require('../models/Empreendimento') //EMPREENDIMENTOS
-const Message = require('../models/Message') //MENSAGENS
+const read_messages = async () => await Message.find({ read: false }).then(res => res.length)
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
@@ -49,14 +50,13 @@ const Message = require('../models/Message') //MENSAGENS
 		const users = await Usuario.find().then(res => res.length)
 		const empreendimentos = await Empreendimento.find().then(res => res.length)
 		const messages = await Message.find().then(res => res.length)
-		const read_messages = await Message.find({read: false}).then(res => res.length)
 
 		res.render('index', {
 			title: 'Página Inicial',
 			users_number: users,
 			empreendimentos_number: empreendimentos,
 			messages_number: messages,
-			messages_read_number: read_messages,
+			messages_read_number: read_messages(),
 			home: true
 		})
 	})
@@ -74,23 +74,22 @@ const Message = require('../models/Message') //MENSAGENS
 		const titulos = {
 			usuarios: 'Usuários',
 			clientes: 'Clientes',
-			posts: 'Publicações',
+			empreendimentos: 'Empreendimentos',
 			messages: 'Mensagens',
 			config: 'Configurações',
 			login: 'Entrar',
 		}
 		const titulo = titulos[page]
-		const read_messages = await Message.find({read: false}).then(res => res.length)
-
 		const RenderPage = args => {
 			const data = {
 				title: args.titulo,
 				data: args.data,
-				messages_read_number: read_messages
+				messages_read_number: read_messages()
 			}
-			data[page] = true
+			data[args.page] = true
 			res.render(`${args.page}`, data)
 		}
+
 		if (page === 'usuarios') {
 			Usuario.find().lean().then(usuarios => {
 				const data = {
@@ -125,6 +124,16 @@ const Message = require('../models/Message') //MENSAGENS
 		else {
 			RenderPage({ page, titulo, data })
 		}
+	})
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+	.get('/empreendimentos/:id', async (req, res) => {
+		res.render('empreendimentos/show', {
+			_id: req.params.id
+		})
+	})
+	.get('/empreendimentos/create', (req, res) => {
+		res.render('empreendimentos/create')
 	})
 
 // -----------------------------------------------------------------------------
@@ -240,11 +249,6 @@ const Message = require('../models/Message') //MENSAGENS
 			console.error(err)
 		})
 	})
-	.get('/empreendimentos/:id', async (req, res) => {
-		res.render('empreendimento', {
-			_id: req.params.id
-		})
-	})
 	.delete('/empreendimentos/:id', (req, res) => {
 		const id = req.params.id
 		Empreendimento.deleteOne({
@@ -320,6 +324,16 @@ const Message = require('../models/Message') //MENSAGENS
 
 	.post('/clientes', (req, res) => {
 		res.sendStatus(200)
+	})
+	.post('/teste_images', multer(multerConfigs).array('images'), (req, res) => {
+		console.log(req.body)
+		const imagens = req.files.map(image => {
+			return {
+				filename: image.filename,
+				empreendimento: req.body.empreendimento_id
+			}
+		})
+		Image.insertMany(imagens).then(() => res.sendStatus(200))
 	})
 
 module.exports = router

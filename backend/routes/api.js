@@ -164,4 +164,16 @@ const Config = require('../models/Config') //ESTRUTURA DAS CONFIGURAÇÕES NO DB
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
+	.post('/testes', (req, res, next) => {
+		req.flash('success_msg', 'Atualizado com sucesso.')
+		res.redirect('back')
+	})
+	.post('/images_teste', (req, res, next) => {
+		req.flash('success_msg', 'Atualizado com sucesso.')
+		res.json(req.body)
+	})
+
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
 module.exports = router

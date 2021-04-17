@@ -1,0 +1,122 @@
+<div class="row pb-5">
+	<div class="col-md-7" id="data">
+
+		<div class="row">
+
+			<div class="col-md-12">
+				<div class="mb-3">
+					<label for="titleForm" class="form-label">Título do anúncio</label>
+					<input type="text" class="form-control form-control-lg" id="titleForm" name="title" placeholder="">
+				</div>
+			</div>
+
+			<div class="col-md-4">
+				<div class="mb-3">
+					<label for="typeForm" class="form-label">Tipo</label>
+					<select class="form-control form-select" id="typeForm" name="type">
+						<option value="1">Casa</option>
+						<option value="2">Apartamento</option>
+						<option value="3">Terreno</option>
+						<option value="4">Lote</option>
+					</select>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="mb-3">
+					<label for="priceForm" class="form-label">Preço/Aluguel</label>
+					<input type="number" class="form-control" id="priceForm" name="price" placeholder="" min="0">
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="mb-3">
+					<label for="categoriaForm" class="form-label">Categoria</label>
+					<select class="form-control form-select" id="categoriaForm" name="categoria">
+						<option value="1">Aluguel</option>
+						<option value="2">Venda</option>
+					</select>
+				</div>
+			</div>
+
+			<div class="col-md-4">
+				<div class="mb-3">
+					<label for="cidadeForm" class="form-label">Cidade</label>
+					<select class="form-control form-select" id="cidadeForm" name="cidade"></select>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="mb-3">
+					<label for="bairroForm" class="form-label">Bairro</label>
+					<select class="form-control form-select form-control" id="bairroForm" name="bairro"></select>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="mb-3">
+					<label for="coordenadasForm" class="form-label">Google Maps</label>
+					<input type="text" class="form-control" id="coordenadasForm"
+						title="Insira as coordenadas do empreendimento localizadas no Google Maps." name="google_maps"
+						placeholder="-00.000000000000000, -00.00000000000000" min="0">
+				</div>
+			</div>
+
+			<div class="col-md-3">
+				<div class="mb-3">
+					<label for="quartosForm" class="form-label">Quartos</label>
+					<input type="number" class="form-control" id="quartosForm" name="quartos" min="0">
+				</div>
+			</div>
+			<div class="col-md-3">
+				<div class="mb-3">
+					<label for="suitesForm" class="form-label">Suítes</label>
+					<input type="number" class="form-control" id="suitesForm" name="suites" min="0">
+				</div>
+			</div>
+			<div class="col-md-3">
+				<div class="mb-3">
+					<label for="banheirosForm" class="form-label">Banheiros</label>
+					<input type="number" class="form-control" id="banheirosForm" name="banheiros" min="0">
+				</div>
+			</div>
+			<div class="col-md-3">
+				<div class="mb-3">
+					<label for="vagasForm" class="form-label">Vagas Garagem</label>
+					<input type="number" class="form-control" id="vagasForm" name="vagas_garagem" min="0">
+				</div>
+			</div>
+
+			<div class="col-md-12">
+				<div class="mb-3">
+					<label for="detailsForm" class="form-label">Detalhes</label>
+					<textarea class="form-control" id="detailsForm" name="details" rows="12"></textarea>
+				</div>
+			</div>
+
+			<div class="col-md-12">
+				<div class="form-check mb-3">
+					<input class="form-check-input form-lg" type="checkbox" id="statusForm" name="status">
+					<label class="form-check-label" for="statusForm">Online</label>
+				</div>
+			</div>
+
+			<div class="col-md-12">
+				<div class="row">
+					<div class="col-md-6">
+						<button type="submit" class="btn btn-primary btn-lg">Atualizar</button>
+					</div>
+					<div class="col-md-6"></div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<div class="col">
+
+		<form action="/dashboard/teste_images" method="POST" enctype="multipart/form-data">
+			<div class="mb-3">
+				<input type="hidden" name="empreendimento_id" value="{{_id}}" <label for="imagesForm"
+					class="form-label">Adicionar imagens</label>
+				<input class="form-control form-control-lg" id="imagesForm" name="images" type="file" multiple>
+				<button type="submit" class="btn btn-primary">Enviar</button>
+			</div>
+		</form>
+	</div>
+</div>
