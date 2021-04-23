@@ -15,7 +15,7 @@ const Empreendimento = new Schema(
 			vagas_garagem: { type: Number },
 		google_maps: { type: String },
 		details: { type: String },
-		images: { type: Schema.Types.ObjectId, ref: "images" }
+		default_image: { type: Schema.Types.ObjectId, ref: "images" }
 	},
 	{ timestamps: true }
 )

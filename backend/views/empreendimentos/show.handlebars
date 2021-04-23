@@ -7,7 +7,7 @@
 <div class="alert alert-danger" role="alert"><strong>{{error_msg}}</strong></div>
 {{/if}}
 
-{{>_add_empreendimento}}
+{{>_empreendimento_form}}
 
 <script type="text/javascript">
 	const Empreendimento = fetch('/api/empreendimentos/{{_id}}')
@@ -43,13 +43,34 @@
 
 	Empreendimento.then(data => {
 		data.json().then(empreendimento => {
-			const { _id, title, price, status, type, quartos, cidade, bairro, details } = empreendimento
+			const {
+				_id,
+				title,
+				price,
+				status,
+				type,
+				cidade,
+				bairro,
+				quartos,
+				suites,
+				banheiros,
+				vagas_garagem,
+				google_maps,
+				details
+			} = empreendimento
+
+			console.log(empreendimento)
 
 			titleForm.value = title
 			priceForm.value = price
-			quartosForm.value = quartos
-			detailsForm.value = details
 			if (status) statusForm.checked = true
+			typeForm.value = type
+			quartosForm.value = quartos
+			suitesForm.value = suites
+			banheirosForm.value = banheiros
+			vagasForm.value = vagas_garagem
+			googleForm.value = google_maps
+			detailsForm.value = details
 
 			return GetCidade(cidade, bairro)
 		}).catch(err => console.error(err))
@@ -59,4 +80,25 @@
 		const cidade_id = this.value
 		GetBairro(cidade_id)
 	})
+
+	document.querySelector('[data-js="form_empreendimento"]')
+		.addEventListener('submit', function(e) {
+			e.preventDefault()
+
+			const dados = {
+				title: titleForm.value,
+				price: priceForm.value,
+				status: statusForm.value,
+				type: statusForm.value,
+				cidade: cidadeForm.value,
+				bairro: bairroForm.value,
+				quartos: quartosForm.value,
+				suites: suitesForm.value,
+				banheiros: banheirosForm.value,
+				vagas_garagem: vagasForm.value,
+				google_maps: googleForm.value,
+				details: detailsForm.value
+			}
+			sessionStorage.setItem('dados', JSON.stringify(dados))
+		})
 </script>

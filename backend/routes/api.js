@@ -83,19 +83,22 @@ const Config = require('../models/Config') //ESTRUTURA DAS CONFIGURAÇÕES NO DB
 		).catch(err => console.error(err))
 	})
 	.put('/empreendimentos/:id', (req, res) => {
+		const new_status = (req.body.status) ? true : false
 		const data = {
 			$set: {
 				"title": req.body.title,
 				"price": req.body.price,
-				"status": req.body.status,
+				"status": new_status,
 				"type": req.body.type,
 				"cidade": req.body.cidade,
 				"bairro": req.body.bairro,
 				"quartos": req.body.quartos,
 				"suites": req.body.suites,
 				"banheiros": req.body.banheiros,
+				"vagas_garagem": req.body.vagas_garagem,
+				"google_maps": req.body.google_maps,
 				"details": req.body.details,
-				"images": req.body.images,
+				"default_image": req.body.default_image,
 			}
 		}
 		Empreendimento.updateOne({ _id: req.params.id }, data)
@@ -145,12 +148,14 @@ const Config = require('../models/Config') //ESTRUTURA DAS CONFIGURAÇÕES NO DB
 
 	.get('/images', (req, res) => {
 		Image.find()
+			.select({ createdAt: false, updatedAt: false })
 			.populate('cidade', 'name')
 			.then(data => res.json(data))
 			.catch(err => console.log(err))
 	})
 	.get('/images/:id', (req, res) => {
 		Image.findOne({ _id: req.params.id })
+			.select({ createdAt: false, updatedAt: false })
 			.populate('cidade', 'name')
 			.then(data => res.json(data))
 			.catch(err => console.log(err))

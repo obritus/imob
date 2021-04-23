@@ -1,9 +1,12 @@
-<h2 class="mb-5">Adicionar empreendimento</h2>
+<h2 class="mb-5">Adicionar novo empreendimento</h2>
 
-{{>_add_empreendimento}}
+{{>_empreendimento_form}}
+
+<h1 class="">{{@hbs}}</h1>
 
 <script type="text/javscript">
-	const Cidades = fetch('/api/cidades/')
+	console.log('teste teste')
+	const Cidades = await fetch('/api/cidades/')
 
 	const GetBairro = (cidade_id, bairro_id) => {
 		bairroForm.innerHTML = null //LIMPA A LISTA ATUAL
@@ -19,7 +22,8 @@
 		})
 	}
 
-	const GetCidade = (cidade_id, bairro_id) => {
+	const GetCidade = async (cidade_id, bairro_id) => {
+		console.log('teste')
 		Cidades.then(data => {
 			data.json().then(cidades => {
 				cidades.map(({ _id, name }) => {
@@ -32,6 +36,29 @@
 			return GetBairro(cidade_id, bairro_id)
 		})
 	}
+
+	GetCidade()
+
+	document.querySelector('[data-js="form_empreendimento"]')
+		.addEventListener('submit', function(e) {
+			e.preventDefault()
+
+			const dados = {
+				title: titleForm.value,
+				price: priceForm.value,
+				status: statusForm.value,
+				type: statusForm.value,
+				cidade: cidadeForm.value,
+				bairro: bairroForm.value,
+				quartos: quartosForm.value,
+				suites: suitesForm.value,
+				banheiros: banheirosForm.value,
+				vagas_garagem: vagasForm.value,
+				google_maps: googleForm.value,
+				details: detailsForm.value
+			}
+			sessionStorage.setItem('dados', JSON.stringify(dados))
+		})
 
 	cidadeForm.addEventListener('change', function (e) {
 		const cidade_id = this.value

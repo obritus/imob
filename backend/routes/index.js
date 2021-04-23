@@ -125,15 +125,29 @@ const read_messages = async () => await Message.find({ read: false }).then(res =
 			RenderPage({ page, titulo, data })
 		}
 	})
+
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
-	.get('/empreendimentos/:id', async (req, res) => {
-		res.render('empreendimentos/show', {
-			_id: req.params.id
-		})
+
+	.get('/empreendimentos/show/:id', async (req, res) => {
+		const imagens = await Image.find()
+		res.render('empreendimentos/show', { _id: req.params.id, img: imagens })
 	})
 	.get('/empreendimentos/create', (req, res) => {
 		res.render('empreendimentos/create')
+	})
+	.post('/empreendimentos', (req, res) => {
+		
+	})
+	.delete('/empreendimentos/:id', (req, res) => {
+		const id = req.params.id
+		Empreendimento.deleteOne({ _id: id })
+			.then(() => {
+				req.flash('success_msg', 'Erro ao tentar excluir o empreendimento.')
+				res.redirect('/')
+			}).catch((err) => {
+				req.flash('error_msg', 'Houve um erro ao tentar excluir o empreendimento.')
+			})
 	})
 
 // -----------------------------------------------------------------------------
@@ -233,31 +247,6 @@ const read_messages = async () => await Message.find({ read: false }).then(res =
 			res.send('Atualizado com sucesso.')
 		}).catch((err) => {
 			req.flash('error_msg', 'Houve um erro ao tentar excluir o usuário.')
-		})
-	})
-	.post('/empreendimentos', (req, res) => {
-		const produto = {
-			name: req.body.name,
-			price: req.body.price,
-			status: true,
-			datails: req.body.details
-		}
-		new Product(produto).save().then(() => {
-			res.sendStatus(200)
-		}).catch(err => {
-			res.sendStatus(404)
-			console.error(err)
-		})
-	})
-	.delete('/empreendimentos/:id', (req, res) => {
-		const id = req.params.id
-		Empreendimento.deleteOne({
-			_id: id
-		}).then(() => {
-			req.flash('success_msg', 'Erro ao tentar excluir o produto.')
-			res.redirect('/')
-		}).catch((err) => {
-			req.flash('error_msg', 'Houve um erro ao tentar excluir o produto.')
 		})
 	})
 	.post('/upload/', multer(multerConfigs).single('file') ,(req, res) => {

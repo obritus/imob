@@ -1,6 +1,5 @@
-<div class="row pb-5">
-	<div class="col-md-7" id="data">
-
+<div class="row pb-5" id="data">
+	<form action="/dashboard/empreendimentos/create" class="form" data-js="form_empreendimento">
 		<div class="row">
 
 			<div class="col-md-12">
@@ -51,8 +50,8 @@
 			</div>
 			<div class="col-md-4">
 				<div class="mb-3">
-					<label for="coordenadasForm" class="form-label">Google Maps</label>
-					<input type="text" class="form-control" id="coordenadasForm"
+					<label for="googleForm" class="form-label">Google Maps</label>
+					<input type="text" class="form-control" id="googleForm"
 						title="Insira as coordenadas do empreendimento localizadas no Google Maps." name="google_maps"
 						placeholder="-00.000000000000000, -00.00000000000000" min="0">
 				</div>
@@ -100,23 +99,13 @@
 			<div class="col-md-12">
 				<div class="row">
 					<div class="col-md-6">
-						<button type="submit" class="btn btn-primary btn-lg">Atualizar</button>
+						<button type="submit" class="btn btn-primary btn-lg">Avançar</button>
 					</div>
 					<div class="col-md-6"></div>
 				</div>
 			</div>
 		</div>
-
-	</div>
-	<div class="col">
-
-		<form action="/dashboard/teste_images" method="POST" enctype="multipart/form-data">
-			<div class="mb-3">
-				<input type="hidden" name="empreendimento_id" value="{{_id}}" <label for="imagesForm"
-					class="form-label">Adicionar imagens</label>
-				<input class="form-control form-control-lg" id="imagesForm" name="images" type="file" multiple>
-				<button type="submit" class="btn btn-primary">Enviar</button>
-			</div>
-		</form>
-	</div>
+	</form>
 </div>
+
+{{foo}}
