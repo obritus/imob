@@ -2,11 +2,8 @@
 
 {{>_empreendimento_form}}
 
-<h1 class="">{{@hbs}}</h1>
-
-<script type="text/javscript">
-	console.log('teste teste')
-	const Cidades = await fetch('/api/cidades/')
+<script>
+	const Cidades = fetch('/api/cidades/')
 
 	const GetBairro = (cidade_id, bairro_id) => {
 		bairroForm.innerHTML = null //LIMPA A LISTA ATUAL
@@ -23,7 +20,6 @@
 	}
 
 	const GetCidade = async (cidade_id, bairro_id) => {
-		console.log('teste')
 		Cidades.then(data => {
 			data.json().then(cidades => {
 				cidades.map(({ _id, name }) => {
@@ -37,12 +33,21 @@
 		})
 	}
 
+	const ShowImagesBox = () => {
+		imagesBox.classList.add('show')
+		imagesBox.scrollIntoView()
+	}
+
 	GetCidade()
 
 	document.querySelector('[data-js="form_empreendimento"]')
 		.addEventListener('submit', function(e) {
 			e.preventDefault()
-
+			const BlockInputs = () => {
+				const GetFormElements =
+					document.querySelectorAll('form input, form textarea, form select')
+				GetFormElements.forEach(e => e.disabled = true)
+			}
 			const dados = {
 				title: titleForm.value,
 				price: priceForm.value,
@@ -58,10 +63,43 @@
 				details: detailsForm.value
 			}
 			sessionStorage.setItem('dados', JSON.stringify(dados))
+			BlockInputs()
+			ShowImagesBox()
 		})
 
-	cidadeForm.addEventListener('change', function (e) {
-		const cidade_id = this.value
-		GetBairro(cidade_id)
-	})
+	cidadeForm.addEventListener('change', function (e) {GetBairro(this.value)})
+
+	dropZone.ondragover =  function () {
+		this.classList.add('active')
+		return false
+	}
+	dropZone.ondragleave = function () {
+		this.classList.remove('active')
+		return false
+	}
+	dropZone.ondrop = function (e) {
+		const upload = files => {
+			const data = new FormData()
+
+			for(x = 0; x < files.length; x++) {
+				data.append('file[]', files[x])
+			}
+
+			fetch('/dashboard/teste_images', {
+				method: 'POST',
+				headers: {
+					"Content-Type": "You will perhaps need to define a content-type here"
+				},
+				body: data
+			}).then(
+				response => console.log(response.json())
+			).then(
+				success => console.log(success)
+			).catch(
+				error => console.error(error)
+			)
+		}
+		e.preventDefault()
+		upload(e.dataTransfer.files)
+	}
 </script>

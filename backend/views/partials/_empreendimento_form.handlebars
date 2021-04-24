@@ -85,14 +85,26 @@
 			<div class="col-md-12">
 				<div class="mb-3">
 					<label for="detailsForm" class="form-label">Detalhes</label>
-					<textarea class="form-control" id="detailsForm" name="details" rows="12"></textarea>
+					<textarea class="form-control" id="detailsForm" name="details" rows="7"></textarea>
 				</div>
 			</div>
 
 			<div class="col-md-12">
 				<div class="form-check mb-3">
-					<input class="form-check-input form-lg" type="checkbox" id="statusForm" name="status">
+					<input class="form-check-input form-lg" type="checkbox" id="statusForm" name="status" checked>
 					<label class="form-check-label" for="statusForm">Online</label>
+				</div>
+			</div>
+
+			<div class="col-md-12 mb-5" id="imagesBox">
+				<div class="row">
+					<div class="col">
+						<h3>Imagens</h3>
+						<p>Adicione imagens no formato .JPG ou .PNG.</p>
+						<div id="dropZone">
+							<p>Insira os arquivos aqui.</p>
+						</div>
+					</div>
 				</div>
 			</div>
 
@@ -107,5 +119,3 @@
 		</div>
 	</form>
 </div>
-
-{{foo}}
