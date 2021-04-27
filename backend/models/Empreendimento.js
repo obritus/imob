@@ -4,9 +4,10 @@ const Schema = mongoose.Schema
 const Empreendimento = new Schema(
 	{
 		title: { type: String, required: true },
-		price: { type: Number, required: true },
-		status: { type: Boolean, required: true },
 		type: { type: Number },
+		price: { type: Number, required: true },
+		categoria: { type: Number, required: true },
+		status: { type: Boolean, required: true },
 		cidade: { type: Schema.Types.ObjectId, ref: "cidades" },
 		bairro: { type: Schema.Types.ObjectId, ref: "bairros" },
 			quartos: { type: Number },

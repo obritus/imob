@@ -22,17 +22,17 @@
 			</div>
 			<div class="col-md-4">
 				<div class="mb-3">
-					<label for="priceForm" class="form-label">Preço/Aluguel</label>
-					<input type="number" class="form-control" id="priceForm" name="price" placeholder="" min="0">
-				</div>
-			</div>
-			<div class="col-md-4">
-				<div class="mb-3">
 					<label for="categoriaForm" class="form-label">Categoria</label>
 					<select class="form-control form-select" id="categoriaForm" name="categoria">
 						<option value="1">Aluguel</option>
 						<option value="2">Venda</option>
 					</select>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="mb-3">
+					<label for="priceForm" class="form-label">Preço/Aluguel</label>
+					<input type="number" class="form-control" id="priceForm" name="price" placeholder="" min="0">
 				</div>
 			</div>
 
@@ -91,19 +91,32 @@
 
 			<div class="col-md-12">
 				<div class="form-check mb-3">
-					<input class="form-check-input form-lg" type="checkbox" id="statusForm" name="status" checked>
+					<input class="form-check-input form-lg" type="checkbox" id="statusForm" name="status">
 					<label class="form-check-label" for="statusForm">Online</label>
 				</div>
 			</div>
 
 			<div class="col-md-12 mb-5" id="imagesBox">
+				<h2 class="mt-3 mb-4">Imagens</h2>
 				<div class="row">
 					<div class="col">
-						<h3>Imagens</h3>
+						<h4>Fazer upload</h4>
 						<p>Adicione imagens no formato .JPG ou .PNG.</p>
 						<div id="dropZone">
 							<p>Insira os arquivos aqui.</p>
 						</div>
+					</div>
+					<div class="col">
+						<h4>Imagens atuais</h4>
+						<p>Galeria atual do empreendimento.</p>
+						<ul>
+							<li></li>
+							<li></li>
+							<li></li>
+							<li></li>
+							<li></li>
+							<li></li>
+						</ul>
 					</div>
 				</div>
 			</div>

@@ -11,6 +11,7 @@
 
 <script type="text/javascript">
 	const Empreendimento = fetch('/api/empreendimentos/{{_id}}')
+	const Imagens = fetch('/api/imagens/{{_id}}')
 	const Cidades = fetch('/api/cidades/')
 
 	const GetBairro = (cidade_id, bairro_id) => {
@@ -46,31 +47,38 @@
 			const {
 				_id,
 				title,
-				price,
-				status,
 				type,
+				price,
+				categoria,
 				cidade,
 				bairro,
+				google_maps,
 				quartos,
 				suites,
 				banheiros,
 				vagas_garagem,
-				google_maps,
-				details
+				details,
+				status,
+				default_image
 			} = empreendimento
 
-			console.log(empreendimento)
+			{{!-- console.log("Veio do BD", empreendimento) --}}
 
 			titleForm.value = title
-			priceForm.value = price
-			if (status) statusForm.checked = true
 			typeForm.value = type
+			categoriaForm.value = categoria
+			priceForm.value = price
 			quartosForm.value = quartos
 			suitesForm.value = suites
 			banheirosForm.value = banheiros
 			vagasForm.value = vagas_garagem
 			googleForm.value = google_maps
 			detailsForm.value = details
+			if (status) {
+				statusForm.checked = true
+			} else {
+				statusForm.checked = false
+			}
 
 			return GetCidade(cidade, bairro)
 		}).catch(err => console.error(err))
@@ -87,18 +95,33 @@
 
 			const dados = {
 				title: titleForm.value,
+				type: typeForm.value,
 				price: priceForm.value,
-				status: statusForm.value,
-				type: statusForm.value,
+				categoria: categoriaForm.value,
+
 				cidade: cidadeForm.value,
 				bairro: bairroForm.value,
+				google_maps: googleForm.value,
+
 				quartos: quartosForm.value,
 				suites: suitesForm.value,
 				banheiros: banheirosForm.value,
 				vagas_garagem: vagasForm.value,
-				google_maps: googleForm.value,
-				details: detailsForm.value
+				details: detailsForm.value,
+
+				status: statusForm.checked,
 			}
+
 			sessionStorage.setItem('dados', JSON.stringify(dados))
+
+			{{!-- console.log("Dados enviados:", dados) --}}
+
+			fetch('/api/empreendimentos/{{_id}}', {
+				method: 'PUT',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(dados)
+			})
+				.then(res => console.log(res))
+				.catch(err => console.error(err))
 		})
 </script>

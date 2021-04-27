@@ -1,5 +1,7 @@
 const express = require('express')
 const router = express.Router()
+const multer = require('multer')
+const path = require('path')
 
 const Usuario = require('../models/Usuario') //ESTRUTURA DOS USUÁRIOS NO DB
 const Empreendimento = require('../models/Empreendimento') //ESTRUTURA DOS EMPREENDIMENTOS NO DB
@@ -8,6 +10,37 @@ const Bairro = require('../models/Bairro') //ESTRUTURA DOS BAIRROSS NO DB
 const Image = require('../models/Image') //ESTRUTURA DAS IMAGENS NO DB
 const Message = require('../models/Message') //ESTRUTURA DAS MENSAGENS NO DB
 const Config = require('../models/Config') //ESTRUTURA DAS CONFIGURAÇÕES NO DB
+
+const multerConfigs = {
+	dest: path.resolve(__dirname, '..', 'tmp', 'uploads'),
+	storage: multer.diskStorage({
+		destination: (req, file, cb) => {
+			cb(null, multerConfigs.dest)
+		},
+		filename: (req, file, cb) => {
+			crypto.randomBytes(16, (err, hash) => {
+				if (err) cb(err)
+				let extension = file.originalname.slice(-4)
+				let filename = `${hash.toString('hex') + extension}`
+				cb(null, filename)
+			})
+		}
+	}),
+	limits: {
+		fileSize: 2 * 1024 * 1024,
+	},
+	fileFilter: (req, file, cb) => {
+		const allowedMimes = [
+			'image/jpeg',
+			'image/png'
+		]
+		if (allowedMimes.includes(file.mimetype)) {
+			cb(null, true)
+		} else {
+			cb(new Error("Tipo de arquivo inválido"))
+		}
+	}
+}
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
@@ -72,37 +105,30 @@ const Config = require('../models/Config') //ESTRUTURA DAS CONFIGURAÇÕES NO DB
 			.then(data => res.json(data))
 			.catch(err => console.log(err))
 	})
+
 	.get('/empreendimentos/:id', (req, res) => {
 		Empreendimento.findOne({_id: req.params.id })
 			.then(data => res.json(data))
 			.catch(err => console.log(err))
 	})
+
 	.post('/empreendimentos', (req, res) => {
-		new Empreendimento(req.body).save().then(
-			res.sendStatus(200)
-		).catch(err => console.error(err))
+		//REMOVER ITENS NULLOS DO REQ.BODY
+		Object.keys(req.body).forEach(item => {
+			if (req.body[item] === '') delete req.body[item]
+		})
+		new Empreendimento(req.body).save()
+			.then(data => res.json(data._id))
+			.catch(err => console.error(err))
 	})
+
 	.put('/empreendimentos/:id', (req, res) => {
-		const new_status = (req.body.status) ? true : false
-		const data = {
-			$set: {
-				"title": req.body.title,
-				"price": req.body.price,
-				"status": new_status,
-				"type": req.body.type,
-				"cidade": req.body.cidade,
-				"bairro": req.body.bairro,
-				"quartos": req.body.quartos,
-				"suites": req.body.suites,
-				"banheiros": req.body.banheiros,
-				"vagas_garagem": req.body.vagas_garagem,
-				"google_maps": req.body.google_maps,
-				"details": req.body.details,
-				"default_image": req.body.default_image,
-			}
+		if(req.body.status) {
+			req.body.status = (req.body.status) ? true : false
 		}
-		Empreendimento.updateOne({ _id: req.params.id }, data)
-			.then(data => res.sendStatus(202))
+		console.log(req.body)
+		Empreendimento.updateOne({ _id: req.params.id }, req.body)
+			.then(() => res.sendStatus(202))
 			.catch(err => console.log(err))
 	})
 
@@ -160,10 +186,12 @@ const Config = require('../models/Config') //ESTRUTURA DAS CONFIGURAÇÕES NO DB
 			.then(data => res.json(data))
 			.catch(err => console.log(err))
 	})
-	.post('/images', (req, res) => {
-		Image.insertMany(req.body)
-			.then(res.sendStatus(200))
-			.catch(err => console.error(err))
+	.post('/images', multer(multerConfigs).array('images'), (req, res, next) => {
+		console.log(req.files)
+		res.json({message: "okay"})
+		// Image.insertMany(req.body)
+		// 	.then(res.sendStatus(200))
+		// 	.catch(err => console.error(err))
 	})
 
 // -----------------------------------------------------------------------------
