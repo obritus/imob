@@ -1,5 +1,6 @@
 const express = require('express')
 const router = express.Router()
+const crypto = require('crypto')
 const multer = require('multer')
 const path = require('path')
 
@@ -27,7 +28,7 @@ const multerConfigs = {
 		}
 	}),
 	limits: {
-		fileSize: 2 * 1024 * 1024,
+		fileSize: 2 * 2560 * 2560,
 	},
 	fileFilter: (req, file, cb) => {
 		const allowedMimes = [
@@ -186,12 +187,27 @@ const multerConfigs = {
 			.then(data => res.json(data))
 			.catch(err => console.log(err))
 	})
-	.post('/images', multer(multerConfigs).array('images'), (req, res, next) => {
-		console.log(req.files)
-		res.json({message: "okay"})
-		// Image.insertMany(req.body)
-		// 	.then(res.sendStatus(200))
-		// 	.catch(err => console.error(err))
+	.post('/images', multer(multerConfigs).any(), (req, res, next) => {
+		const _id = req.body._id
+		const uploaded = []
+		req.files.forEach(({ filename }) => {
+			uploaded.push({ filename, empreendimento: _id })
+		})
+		Image.insertMany(uploaded)
+			.then(data => {
+				const fs = require('fs')
+				const tmp_folder = file => path.resolve(__dirname, '..', 'tmp', 'uploads', file)
+				const new_folder = file => path.resolve(__dirname, '..', 'public', 'images', 'empreendimentos', _id, file)
+				if (!fs.existsSync(path.resolve(__dirname, '..', 'public', 'images', 'empreendimentos', _id))) { fs.mkdirSync(new_folder()) }
+
+				req.files.forEach(file => {
+					fs.rename(tmp_folder(file.filename), new_folder(file.filename), (err) => {
+						if (err) return console.error(err)
+					})
+				})
+				res.json(data)
+			})
+			.catch(err => console.error(err))
 	})
 
 // -----------------------------------------------------------------------------

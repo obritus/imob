@@ -92,7 +92,7 @@
 	dropZone.ondrop = function (e) {
 		const upload = files => {
 			const data = new FormData()
-			//data.append('teste', sessionStorage.getItem('empreendimento_id'))
+			data.append('_id', sessionStorage.getItem('empreendimento_id'))
 
 			for(x = 0; x < files.length; x++) {
 				data.append('images[]', files[x])
@@ -105,10 +105,24 @@
 				body: data
 			}).then(response => response.json().then(data => {
 				console.log(data)
+				const divImagens = document.getElementById('uploaded')
+
+				data.forEach(({ filename, empreendimento }) => {
+					const divImagem = document.createElement('div')
+					divImagem.className = 'image'
+					divImagem.style.backgroundImage = `url(/images/empreendimentos/${empreendimento}/${filename})`
+					document.getElementById('uploaded').appendChild(divImagem)
+				})
 			})
 			).catch(err => console.error(err))
 		}
 		e.preventDefault()
 		upload(e.dataTransfer.files)
 	}
+
+	const imagensAPI = [
+		{ filename: 'ab1e16a603b39b13c332ae8d50a8e979.png', empreendimento: '12ab34' },
+		{ filename: 'b305f611d9b8b1a85933916023cf37c1.png', empreendimento: '12ab34' }
+	]
+
 </script>
