@@ -7,7 +7,7 @@ const Image = new Schema(
 		filename: { type: String, required: true },
 		empreendimento: { type: Schema.Types.ObjectId, ref: "empreendimentos", required: true }
 	},
-	{timestamps: true}
+	{ timestamps: true }
 )
 
 module.exports = mongoose.model('images', Image)

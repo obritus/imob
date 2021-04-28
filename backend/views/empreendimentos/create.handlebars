@@ -73,9 +73,15 @@
 				},
 				body: JSON.stringify(dados)
 			}).then(data => data.json()).then(body => {
-				sessionStorage.setItem('empreendimento_id', body)
-				BlockInputs()
-				ShowImagesBox()
+				if(!body.errors) {
+					sessionStorage.setItem('empreendimento_id', body)
+					BlockInputs()
+					ShowImagesBox()
+				}
+				const alertBox = document.querySelector('[data-js="alert"]')
+				alertBox.children[0].innerHTML = "Ocorreu um erro, por favor, verifique as informações digitadas."
+				alertBox.classList.toggle('visually-hidden')
+				alertBox.scrollIntoView({ block: "end", behavior: "smooth" })
 			}).catch(err => console.error(err))
 		})
 
@@ -98,13 +104,10 @@
 				data.append('images[]', files[x])
 			}
 
-			console.log(data)
-
 			fetch('/api/images/', {
 				method: 'POST',
 				body: data
 			}).then(response => response.json().then(data => {
-				console.log(data)
 				const divImagens = document.getElementById('uploaded')
 
 				data.forEach(({ filename, empreendimento }) => {
@@ -120,9 +123,9 @@
 		upload(e.dataTransfer.files)
 	}
 
-	const imagensAPI = [
-		{ filename: 'ab1e16a603b39b13c332ae8d50a8e979.png', empreendimento: '12ab34' },
-		{ filename: 'b305f611d9b8b1a85933916023cf37c1.png', empreendimento: '12ab34' }
-	]
-
+	const alert_buttons = document.querySelector('[data-bs-dismiss="alert"]')
+	alert_buttons.addEventListener('click', function (e) {
+		e.preventDefault()
+		e.path[1].classList.add('visually-hidden')
+	})
 </script>

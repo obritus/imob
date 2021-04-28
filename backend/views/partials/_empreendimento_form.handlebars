@@ -1,18 +1,23 @@
 <div class="row pb-5" id="data">
+	<div class="alert alert-warning alert-dismissible fade show visually-hidden" data-js="alert">
+		<p class="m-0 p-0 fw-bold"></p>
+		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+
 	<form action="/dashboard/empreendimentos/create" class="form" data-js="form_empreendimento">
 		<div class="row">
 
 			<div class="col-md-12">
 				<div class="mb-3">
 					<label for="titleForm" class="form-label">Título do anúncio</label>
-					<input type="text" class="form-control form-control-lg" id="titleForm" name="title" placeholder="">
+					<input type="text" class="form-control form-control-lg" id="titleForm" name="title" required>
 				</div>
 			</div>
 
 			<div class="col-md-4">
 				<div class="mb-3">
 					<label for="typeForm" class="form-label">Tipo</label>
-					<select class="form-control form-select" id="typeForm" name="type">
+					<select class="form-control form-select" id="typeForm" name="type" required>
 						<option value="1">Casa</option>
 						<option value="2">Apartamento</option>
 						<option value="3">Terreno</option>
@@ -23,16 +28,17 @@
 			<div class="col-md-4">
 				<div class="mb-3">
 					<label for="categoriaForm" class="form-label">Categoria</label>
-					<select class="form-control form-select" id="categoriaForm" name="categoria">
+					<select class="form-control form-select" id="categoriaForm" name="categoria" required>
 						<option value="1">Aluguel</option>
 						<option value="2">Venda</option>
 					</select>
 				</div>
 			</div>
 			<div class="col-md-4">
-				<div class="mb-3">
 					<label for="priceForm" class="form-label">Preço/Aluguel</label>
-					<input type="number" class="form-control" id="priceForm" name="price" placeholder="" min="0">
+				<div class="input-group mb-3">
+					<span class="input-group-text" id="basic-addon1">R$</span>
+					<input type="number" class="form-control" id="priceForm" name="price" min="0" required>
 				</div>
 			</div>
 

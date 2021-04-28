@@ -107,9 +107,12 @@ const multerConfigs = {
 			.catch(err => console.log(err))
 	})
 
-	.get('/empreendimentos/:id', (req, res) => {
-		Empreendimento.findOne({_id: req.params.id })
-			.then(data => res.json(data))
+	.get('/empreendimentos/:id', async (req, res) => {
+		await Empreendimento.findOne({ _id: req.params.id })
+			.populate('images')
+			.then(data => {
+				res.json(data)
+			})
 			.catch(err => console.log(err))
 	})
 
@@ -120,7 +123,10 @@ const multerConfigs = {
 		})
 		new Empreendimento(req.body).save()
 			.then(data => res.json(data._id))
-			.catch(err => console.error(err))
+			.catch(err => {
+				console.error(err)
+				res.send(err)
+			})
 	})
 
 	.put('/empreendimentos/:id', (req, res) => {
@@ -138,6 +144,7 @@ const multerConfigs = {
 
 	.get('/cidades', (req, res) => {
 		Cidade.find()
+			.populate('bairros', 'name')
 			.then(data => res.json(data))
 			.catch(err => console.log(err))
 	})
@@ -180,6 +187,7 @@ const multerConfigs = {
 			.then(data => res.json(data))
 			.catch(err => console.log(err))
 	})
+
 	.get('/images/:id', (req, res) => {
 		Image.findOne({ _id: req.params.id })
 			.select({ createdAt: false, updatedAt: false })
@@ -187,22 +195,34 @@ const multerConfigs = {
 			.then(data => res.json(data))
 			.catch(err => console.log(err))
 	})
+
 	.post('/images', multer(multerConfigs).any(), (req, res, next) => {
 		const _id = req.body._id
 		const uploaded = []
 		req.files.forEach(({ filename }) => {
 			uploaded.push({ filename, empreendimento: _id })
 		})
+
 		Image.insertMany(uploaded)
 			.then(data => {
 				const fs = require('fs')
-				const tmp_folder = file => path.resolve(__dirname, '..', 'tmp', 'uploads', file)
-				const new_folder = file => path.resolve(__dirname, '..', 'public', 'images', 'empreendimentos', _id, file)
-				if (!fs.existsSync(path.resolve(__dirname, '..', 'public', 'images', 'empreendimentos', _id))) { fs.mkdirSync(new_folder()) }
+				const tmp_folder = path.resolve('tmp/uploads')
+				const new_folder =
+					path.resolve(`public/images/empreendimentos/${_id}`)
+				
+				console.log('new_folder:', new_folder)
+				console.log('path.resolve:', path.resolve('public/images/empreendimentos', _id))
+				console.log('Soma:', new_folder + '\\fooBar')
+
+				// CRIA UMA NOVA PASTA PARA O EMPREENDIMENTO SE ELA NÃO EXISTIR
+				if (!fs.existsSync(new_folder))	{ fs.mkdirSync(new_folder) }
 
 				req.files.forEach(file => {
-					fs.rename(tmp_folder(file.filename), new_folder(file.filename), (err) => {
-						if (err) return console.error(err)
+					fs.rename(
+						(tmp_folder + `\\${file.filename}`),
+						(new_folder + `\\${file.filename}`),
+						err => {
+							if (err) return console.error(err)
 					})
 				})
 				res.json(data)

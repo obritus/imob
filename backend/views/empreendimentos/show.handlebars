@@ -11,7 +11,7 @@
 
 <script type="text/javascript">
 	const Empreendimento = fetch('/api/empreendimentos/{{_id}}')
-	const Imagens = fetch('/api/imagens/{{_id}}')
+	const Imagens = fetch('/api/images/{{_id}}')
 	const Cidades = fetch('/api/cidades/')
 
 	const GetBairro = (cidade_id, bairro_id) => {
@@ -40,6 +40,11 @@
 			})
 			return GetBairro(cidade_id, bairro_id)
 		})
+	}
+
+	const ShowImagesBox = () => {
+		
+		imagesBox.scrollIntoView()
 	}
 
 	Empreendimento.then(data => {
@@ -79,7 +84,7 @@
 			} else {
 				statusForm.checked = false
 			}
-
+			imagesBox.classList.add('show')
 			return GetCidade(cidade, bairro)
 		}).catch(err => console.error(err))
 	})
