@@ -12,7 +12,7 @@ export default class SearchBox extends React.Component {
 	}
 
 	componentDidMount = () => {
-		console.log('Search box pronto.')
+		// OBTER AS CIDADES ASSIM QUE O SITE CARREGAR
 		this._asyncRequest = api.GetCidades().then(
 			cidades => {
 				this._asyncRequest = null
@@ -20,6 +20,15 @@ export default class SearchBox extends React.Component {
 			}
 		).catch(err => {
 			console.error(err)
+		})
+		
+		// OBTER OS BAIRROS QUANDO SELECIONAR NA LISTA
+		document.getElementById('cidadeForm')
+			.addEventListener('change', event => {
+				const _id = event.target.value
+				api.GetBairros(_id).then(bairros => {
+					this.setState({ bairros: bairros.data })
+				})
 		})
 	}
 
@@ -35,11 +44,12 @@ export default class SearchBox extends React.Component {
 					</Container>
 				</div>
 				<div id="search">
-					<Container className="pt-3">
+					<Container>
 						<form>
 							<div className="row">
 								<div className="col-sm">
-									<select className="form-select" name="cidade">
+									<select className="form-select" name="cidade" id="cidadeForm">
+										<option value="">Cidade</option>
 									{(
 										cidades.length > 0
 										? cidades.map((cidade, index) => ( <option key={index} value={cidade._id}>{cidade.name}</option> ))
@@ -48,17 +58,24 @@ export default class SearchBox extends React.Component {
 									</select>
 								</div>
 								<div className="col-sm">
-									<select className="form-select">
+									<select className="form-select" name="bairro">
 										<option value="">Bairro</option>
+										{(
+											bairros.length > 0
+												? bairros.map((bairro, index) => (<option key={index} value={bairro._id}>{bairro.name}</option>))
+												: <option>Carregando bairros</option>
+										)}
 									</select>
 								</div>
 								<div className="col-sm">
-									<select className="form-select">
+									<select className="form-select" name="type">
 										<option value="">Tipo</option>
-										<option value="casa">Casa</option>
-										<option value="apartamento">Apartamento</option>
-										<option value="kitnet">Kitnet</option>
-										<option value="ponto_comercial">Ponto Comercial</option>
+										<option value="1">Casa</option>
+										<option value="2">Apartamento</option>
+										<option value="3">Kitnet</option>
+										<option value="4">Terreno</option>
+										<option value="5">Lote</option>
+										<option value="6">Ponto Comercial</option>
 									</select>
 								</div>
 								<div className="col-sm">

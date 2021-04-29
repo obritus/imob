@@ -13,7 +13,6 @@ export default class extends Component {
 	}
 
 	componentWillMount = () => {
-		console.log('Empreendimentos pronto.')
 		this._asyncRequest = api.GetEmpreendimentos().then(
 			empreendimentos => {
 				this._asyncRequest = null
@@ -33,7 +32,7 @@ export default class extends Component {
 					<Row data-id="produtos">
 						{empreendimentos.length > 0
 							? empreendimentos.map(data =>
-								<Col className="mb-3" xs={12} md={4}>
+								<Col className="mb-3" xs={12} sm={4}>
 									<Card data={data} />
 								</Col>)
 							: <Spinner style={{ width: '3rem', height: '3rem' }} />

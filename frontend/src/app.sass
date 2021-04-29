@@ -1,7 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap')
 $enable-rounded: false
 
-$primary: #5c574d
+$primary: #F26E22
+$secondary: #514F59
 @import '../node_modules/bootstrap/scss/bootstrap'
 
 
@@ -9,10 +10,10 @@ body
 	font-family: 'Poppins', sans-serif
 	color: #333
 	font-size: 12pt
-	background: #5c574d
+	background: $primary
 
 header
-	background: #8e8c82
+	background: $light
 	.container
 		display: flex
 		align-items: center
@@ -28,6 +29,7 @@ header
 		height: 40px
 		background: url('/images/logo.svg') no-repeat 0% 50%
 		background-size: contain
+		margin: 0 auto
 		span
 			display: none
 
@@ -44,19 +46,25 @@ header
 			color:#000
 section
 	color: #FFF
-	padding-bottom: 73px
+	padding-bottom: 0px
 	.card
 		color: #000
 footer
-	font-size: 0.8em
-	background: #110907
+	background: #514F59
 	color: #d5d6d5
 	font-size: 0.7em
+	overflow: hidden
+
+h1, h2, h3, h4
+	font-weight: bold
 
 [data-id="produtos"]
 	display: flex
 	align-items: normal
 	justify-content: space-evenly
+
+#search
+	background: $secondary
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------

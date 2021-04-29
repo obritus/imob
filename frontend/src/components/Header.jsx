@@ -44,13 +44,7 @@ export default class Header extends React.Component {
 						</Link>
 					</div>
 					<div>
-						<MainMenu itens={this.state.MenuItens} className="d-none d-sm-block" />
-						<div id="hamburger" className="hamburger d-sm-none toggle">
-							<button
-								onClick={() => document.getElementById('hamburger').classList.toggle('toggle')}
-								className="btn btn-dark"></button>
-							<MainMenu itens={this.state.MenuItens} />
-						</div>
+						<MainMenu itens={this.state.MenuItens} className="d-sm-block" />
 					</div>
 				</Container>
 			</header>

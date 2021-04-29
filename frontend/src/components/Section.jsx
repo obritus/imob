@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { Container, Spinner } from 'reactstrap'
 import styled from 'styled-components'
-import api from '../api'
 
 import BannerImage from '../images/banner-home.jpg'
 import SearchBar from './SearchBar'
@@ -38,7 +37,7 @@ export default class Section extends Component {
 		destaques: []
 	}
 
-	componentDidMount = () => {}
+	componentDidMount = () => { console.log("Props.Match", this.props.match)}
 
 	render () {
 		return (
