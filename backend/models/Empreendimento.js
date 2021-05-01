@@ -4,7 +4,7 @@ const Schema = mongoose.Schema
 const Empreendimento = new Schema(
 	{
 		title: { type: String, required: true },
-		type: { type: Number },
+		type: { type: Number, required: true },
 		price: { type: Number, required: true },
 		categoria: { type: Number, required: true },
 		status: { type: Boolean, required: true },
@@ -16,7 +16,6 @@ const Empreendimento = new Schema(
 			vagas_garagem: { type: Number },
 		google_maps: { type: String },
 		details: { type: String },
-		images: [{ type: Schema.Types.ObjectId, ref: "images" }],
 		default_image: { type: Schema.Types.ObjectId, ref: "images" }
 	},
 	{ timestamps: true }

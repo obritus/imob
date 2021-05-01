@@ -5,8 +5,9 @@ import Styled from 'styled-components'
 
 const FooterLogo = Styled.div`
 	background: url(${ImobJSLogo}) no-repeat;
-	widht: 60px;
+	width: 60px;
 	height: 32px;
+	float: right;
 `
 const FooterMap = Styled.div`
 	height: 531px;

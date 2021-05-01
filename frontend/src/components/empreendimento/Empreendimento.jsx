@@ -8,7 +8,9 @@ export default class extends Component {
 		super(props)
 
 		this.state = {
-			empreendimento: []
+			empreendimento: [],
+			cidade: null,
+			bairro: null
 		}
 	}
 
@@ -18,7 +20,6 @@ export default class extends Component {
 				console.log(empreendimento.data)
 				this._asyncRequest = null
 				this.setState({ empreendimento: empreendimento.data })
-				console.log(typeof [])
 			}
 		).catch(err => {
 			console.error(err)

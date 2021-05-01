@@ -109,7 +109,16 @@ const multerConfigs = {
 
 	.get('/empreendimentos/:id', async (req, res) => {
 		await Empreendimento.findOne({ _id: req.params.id })
-			.populate('images')
+			.populate([
+				{
+					path: "bairro",
+					select: 'name'
+				},
+				{
+					path: "cidade",
+					select: 'name'
+				}
+			])
 			.then(data => {
 				res.json(data)
 			})
