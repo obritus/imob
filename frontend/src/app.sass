@@ -5,7 +5,6 @@ $primary: #F26E22
 $secondary: #514F59
 @import '../node_modules/bootstrap/scss/bootstrap'
 
-
 body
 	font-family: 'Poppins', sans-serif
 	color: #333
@@ -76,38 +75,27 @@ h1, h2, h3, h4
 		list-style: none
 		padding: 0
 
-[data-js="galeria"]
-	background: #333
+.pswp-thumbnails
+	padding: 1em 0 1em 0
 	display: grid
 	grid-template-columns: 1fr 1fr
-	grid-gap: 1em
-	align-content: space-between
+	justify-items: stretch
+	gap: .5em
+
+.pswp-thumbnail
+	min-width: 50%
+	background: red
+	
+
+
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-@media (min-width: var(--breakpoint-xs))
-	#main
-		overflow: hidden
-	footer
-		height: 75px
-	[data-id="produtos"]
-		display: block
-	.hamburger
-		width: 80%
-		height: 100vh
-		z-index: 1100
-		background: green
-		position: absolute
-		top: 0
-		right: 0
-		transform: translateX(0%)
-		transition: .5s
-		&.toggle
-			transform: translateX(100%)
-			transition: .5s
-		button
-			width: 2.5em
-			height: 2.5em
-			transform: translateX(-2.5em)
-			background: yellow
+@include media-breakpoint-down(sm)
+	[data-js="info"]
+		font-size: 1em
+	
+	[data-js="contact"]
+		justify-content: center
+	

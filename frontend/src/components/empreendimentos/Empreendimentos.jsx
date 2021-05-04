@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Container, Spinner, Row, Col } from 'reactstrap'
+import queryString from 'query-string'
 import Card from './Card'
 import api from '../../api'
 
@@ -13,6 +14,8 @@ export default class extends Component {
 	}
 
 	componentWillMount = () => {
+		const query = queryString.parse(this.props.location.search)
+		console.log(query)
 		this._asyncRequest = api.GetEmpreendimentos().then(
 			empreendimentos => {
 				this._asyncRequest = null

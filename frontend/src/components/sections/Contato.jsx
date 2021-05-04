@@ -5,12 +5,10 @@ import { Col, Container, Row } from 'reactstrap'
 export default class extends Component {
 	constructor(props) {
 		super(props)
-		this.state = {
-			teste: 'teste'
-		}
 	}
+
 	sendMessage() {
-		fetch('http://localhost:4000/api/messages/send', {
+		fetch(process.env.REACT_APP_BACKEND_URL + 'api/messages/send', {
 			method: 'post',
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8'
@@ -25,7 +23,9 @@ export default class extends Component {
 			console.log(data)
 		}))
 	}
+
 	render() {
+		console.log("Props", this.props.data)
 		return(
 			<section className="pt-3">
 				<Container>
@@ -52,9 +52,6 @@ export default class extends Component {
 								</div>
 								<button className="btn btn-primary text-right">Enviar</button>
 							</form>
-						</Col>
-						<Col xs={12} sm={6}>
-							<h3>Onde encontrar?</h3>
 						</Col>
 					</Row>
 				</Container>

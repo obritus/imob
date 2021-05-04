@@ -45,7 +45,7 @@ export default class SearchBox extends React.Component {
 				</div>
 				<div id="search">
 					<Container>
-						<form>
+						<form method="get" action="/empreendimentos">
 							<div className="row">
 								<div className="col-sm">
 									<select className="form-select" name="cidade" id="cidadeForm">
@@ -82,7 +82,9 @@ export default class SearchBox extends React.Component {
 									<input type="number"
 										className="form-control"
 										placeholder="Quartos"
-										aria-label="Quartos" min="1" max="7" />
+										aria-label="Quartos" min="1" max="7"
+										name="quartos"
+									/>
 								</div>
 								<div className="col-sm d-grid">
 									<button

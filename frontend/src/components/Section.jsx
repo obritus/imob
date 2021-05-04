@@ -37,7 +37,9 @@ export default class Section extends Component {
 		destaques: []
 	}
 
-	componentDidMount = () => { console.log("Props.Match", this.props.match)}
+	componentDidMount = () => {
+		
+	}
 
 	render () {
 		return (

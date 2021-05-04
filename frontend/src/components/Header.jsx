@@ -37,7 +37,7 @@ export default class Header extends React.Component {
 			<header className="pt-5 pb-5">
 				<Container>
 					<div>
-						<Link to="/">
+						<Link to="/" key={Math.random()}>
 							<h1 data-js="logotipo">
 								<span>Imobiliária X</span>
 							</h1>

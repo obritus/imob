@@ -198,10 +198,15 @@ const multerConfigs = {
 	})
 
 	.get('/images/:id', (req, res) => {
-		Image.findOne({ _id: req.params.id })
+		Image.find({ empreendimento: req.params.id })
 			.select({ createdAt: false, updatedAt: false })
-			.populate('cidade', 'name')
 			.then(data => res.json(data))
+			.catch(err => console.log(err))
+	})
+
+	.put('/images/:id', (req, res) => {
+		Image.updateOne({ _id: req.params.id }, req.body)
+			.then(() => res.sendStatus(202))
 			.catch(err => console.log(err))
 	})
 
