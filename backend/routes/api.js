@@ -92,7 +92,24 @@ const multerConfigs = {
 // -----------------------------------------------------------------------------
 
 	.get('/empreendimentos', (req, res) => {
-		Empreendimento.find()
+		const query = {
+			cidade: {
+				_id: req.query.cidade || ''
+			},
+			bairro: {
+				_id: req.query.bairro || ''
+			},
+			categoria: req.query.categoria || '',
+			quartos: req.query.quartos || ''
+		}
+
+		Object.keys(query).forEach(key => {
+			if (query[key] === '') delete query[key]
+			if (key === 'cidade' && query.cidade._id === '') delete query.cidade
+			if (key === 'bairro' && query.bairro._id === '') delete query.bairro
+		})
+
+		Empreendimento.find(query)
 			.populate([
 				{
 					path: "bairro",
@@ -126,16 +143,20 @@ const multerConfigs = {
 	})
 
 	.post('/empreendimentos', (req, res) => {
+		console.log('\n------------------------------------------------------')
+		console.log('\n------------------------------------------------------')
+		console.log(req.body)
+		res.sendStatus(200)
 		//REMOVER ITENS NULLOS DO REQ.BODY
-		Object.keys(req.body).forEach(item => {
-			if (req.body[item] === '') delete req.body[item]
-		})
-		new Empreendimento(req.body).save()
-			.then(data => res.json(data._id))
-			.catch(err => {
-				console.error(err)
-				res.send(err)
-			})
+		// Object.keys(req.body).forEach(item => {
+		// 	if (req.body[item] === '') delete req.body[item]
+		// })
+		// new Empreendimento(req.body).save()
+		// 	.then(data => res.json(data._id))
+		// 	.catch(err => {
+		// 		console.error(err)
+		// 		res.send(err)
+		// 	})
 	})
 
 	.put('/empreendimentos/:id', (req, res) => {

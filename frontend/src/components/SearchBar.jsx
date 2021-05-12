@@ -26,7 +26,7 @@ export default class SearchBox extends React.Component {
 		document.getElementById('cidadeForm')
 			.addEventListener('change', event => {
 				const _id = event.target.value
-				api.GetBairros(_id).then(bairros => {
+				api.GetBairro(_id).then(bairros => {
 					this.setState({ bairros: bairros.data })
 				})
 		})
@@ -36,13 +36,10 @@ export default class SearchBox extends React.Component {
 		const { cidades, bairros } = this.state
 		return (
 			<>
-				<div id="carousel"></div>
-				<div id="teste">
-					<Container>
-						<button className="btn btn-lg btn-primary">Aluguel</button>
-						<button className="btn btn-lg btn-warning">Venda</button>
-					</Container>
-				</div>
+				<Container>
+					<button className="btn btn-lg btn-primary" onClick={() => alert('teste')}>Aluguel</button>
+					<button className="btn btn-lg btn-warning">Venda</button>
+				</Container>
 				<div id="search">
 					<Container>
 						<form method="get" action="/empreendimentos">
@@ -68,8 +65,8 @@ export default class SearchBox extends React.Component {
 									</select>
 								</div>
 								<div className="col-sm">
-									<select className="form-select" name="type">
-										<option value="">Tipo</option>
+									<select className="form-select" name="categoria">
+										<option value="">Categoria</option>
 										<option value="1">Casa</option>
 										<option value="2">Apartamento</option>
 										<option value="3">Kitnet</option>

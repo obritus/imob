@@ -71,15 +71,21 @@ const read_messages = async () => await Message.find({ read: false }).then(res =
 	.get('/:page', async (req, res) => {
 		const data = {}
 		const page = req.params.page
-		const titulos = {
-			usuarios: 'Usuários',
-			clientes: 'Clientes',
-			empreendimentos: 'Empreendimentos',
-			messages: 'Mensagens',
-			config: 'Configurações',
-			login: 'Entrar',
+
+		const GetTitle = t => {
+			const titulos = {
+				undefined: '',
+				usuarios: 'Usuários',
+				clientes: 'Clientes',
+				empreendimentos: 'Empreendimentos',
+				messages: 'Mensagens',
+				config: 'Configurações',
+				login: 'Entrar'
+			}
+			return titulos[t]
 		}
-		const titulo = titulos[page]
+		const titulo = GetTitle(page)
+
 		const RenderPage = args => {
 			const data = {
 				title: args.titulo,
@@ -90,6 +96,13 @@ const read_messages = async () => await Message.find({ read: false }).then(res =
 			res.render(`${args.page}`, data)
 		}
 
+		if (page === 'empreendimentos') {
+			const data = {
+				search: req._parsedUrl.search
+			}
+			console.log(req._parsedUrl.search)
+			RenderPage({ page, titulo, data })
+		}
 		if (page === 'usuarios') {
 			Usuario.find().lean().then(usuarios => {
 				const data = {

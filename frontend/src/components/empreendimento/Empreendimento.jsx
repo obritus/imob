@@ -1,7 +1,5 @@
 import React, { Component } from 'react'
-import { Container } from 'reactstrap'
-import Col from "reactstrap/lib/Col"
-import Row from "reactstrap/lib/Row"
+import { Col, Row, Container } from 'reactstrap'
 import api from '../../api'
 import Card from './Card'
 import { PhotoSwipeGallery } from 'react-photoswipe'

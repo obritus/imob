@@ -1,7 +1,7 @@
 import axios from 'axios'
 const api = axios.create({ baseURL: `${process.env.REACT_APP_BACKEND_URL}api`})
 
-export const GetEmpreendimentos = () => api.get('/empreendimentos/')
+export const GetEmpreendimentos = query => api.get(`/empreendimentos${query}`)
 export const GetCidades = () => api.get('/cidades/')
 export const GetBairros = () => api.get('/bairros/')
 

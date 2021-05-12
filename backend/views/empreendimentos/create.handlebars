@@ -40,54 +40,43 @@
 	GetCidade()
 
 	document.querySelector('[data-js="form_empreendimento"]')
-		.addEventListener('submit', function(e) {
+		.addEventListener('submit', async function(e) {
 			e.preventDefault()
-			const BlockInputs = () => {
-				const GetFormElements =
-					document.querySelectorAll('form input, form textarea, form select')
-				GetFormElements.forEach(e => e.disabled = true)
-			}
-			const dados = {
-				title: titleForm.value,
-				type: typeForm.value,
-				categoria: categoriaForm.value,
-				price: priceForm.value,
+			const response =
+				await new Response(
+					new URLSearchParams(new FormData(e.target).entries())
+				).text()
 
-				cidade: cidadeForm.value,
-				bairro: bairroForm.value,
-				google_maps: googleForm.value,
-
-				quartos: quartosForm.value,
-				suites: suitesForm.value,
-				banheiros: banheirosForm.value,
-				vagas_garagem: vagasForm.value,
-				details: detailsForm.value,
-
-				status: statusForm.checked,
-			}
-			sessionStorage.setItem('dados', JSON.stringify(dados))
 			fetch('/api/empreendimentos/', {
 				method: 'POST',
 				headers: {
-					'Content-Type': 'application/json'
+					'Content-Type': 'application/x-www-form-urlencoded'
 				},
-				body: JSON.stringify(dados)
-			}).then(data => data.json()).then(body => {
-				if(!body.errors) {
-					sessionStorage.setItem('empreendimento_id', body)
-					BlockInputs()
-					ShowImagesBox()
-				}
-				const alertBox = document.querySelector('[data-js="alert"]')
-				alertBox.children[0].innerHTML = "Ocorreu um erro, por favor, verifique as informações digitadas."
-				alertBox.classList.toggle('visually-hidden')
-				alertBox.scrollIntoView({ block: "end", behavior: "smooth" })
-			}).catch(err => console.error(err))
+				body: response
+			})
+				.then(data => data.json()).then(body => {
+					if(!body.errors) {
+						sessionStorage.setItem('empreendimento_id', body)
+						const BlockInputs = () => {
+							const GetFormElements =
+								document.querySelectorAll('form input, form textarea, form select')
+							GetFormElements.forEach(e => e.disabled = true)
+						}
+						BlockInputs()
+						ShowImagesBox()
+						document.querySelector('#formulario .btn').innerText = 'Concluir'
+					}
+					const alertBox = document.querySelector('[data-js="alert"]')
+					alertBox.children[0].innerHTML = "Ocorreu um erro, por favor, verifique as informações digitadas."
+					alertBox.classList.toggle('visually-hidden')
+					alertBox.scrollIntoView({ block: "end", behavior: "smooth" })
+				})
+				.catch(err => console.error(err))
 		})
 
 	cidadeForm.addEventListener('change', function (e) {GetBairro(this.value)})
 
-	dropZone.ondragover =  function () {
+	dropZone.ondragover = function () {
 		this.classList.add('active')
 		return false
 	}

@@ -9,21 +9,28 @@ export default class extends Component {
 		super(props)
 
 		this.state = {
-			empreendimentos: []
+			empreendimentos: [],
+			msg: null
 		}
 	}
 
 	componentWillMount = () => {
 		const query = queryString.parse(this.props.location.search)
-		console.log(query)
-		this._asyncRequest = api.GetEmpreendimentos().then(
-			empreendimentos => {
-				this._asyncRequest = null
-				this.setState({ empreendimentos: empreendimentos.data })
-			}
-		).catch(err => {
-			console.error(err)
-		})
+		console.log(document.location.search)
+		this._asyncRequest = api.GetEmpreendimentos(document.location.search)
+			.then(
+				empreendimentos => {
+					this._asyncRequest = null
+					console.log('empreendimentos.data', empreendimentos.data)
+					if(empreendimentos.data.length > 0) {
+						this.setState({ empreendimentos: empreendimentos.data })
+					} else {
+						this.setState({ msg: 'Sua busca não retornou resultados.' })
+					}
+				}
+			).catch(err => {
+				console.error(err)
+			})
 	}
 
 	render() {
@@ -38,7 +45,7 @@ export default class extends Component {
 								<Col className="mb-3" xs={12} sm={4}>
 									<Card data={data} />
 								</Col>)
-							: <Spinner style={{ width: '3rem', height: '3rem' }} />
+							: <p>{this.state.msg}</p>
 						}
 					</Row>
 				</Container>

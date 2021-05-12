@@ -4,7 +4,7 @@
 		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 	</div>
 
-	<form action="/dashboard/empreendimentos/create" class="form" data-js="form_empreendimento">
+	<form action="#" id="formulario" class="form" data-js="form_empreendimento">
 		<div class="row">
 
 			<div class="col-md-12">
@@ -45,13 +45,13 @@
 			<div class="col-md-4">
 				<div class="mb-3">
 					<label for="cidadeForm" class="form-label">Cidade</label>
-					<select class="form-control form-select" id="cidadeForm" name="cidade"></select>
+					<select class="form-control form-select" id="cidadeForm" name="cidade" required></select>
 				</div>
 			</div>
 			<div class="col-md-4">
 				<div class="mb-3">
 					<label for="bairroForm" class="form-label">Bairro</label>
-					<select class="form-control form-select form-control" id="bairroForm" name="bairro"></select>
+					<select class="form-control form-select form-control" id="bairroForm" name="bairro" required></select>
 				</div>
 			</div>
 			<div class="col-md-4">
@@ -131,3 +131,8 @@
 		</div>
 	</form>
 </div>
+<script>
+	categoriaForm.addEventListener('change', function () {
+		console.log()
+	})
+</script>

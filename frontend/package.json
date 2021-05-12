@@ -25,7 +25,7 @@
 	},
 	"scripts": {
 		"start": "react-scripts start",
-		"start_backend": "cd backend && nodemon index",
+		"start_backend": "cd .. && cd backend && nodemon index",
 		"build": "react-scripts build",
 		"test": "react-scripts test",
 		"eject": "react-scripts eject"

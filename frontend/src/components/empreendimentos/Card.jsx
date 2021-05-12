@@ -13,7 +13,7 @@ export default props => {
 				<img src={thumb(default_image)} className="card-img-top" alt="" />
 				<div className="card-body">
 					<h5 className="card-title">{title}</h5>
-					<p className="card-text"><h1 className="display">{GetPriceBRL}</h1></p>
+					<h1 className="display">{GetPriceBRL}</h1>
 					{(quartos) ? <p className="card-text">{quartos} quartos.</p> : null}
 					{(cidade && bairro) ? <p className="card-text small text-right">{cidade.name}/{bairro.name}.</p> : null}
 				</div>
