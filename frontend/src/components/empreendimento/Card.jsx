@@ -1,7 +1,7 @@
 import React from "react"
-import Styled from 'styled-components'
+import styled from 'styled-components'
 
-const ImageBox = Styled.div`
+const ImageBox = styled.div`
 	height: 100px;
 	background: #CCC url('${process.env.REACT_APP_BACKEND_URL}images/empreendimentos/${props => props.img}');
 	background-size: cover;
@@ -56,10 +56,12 @@ export default props => {
 					{(condominio) ? <li><strong>condomínio:</strong> {toBRL(condominio)}</li> : null}
 					<li><strong>categoria:</strong> {GetCategoria(categoria)}</li>
 					<li><strong>tipo:</strong> {GetType(type)}</li>
-					<li><strong>quartos:</strong> {quartos}</li>
-					<li><strong>suítes:</strong> {suites}</li>
-					<li><strong>banheiros:</strong> {banheiros}</li>
-					<li><strong>vagas na garagem:</strong> {vagas_garagem}</li>
+
+					{(quartos) ? <li><strong>quartos:</strong> {quartos}</li> : null}
+					{(suites) ? <li><strong>suítes:</strong> {suites}</li> : null}
+					{(banheiros) ? <li><strong>banheiros:</strong> {banheiros}</li> : null}
+					{(vagas_garagem) ? <li><strong>vagas na garagem:</strong> {vagas_garagem}</li> : null}
+
 					<li><strong>cidade:</strong> {cidade.name}</li>
 					<li><strong>bairro:</strong> {bairro.name}</li>
 				</ul>

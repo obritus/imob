@@ -69,7 +69,7 @@ div[data-id="flex-home"]
 
 #imagesBox
 	color: white
-	height: 200px
+	height: auto
 	display: none
 	&.show
 		display: block
@@ -90,12 +90,24 @@ div[data-id="flex-home"]
 	padding-bottom: 50px
 	grid-template-columns: 1fr 1fr 1fr
 	grid-gap: 1em
+	input
+		cursor: pointer
+		display: none
+		&:checked + label
+			outline: $verde solid 5px
+
 	div.image
 		width: 100%
 		height: 140px
-		background: $verde 50% 50%
+		background-position: 50% 50%
+		background-size: cover
+		background-clip: content-box
+		background-color: rgba($verde, 0.3)
 		line-height: 140px
 		color: $dark1
 		text-align: center
-		background-clip: content-box
-		background-size: cover
+		user-select: all
+		p
+			line-height: 140px
+			color: $white
+			text-align: center

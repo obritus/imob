@@ -12,11 +12,11 @@ const Image = require('../models/Image') //ESTRUTURA DAS IMAGENS NO DB
 const Message = require('../models/Message') //ESTRUTURA DAS MENSAGENS NO DB
 const Config = require('../models/Config') //ESTRUTURA DAS CONFIGURAÇÕES NO DB
 
-const multerConfigs = {
+const upld = {
 	dest: path.resolve(__dirname, '..', 'tmp', 'uploads'),
 	storage: multer.diskStorage({
 		destination: (req, file, cb) => {
-			cb(null, multerConfigs.dest)
+			cb(null, upld.dest)
 		},
 		filename: (req, file, cb) => {
 			crypto.randomBytes(16, (err, hash) => {
@@ -27,9 +27,6 @@ const multerConfigs = {
 			})
 		}
 	}),
-	limits: {
-		fileSize: 2 * 2560 * 2560,
-	},
 	fileFilter: (req, file, cb) => {
 		const allowedMimes = [
 			'image/jpeg',
@@ -46,7 +43,8 @@ const multerConfigs = {
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-	router.get('/', (req, res) => {
+router
+	.get('/', (req, res) => {
 		res.sendStatus(200)
 	})
 
@@ -59,15 +57,6 @@ const multerConfigs = {
 		}).catch(err => {
 			console.log(err)
 		})
-	})
-
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-
-	.get('/carousel', (req, res) => {
-		Config.find()
-			.then(data => res.json(data))
-			.catch(err => console.log(err))
 	})
 
 // -----------------------------------------------------------------------------
@@ -92,6 +81,22 @@ const multerConfigs = {
 // -----------------------------------------------------------------------------
 
 	.get('/empreendimentos', (req, res) => {
+		const GetStatus = s => {
+			switch (s) {
+				case 'true':
+					return true
+					break
+			
+				case 'false':
+					return false
+					break
+				
+				default:
+					return ''
+					break
+			}
+		}
+
 		const query = {
 			cidade: {
 				_id: req.query.cidade || ''
@@ -100,7 +105,9 @@ const multerConfigs = {
 				_id: req.query.bairro || ''
 			},
 			categoria: req.query.categoria || '',
-			quartos: req.query.quartos || ''
+			type: req.query.type || '',
+			quartos: req.query.quartos || '',
+			status: GetStatus(req.query.status)
 		}
 
 		Object.keys(query).forEach(key => {
@@ -109,71 +116,70 @@ const multerConfigs = {
 			if (key === 'bairro' && query.bairro._id === '') delete query.bairro
 		})
 
-		Empreendimento.find(query)
+		Empreendimento.find(Object.assign({ status: true }, query))
 			.populate([
-				{
-					path: "bairro",
-					select: 'name'
-				},
-				{
-					path: "cidade",
-					select: 'name'
-				}
+				{ path: "bairro", select: 'name' },
+				{ path: "cidade", select: 'name' }
 			])
+			.limit(10)
 			.then(data => res.json(data))
 			.catch(err => console.log(err))
 	})
 
 	.get('/empreendimentos/:id', async (req, res) => {
+		req.flash('error_msg', 'Houve um erro ao tentar excluir o empreendimento.')
 		await Empreendimento.findOne({ _id: req.params.id })
 			.populate([
-				{
-					path: "bairro",
-					select: 'name'
-				},
-				{
-					path: "cidade",
-					select: 'name'
-				}
+				{ path: "bairro", select: 'name' },
+				{ path: "cidade", select: 'name' }
 			])
-			.then(data => {
-				res.json(data)
-			})
+			.then(data => res.json(data))
 			.catch(err => console.log(err))
 	})
 
 	.post('/empreendimentos', (req, res) => {
-		console.log('\n------------------------------------------------------')
-		console.log('\n------------------------------------------------------')
-		console.log(req.body)
-		res.sendStatus(200)
 		//REMOVER ITENS NULLOS DO REQ.BODY
-		// Object.keys(req.body).forEach(item => {
-		// 	if (req.body[item] === '') delete req.body[item]
-		// })
-		// new Empreendimento(req.body).save()
-		// 	.then(data => res.json(data._id))
-		// 	.catch(err => {
-		// 		console.error(err)
-		// 		res.send(err)
-		// 	})
+		Object.keys(req.body).forEach(item => {
+			if (req.body[item] === '') delete req.body[item]
+		})
+
+		req.body.status = true
+
+		new Empreendimento(req.body).save()
+			.then(data => res.json({_id: data._id, msg: 'Empreendimento adicionado com sucesso.'}))
+			.catch(err => {
+				console.error(err)
+				res.json({'err': err, msg: 'Ocorreu um erro ao tentar adicionar o empreendimento.'})
+			})
 	})
 
 	.put('/empreendimentos/:id', (req, res) => {
 		if(req.body.status) {
 			req.body.status = (req.body.status) ? true : false
 		}
-		console.log(req.body)
 		Empreendimento.updateOne({ _id: req.params.id }, req.body)
-			.then(() => res.sendStatus(202))
-			.catch(err => console.log(err))
+			.then(() => res.json({ msg: 'Alterações aplicadas.' }))
+			.catch(err => {
+				res.json({ 
+					err, 
+					msg: 'Ocorreu um erro ao tentar atualizar o empreendimento.'
+				})
+			})
+	})
+	// .put('/empreendimentos/:id', (req, res) => {
+	// 	Empreendimento.updateOne({ _id: req.params.id }, req.params.)
+	// })
+
+	.delete('/empreendimentos', (req, res) => {
+		res.json({ "msg": "Empreendimento excluído com sucesso.", "_id": req.body._id })
 	})
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
 	.get('/cidades', (req, res) => {
-		Cidade.find()
+		Cidade
+			.find()
 			.populate('bairros', 'name')
 			.then(data => res.json(data))
 			.catch(err => console.log(err))
@@ -188,16 +194,15 @@ const multerConfigs = {
 // -----------------------------------------------------------------------------
 
 	.get('/bairros', (req, res) => {
-		Bairro.find()
-			.populate('cidade', 'name')
+		Bairro.find({ cidade: '6064184096ed1404cf50c20e' })
 			.skip()
+			.select({_id: true})
 			.limit(0)
 			.then(data => res.json(data))
 			.catch(err => console.log(err))
 	})
 	.get('/bairros/:id', (req, res) => {
 		Bairro.find({ cidade: req.params.id})
-			.populate('cidade', 'name')
 			.then(data => res.json(data))
 			.catch(err => console.log(err))
 	})
@@ -231,7 +236,7 @@ const multerConfigs = {
 			.catch(err => console.log(err))
 	})
 
-	.post('/images', multer(multerConfigs).any(), (req, res, next) => {
+	.post('/images', multer(upld).array('images', 15), (req, res, next) => {
 		const _id = req.body._id
 		const uploaded = []
 		req.files.forEach(({ filename }) => {
@@ -241,24 +246,17 @@ const multerConfigs = {
 		Image.insertMany(uploaded)
 			.then(data => {
 				const fs = require('fs')
-				const tmp_folder = path.resolve('tmp/uploads')
+				const sharp = require('sharp')
 				const new_folder =
 					path.resolve(`public/images/empreendimentos/${_id}`)
-				
-				console.log('new_folder:', new_folder)
-				console.log('path.resolve:', path.resolve('public/images/empreendimentos', _id))
-				console.log('Soma:', new_folder + '\\fooBar')
 
 				// CRIA UMA NOVA PASTA PARA O EMPREENDIMENTO SE ELA NÃO EXISTIR
 				if (!fs.existsSync(new_folder))	{ fs.mkdirSync(new_folder) }
 
-				req.files.forEach(file => {
-					fs.rename(
-						(tmp_folder + `\\${file.filename}`),
-						(new_folder + `\\${file.filename}`),
-						err => {
-							if (err) return console.error(err)
-					})
+				req.files.forEach(async ({ filename }) => {
+					await sharp(path.resolve(__dirname, '..', 'tmp/uploads', filename))
+						.resize(1366)
+						.toFile(path.resolve(new_folder, filename))
 				})
 				res.json(data)
 			})
@@ -272,12 +270,44 @@ const multerConfigs = {
 		req.flash('success_msg', 'Atualizado com sucesso.')
 		res.redirect('back')
 	})
-	.post('/images_teste', (req, res, next) => {
-		req.flash('success_msg', 'Atualizado com sucesso.')
-		res.json(req.body)
+
+	.post('/images_teste', multer(upld).array('images', 12), (req, res, next) => {
+		console.log(req.files)
+		res.send('Okay')
+	})
+
+	.get('/images_teste', async (req, res, next) => {
+		const sharp = require('sharp')
+		const imagens = ['96fade58b9a09e8f24892b19d8eee884.jpg',
+		'21113d1a004a8246978ab16aada1d061.jpg',
+		'da75bf3f69d3b8ee2def5c55136410bc.jpg']
+
+		imagens.forEach(image => {
+			sharp(path.resolve(__dirname, '..', 'tmp/uploads', image))
+				.resize(180)
+				.toFile(path.resolve(__dirname, '..', 'tmp/', image))
+		})
+		res.send('Okay')
 	})
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
+
+	.get('/configs', (req, res) => {
+		Config.find()
+			.populate([
+				{ path: "destaques", select: 'title' }
+			])
+			.then(data => res.json(data))
+	})
+	.put('/configs', (req, res) => {
+		Config.updateOne({ _id: '5fa0412d48b94e17a8f1ea6a' }, req.body)
+			.then(data => res.json({ msg: "Alterações salvas.", data }))
+		})
+		
+		.put('/cidades', (req, res) => {
+			Cidade.updateMany({ _id: '6064184096ed1404cf50c20e'}, req.body)
+			.then(data => res.json({ msg: "Alterações salvas.", data }))
+	})
 
 module.exports = router

@@ -16,13 +16,15 @@ const InputHamburger = styled.input`
 		transform: rotate(-225deg);
 	}
 	&:checked ~ div {
-		transform: translateX(0);
+		display: block;
 	}
 `
 const Hamburger = styled.div`
 	width: 36px;
 	height: 36px;
-	position: relative;
+	position: fixed;
+	top: 34px;
+	right: 36px;
 	z-index: 1101;
 	&::before {
 		content: '';
@@ -45,13 +47,14 @@ const Hamburger = styled.div`
 	}
 `
 const MenuContainer = styled.div`
-	width: 320px;
-	height: 100%;
-	background: white;
+	border-radius: 16px;
+	background: #FFF;
 	position: fixed;
-	top: 0;
-	right: 0;
-	transform: translateX(320px);
+	top: 16px;
+	right: 16px;
+	padding: 62px 0 16px 0;
+	text-align: right;
+	display: none;
 	transition: .5s ease;
 	z-index: 1100;
 `

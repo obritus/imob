@@ -1,11 +1,7 @@
-<h2 class="mb-5">Editar empreendimento <em><small class="text-muted">{{_id}}</small></em></h2>
-
-{{#if success_msg}}
-<div class="alert alert-success" role="alert"><strong>{{success_msg}}</strong></div>
-{{/if}}
-{{#if error_msg}}
-<div class="alert alert-danger" role="alert"><strong>{{error_msg}}</strong></div>
-{{/if}}
+<h2 class="mb-5">
+	Editar empreendimento
+	<em><small class="text-muted">{{_id}}</small></em>
+</h2>
 
 {{>_empreendimento_form}}
 
@@ -35,17 +31,44 @@
 					const Render = `<option value="${_id}">${name}</option>`
 					cidadeForm.innerHTML += Render
 				})
-				const GetOption = document.querySelector(`option[value="${cidade_id}"]`)
 				cidadeForm.value = cidade_id || null
 			})
 			return GetBairro(cidade_id, bairro_id)
 		})
 	}
 
-	const ShowImagesBox = () => {
-		
-		imagesBox.scrollIntoView()
+	const GetImagens = async ({ _id, filename, empreendimento }) => {
+		const imgUrl = `/images/empreendimentos/${empreendimento}/${filename}`
+
+		const divImagem = document.createElement('div')
+		const divRadio = document.createElement('input')
+		const divLabel = document.createElement('label')
+		const divP = document.createElement('p')
+
+		divRadio.type = 'radio'
+		divRadio.name = 'default_image'
+		divRadio.id = _id
+		divRadio.className = 'd-none'
+
+		divLabel.htmlFor = _id
+
+		divImagem.className = 'image'
+
+		divP.innerHTML = 'Carregando...'
+
+		divImagem.appendChild(divP)
+		divLabel.appendChild(divImagem)
+
+		document.getElementById('uploaded').appendChild(divRadio)
+		document.getElementById('uploaded').appendChild(divLabel)
+
+		setTimeout(() => {
+			divImagem.removeChild(divP)
+			divImagem.style.backgroundImage = `url(${imgUrl})`
+		}, 2000)
 	}
+
+	const ShowImagesBox = () => imagesBox.scrollIntoView()
 
 	Empreendimento.then(data => {
 		data.json().then(empreendimento => {
@@ -66,8 +89,8 @@
 				status,
 				default_image
 			} = empreendimento
-
-			{{!-- console.log("Veio do BD", empreendimento) --}}
+			
+			console.log("Veio do BD", empreendimento)
 
 			titleForm.value = title
 			typeForm.value = type
@@ -84,8 +107,22 @@
 			} else {
 				statusForm.checked = false
 			}
+
 			imagesBox.classList.add('show')
-			return GetCidade(cidade, bairro)
+
+			fetch('/api/images/{{_id}}')
+				.then(response => response.json().then(data => {
+					const divImagens = document.getElementById('uploaded')
+					console.log(data)
+					data.forEach(data => GetImagens(data))
+					document.querySelector('[data-js="total_images"]').innerHTML = data.length
+					document.querySelector('input[type="radio"]').checked = default_image || null
+					document.querySelector('form button').innerHTML = 'Aplicar alterações'
+
+					return GetCidade(cidade._id, bairro._id)
+				})
+				).catch(err => console.error(err))
+
 		}).catch(err => console.error(err))
 	})
 
@@ -129,4 +166,29 @@
 				.then(res => console.log(res))
 				.catch(err => console.error(err))
 		})
+
+	dropZone.ondragover = function () {
+		this.classList.add('active')
+		return false
+	}
+	dropZone.ondragleave = function () {
+		this.classList.remove('active')
+	}
+	dropZone.ondrop = function (e) {
+		const upload = files => {
+			const data = new FormData()
+			data.append('_id', '{{_id}}')
+
+			for (x = 0; x < files.length; x++) {
+				data.append('images', files[x])
+			}
+
+			fetch('/api/images', { method: 'POST', body: data })
+				.then(response => response.json())
+				.then(data => data.forEach(data => GetImagens(data)))
+				.catch(err => console.error(err))
+		}
+		e.preventDefault()
+		upload(e.dataTransfer.files)
+	}
 </script>

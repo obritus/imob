@@ -4,26 +4,9 @@ const Schema = mongoose.Schema
 const Bairro = new Schema(
 	{
 		name: { type: String, required: true },
-		cidade: { type: Schema.Types.ObjectId, ref: "cidades"  }
+		cidade: { type: Schema.Types.ObjectId, ref: "cidades" }
 	},
-	{timestamps: true}
+	{ timestamps: true }
 )
 
 module.exports = mongoose.model('bairros', Bairro)
-
-/*
-
------- TIPOS ------
-
-String
-Number
-Date
-Buffer
-Boolean
-Mixed
-ObjectId
-Array
-Decimal128
-Map
-
-*/

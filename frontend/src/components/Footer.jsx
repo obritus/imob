@@ -27,12 +27,14 @@ const Facebook = Styled.div`
 `
 const FooterMap = Styled.div`
 	height: 531px;
-	background: #716A76;
+	background: url('images/map_footer.jpg') no-repeat 50% 50% #716A76;
+	background-size: cover;
 `
+
 export default () =>
 	<footer>
-		<FooterMap />
-		<Container className="pt-3 fixed-bottom bg-secondary" fluid>
+		<FooterMap></FooterMap>
+		<Container className="pt-3 bg-secondary" fluid>
 			<Container>
 				<Row>
 					<Col md={4}>

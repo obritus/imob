@@ -1,27 +1,30 @@
 <h2 class="mb-5">Adicionar novo empreendimento</h2>
 
 {{>_empreendimento_form}}
-
+<div class="test"></div>
 <script>
 	const Cidades = fetch('/api/cidades/')
 
-	const GetBairro = (cidade_id) => {
+	const GetBairro = cidade_id => {
 		bairroForm.innerHTML = null //LIMPA A LISTA ATUAL
 		const Bairro = fetch('/api/bairros/' + cidade_id)
-		Bairro.then(data => {
-			data.json().then(bairros => {
-				bairros.map(({ _id, name }) => {
-					const Render = `<option value="${_id}">${name}</option>`
-					bairroForm.innerHTML += Render
-				})
-				bairroForm.value = bairroForm.options[0].value
+		Bairro
+			.then(response => response.json())
+			.then(bairros => {
+				if(bairros.length > 0) {
+					bairros.map(({ _id, name }) => {
+						const Render = `<option value="${_id}">${name}</option>`
+						bairroForm.innerHTML += Render
+					})
+					bairroForm.value = bairroForm.options[0].value
+				}
 			})
-		})
 	}
 
-	const GetCidade = async () => {
-		Cidades.then(data => {
-			data.json().then(cidades => {
+	const GetCidade = () => {
+		Cidades
+			.then(response => response.json())
+			.then(cidades => {
 				cidades.map(({ _id, name }) => {
 					const Render = `<option value="${_id}">${name}</option>`
 					cidadeForm.innerHTML += Render
@@ -29,7 +32,37 @@
 				cidadeForm.value = cidadeForm.options[0].value
 				return GetBairro(cidadeForm.value)
 			})
-		})
+	}
+
+	const GetImagens = async ({ filename, empreendimento }) => {
+		const imgUrl = `/images/empreendimentos/${empreendimento}/${filename}`
+
+		const divImagem = document.createElement('div')
+		const divRadio = document.createElement('input')
+		const divLabel = document.createElement('label')
+		const divP = document.createElement('p')
+
+		divRadio.type = 'radio'
+		divRadio.name = 'default_image'
+		divRadio.id = filename
+		divRadio.className = 'd-none'
+
+		divLabel.htmlFor = filename
+
+		divImagem.className = 'image'
+
+		divP.innerHTML = 'Carregando...'
+
+		divImagem.appendChild(divP)
+		divLabel.appendChild(divImagem)
+
+		document.getElementById('uploaded').appendChild(divRadio)
+		document.getElementById('uploaded').appendChild(divLabel)
+
+		setTimeout(() => {
+			divImagem.removeChild(divP)
+			divImagem.style.backgroundImage = `url(${imgUrl})`
+		}, 2000)
 	}
 
 	const ShowImagesBox = () => {
@@ -55,8 +88,8 @@
 				body: response
 			})
 				.then(data => data.json()).then(body => {
-					if(!body.errors) {
-						sessionStorage.setItem('empreendimento_id', body)
+					if(body._id) {
+						sessionStorage.setItem('empreendimento_id', body._id)
 						const BlockInputs = () => {
 							const GetFormElements =
 								document.querySelectorAll('form input, form textarea, form select')
@@ -66,10 +99,12 @@
 						ShowImagesBox()
 						document.querySelector('#formulario .btn').innerText = 'Concluir'
 					}
-					const alertBox = document.querySelector('[data-js="alert"]')
-					alertBox.children[0].innerHTML = "Ocorreu um erro, por favor, verifique as informações digitadas."
-					alertBox.classList.toggle('visually-hidden')
-					alertBox.scrollIntoView({ block: "end", behavior: "smooth" })
+					if(body.err) {
+						const alertBox = document.querySelector('[data-js="alert"]')
+						alertBox.children[0].innerHTML = "Ocorreu um erro, por favor, verifique as informações digitadas."
+						alertBox.classList.toggle('visually-hidden')
+						alertBox.scrollIntoView({ block: "end", behavior: "smooth" })
+					}
 				})
 				.catch(err => console.error(err))
 		})
@@ -90,23 +125,13 @@
 			data.append('_id', sessionStorage.getItem('empreendimento_id'))
 
 			for(x = 0; x < files.length; x++) {
-				data.append('images[]', files[x])
+				data.append('images', files[x])
 			}
 
-			fetch('/api/images/', {
-				method: 'POST',
-				body: data
-			}).then(response => response.json().then(data => {
-				const divImagens = document.getElementById('uploaded')
-
-				data.forEach(({ filename, empreendimento }) => {
-					const divImagem = document.createElement('div')
-					divImagem.className = 'image'
-					divImagem.style.backgroundImage = `url(/images/empreendimentos/${empreendimento}/${filename})`
-					document.getElementById('uploaded').appendChild(divImagem)
-				})
-			})
-			).catch(err => console.error(err))
+			fetch('/api/images', { method: 'POST', body: data })
+				.then(response => response.json())
+				.then(data => data.forEach(data => GetImagens(data)))
+				.catch(err => console.error(err))
 		}
 		e.preventDefault()
 		upload(e.dataTransfer.files)

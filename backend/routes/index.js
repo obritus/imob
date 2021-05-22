@@ -93,14 +93,14 @@ const read_messages = async () => await Message.find({ read: false }).then(res =
 				messages_read_number: read_messages()
 			}
 			data[args.page] = true
-			res.render(`${args.page}`, data)
+			console.log(page)
+			return res.render(`${args.page}`, data)
 		}
 
 		if (page === 'empreendimentos') {
 			const data = {
 				search: req._parsedUrl.search
 			}
-			console.log(req._parsedUrl.search)
 			RenderPage({ page, titulo, data })
 		}
 		if (page === 'usuarios') {
@@ -142,25 +142,19 @@ const read_messages = async () => await Message.find({ read: false }).then(res =
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-	.get('/empreendimentos/show/:id', async (req, res) => {
-		const imagens = await Image.find()
-		res.render('empreendimentos/show', { _id: req.params.id, img: imagens })
+	.get('/empreendimentos/show/:id', (req, res) => {
+		res.render('empreendimentos/show', {
+			_id: req.params.id,
+			show: true,
+			empreendimentos: true
+		})
 	})
 	.get('/empreendimentos/create', (req, res) => {
-		res.render('empreendimentos/create')
-	})
-	.post('/empreendimentos', (req, res) => {
-		
-	})
-	.delete('/empreendimentos/:id', (req, res) => {
-		const id = req.params.id
-		Empreendimento.deleteOne({ _id: id })
-			.then(() => {
-				req.flash('success_msg', 'Erro ao tentar excluir o empreendimento.')
-				res.redirect('/')
-			}).catch((err) => {
-				req.flash('error_msg', 'Houve um erro ao tentar excluir o empreendimento.')
-			})
+		res.render('empreendimentos/create', {
+			_id: req.params.id,
+			create: true,
+			empreendimentos: true
+		})
 	})
 
 // -----------------------------------------------------------------------------

@@ -3,8 +3,9 @@ const Schema = mongoose.Schema
 
 const Config = new Schema(
 	{
-		app_title: { type: String },
-		destaques: { type: Object }
+		site_title: { type: String },
+		carousel: { type: Object },
+		destaques: [{ type: Schema.Types.ObjectId, ref: "empreendimentos" }],
 	},
 	{ timestamps: true }
 )

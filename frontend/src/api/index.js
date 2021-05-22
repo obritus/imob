@@ -1,15 +1,16 @@
 import axios from 'axios'
 const api = axios.create({ baseURL: `${process.env.REACT_APP_BACKEND_URL}api`})
 
-export const GetEmpreendimentos = query => api.get(`/empreendimentos${query}`)
-export const GetCidades = () => api.get('/cidades/')
-export const GetBairros = () => api.get('/bairros/')
+const GetEmpreendimentos = query => api.get(`/empreendimentos${query}`)
+const GetCidades = () => api.get('/cidades/')
+const GetBairros = () => api.get('/bairros/')
+const GetConfigs = () => api.get('/configs/')
 
-export const GetEmpreendimento = _id => api.get('/empreendimentos/' + _id)
-export const GetImages = _id => api.get('/images/' + _id)
-export const GetCidade = _id => api.get('/cidades/' + _id)
-export const GetBairro = _id => api.get('/bairros/' + _id)
-export const getCarousel = () => api.get('/carousel/')
+const GetEmpreendimento = _id => api.get('/empreendimentos/' + _id)
+const GetImages = _id => api.get('/images/' + _id)
+const GetCidade = _id => api.get('/cidades/' + _id)
+const GetBairro = _id => api.get('/bairros/' + _id)
+const getCarousel = () => api.get('/carousel/')
 
 const apis = {
 	GetEmpreendimentos,
@@ -20,6 +21,7 @@ const apis = {
 	GetBairros,
 	GetBairro,
 	getCarousel,
+	GetConfigs,
 }
 
 export default apis

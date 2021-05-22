@@ -17,7 +17,7 @@ const slugfy = (str) => {
 	str = str.toLowerCase()
 
 	var from = "àáäâèéëêìíïîòóöôùúüûñç·/_,:"
-	var to   = "aaaaeeeeiiiioooouuuunc------"
+	var to = "aaaaeeeeiiiioooouuuunc------"
 
 	for (var i=0, l=from.length ; i<l ; i++) {
 		str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i))
