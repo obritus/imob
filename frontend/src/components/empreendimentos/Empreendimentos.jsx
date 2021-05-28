@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Container, Spinner, Row, Col } from 'reactstrap'
 import queryString from 'query-string'
+import SideSearchBar from '../SideSearchBar'
 import Card from './Card'
 import api from '../../api'
 
@@ -39,14 +40,22 @@ export default class extends Component {
 			<section className="pt-3">
 				<Container>
 					<h1 className="pb-3">Empreendimentos</h1>
-					<Row data-id="produtos">
-						{empreendimentos.length > 0
-							? empreendimentos.map(data =>
-								<Col className="mb-3" xs={12} sm={4}>
-									<Card data={data} />
-								</Col>)
-							: <p>{this.state.msg}</p>
-						}
+					<Row>
+						<Col sm={3} className="bg-light">
+							<h4 className="my-4 text-dark text-center">Refinar busca:</h4>
+							<SideSearchBar />
+						</Col>
+						<Col sm={9}>
+							<Row data-id="empreendimentos">
+							{empreendimentos.length > 0
+								? empreendimentos.map(data =>
+									<Col className="mb-3" xs={12} sm={4}>
+										<Card data={data} />
+									</Col>)
+								: <p>{this.state.msg}</p>
+							}
+							</Row>
+						</Col>
 					</Row>
 				</Container>
 			</section>

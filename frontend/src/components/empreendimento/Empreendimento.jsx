@@ -13,9 +13,7 @@ export default class extends Component {
 		this.state = {
 			empreendimento: [],
 			images: [],
-			galeria: [],
-			cidade: null,
-			bairro: null
+			galeria: []
 		}
 	}
 

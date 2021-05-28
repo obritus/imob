@@ -34,20 +34,23 @@
 			})
 	}
 
-	const GetImagens = async ({ filename, empreendimento }) => {
+	const GetImagens = async ({ _id, filename, empreendimento }) => {
 		const imgUrl = `/images/empreendimentos/${empreendimento}/${filename}`
 
 		const divImagem = document.createElement('div')
 		const divRadio = document.createElement('input')
 		const divLabel = document.createElement('label')
 		const divP = document.createElement('p')
+		const eraseButton = document.createElement('button')
 
 		divRadio.type = 'radio'
 		divRadio.name = 'default_image'
-		divRadio.id = filename
 		divRadio.className = 'd-none'
+		divRadio.id = _id
+		divRadio.value = _id
+		divRadio.setAttribute('form', 'form_empreendimento')
 
-		divLabel.htmlFor = filename
+		divLabel.htmlFor = _id
 
 		divImagem.className = 'image'
 
@@ -62,6 +65,10 @@
 		setTimeout(() => {
 			divImagem.removeChild(divP)
 			divImagem.style.backgroundImage = `url(${imgUrl})`
+			divRadio.checked = true
+			divRadio.addEventListener('change', function () {
+				console.log(this.id)
+			})
 		}, 2000)
 	}
 
@@ -87,19 +94,30 @@
 				},
 				body: response
 			})
-				.then(data => data.json()).then(body => {
-					if(body._id) {
-						sessionStorage.setItem('empreendimento_id', body._id)
+				.then(response => response.json())
+				.then(data => {
+					if(data._id) {
+						sessionStorage.setItem('empreendimento_id', data._id)
 						const BlockInputs = () => {
 							const GetFormElements =
 								document.querySelectorAll('form input, form textarea, form select')
 							GetFormElements.forEach(e => e.disabled = true)
 						}
+
+						if (data.msg) {
+							const alertBox = document.querySelector('[data-js="alert"]')
+							alertBox.children[0].innerHTML = data.msg
+							if (alertBox.classList.contains('visually-hidden')) {
+								alertBox.classList.toggle('visually-hidden')
+							}
+							alertBox.scrollIntoView({ block: "end", behavior: "smooth" })
+						}
+
 						BlockInputs()
 						ShowImagesBox()
-						document.querySelector('#formulario .btn').innerText = 'Concluir'
+						document.querySelector('#form_empreendimento .btn').innerText = 'Concluir'
 					}
-					if(body.err) {
+					if(data.err) {
 						const alertBox = document.querySelector('[data-js="alert"]')
 						alertBox.children[0].innerHTML = "Ocorreu um erro, por favor, verifique as informações digitadas."
 						alertBox.classList.toggle('visually-hidden')

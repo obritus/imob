@@ -37,27 +37,54 @@
 		})
 	}
 
-	const GetImagens = async ({ _id, filename, empreendimento }) => {
+	const EraseImage = _id => {
+		if(confirm('Deseja excluir essa imagem?')) {
+			fetch('/api/images/' + _id, { method: 'DELETE' })
+				.then(response => response.json())
+				.then(data => {
+					if(data.msg) {
+						//PEGAR O LABEL E O INPUT RADIO E APAGAR
+						document
+							.querySelectorAll(`
+								input[id="${_id}"],
+								label[for="${_id}"],
+								button[data-id="${_id}"]
+							`)
+							.forEach(i => i.remove())
+					}
+				})
+		}
+	}
+
+	const GetImagens = async ({ _id, filename, empreendimento }, default_image) => {
 		const imgUrl = `/images/empreendimentos/${empreendimento}/${filename}`
 
 		const divImagem = document.createElement('div')
 		const divRadio = document.createElement('input')
 		const divLabel = document.createElement('label')
 		const divP = document.createElement('p')
+		const eraseButton = document.createElement('button')
 
 		divRadio.type = 'radio'
 		divRadio.name = 'default_image'
-		divRadio.id = _id
 		divRadio.className = 'd-none'
+		divRadio.id = _id
+		divRadio.value = _id
+		divRadio.setAttribute('form', 'form_empreendimento')
 
 		divLabel.htmlFor = _id
 
 		divImagem.className = 'image'
-
+		eraseButton.dataset.id = _id
+		eraseButton.className = 'btn-close erase_button'
+		eraseButton.type = 'button'
+		eraseButton.title = 'Excluir imagem'
+		eraseButton.onclick = () => EraseImage(_id)
 		divP.innerHTML = 'Carregando...'
 
 		divImagem.appendChild(divP)
 		divLabel.appendChild(divImagem)
+		divLabel.appendChild(eraseButton)
 
 		document.getElementById('uploaded').appendChild(divRadio)
 		document.getElementById('uploaded').appendChild(divLabel)
@@ -65,6 +92,8 @@
 		setTimeout(() => {
 			divImagem.removeChild(divP)
 			divImagem.style.backgroundImage = `url(${imgUrl})`
+			document
+				.querySelector(`input[value="${default_image}"]`).checked = true
 		}, 2000)
 	}
 
@@ -102,22 +131,17 @@
 			vagasForm.value = vagas_garagem
 			googleForm.value = google_maps
 			detailsForm.value = details
-			if (status) {
-				statusForm.checked = true
-			} else {
-				statusForm.checked = false
-			}
-
+			if(status) { statusForm.checked = true || false }
+			
 			imagesBox.classList.add('show')
 
 			fetch('/api/images/{{_id}}')
 				.then(response => response.json().then(data => {
 					const divImagens = document.getElementById('uploaded')
 					console.log(data)
-					data.forEach(data => GetImagens(data))
+					data.forEach(data => GetImagens(data, default_image))
 					document.querySelector('[data-js="total_images"]').innerHTML = data.length
-					document.querySelector('input[type="radio"]').checked = default_image || null
-					document.querySelector('form button').innerHTML = 'Aplicar alterações'
+					btn_form.innerHTML = 'Aplicar alterações'
 
 					return GetCidade(cidade._id, bairro._id)
 				})
@@ -131,7 +155,7 @@
 		GetBairro(cidade_id)
 	})
 
-	document.querySelector('[data-js="form_empreendimento"]')
+	document.querySelector('#form_empreendimento')
 		.addEventListener('submit', function(e) {
 			e.preventDefault()
 
@@ -152,18 +176,29 @@
 				details: detailsForm.value,
 
 				status: statusForm.checked,
+				default_image: document.querySelector('input[name="default_image"]:checked').value || null
 			}
 
 			sessionStorage.setItem('dados', JSON.stringify(dados))
 
-			{{!-- console.log("Dados enviados:", dados) --}}
+			console.log("Dados enviados:", dados)
 
 			fetch('/api/empreendimentos/{{_id}}', {
 				method: 'PUT',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify(dados)
 			})
-				.then(res => console.log(res))
+				.then(res => res.json())
+				.then(data => {
+					if (data.msg) {
+						const alertBox = document.querySelector('[data-js="alert"]')
+						alertBox.children[0].innerHTML = data.msg
+						if(alertBox.classList.contains('visually-hidden')) {
+							alertBox.classList.toggle('visually-hidden')
+						}
+						alertBox.scrollIntoView({ block: "end", behavior: "smooth" })
+					}
+				})
 				.catch(err => console.error(err))
 		})
 

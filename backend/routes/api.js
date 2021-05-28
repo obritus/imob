@@ -237,30 +237,42 @@ router
 	})
 
 	.post('/images', multer(upld).array('images', 15), (req, res, next) => {
+		const fs = require('fs')
+		const sharp = require('sharp')
+		
 		const _id = req.body._id
 		const uploaded = []
-		req.files.forEach(({ filename }) => {
-			uploaded.push({ filename, empreendimento: _id })
+		const new_folder =
+			path.resolve(`public/images/empreendimentos/${_id}`)
+
+		// CRIA UMA NOVA PASTA PARA O EMPREENDIMENTO SE ELA NÃO EXISTIR
+		if (!fs.existsSync(new_folder)) { fs.mkdirSync(new_folder) }
+
+		req.files.forEach(async ({ filename }) => {
+			await sharp(path.resolve(__dirname, '..', 'tmp/uploads', filename))
+				.resize(1366)
+				.toFile(path.resolve(new_folder, filename))
+					.then(info => {
+						uploaded.push(info)
+					})
 		})
+		
+		console.log(uploaded)
+		res.sendStatus(200)
 
-		Image.insertMany(uploaded)
-			.then(data => {
-				const fs = require('fs')
-				const sharp = require('sharp')
-				const new_folder =
-					path.resolve(`public/images/empreendimentos/${_id}`)
+		// req.files.forEach(({ filename }) => {
+		// 	uploaded.push({ filename, empreendimento: _id })
+		// })
 
-				// CRIA UMA NOVA PASTA PARA O EMPREENDIMENTO SE ELA NÃO EXISTIR
-				if (!fs.existsSync(new_folder))	{ fs.mkdirSync(new_folder) }
+		// Image.insertMany(uploaded)
+		// 	.then(data => {
+		// 		res.json(data)
+		// 	})
+		// 	.catch(err => console.error(err))
+	})
 
-				req.files.forEach(async ({ filename }) => {
-					await sharp(path.resolve(__dirname, '..', 'tmp/uploads', filename))
-						.resize(1366)
-						.toFile(path.resolve(new_folder, filename))
-				})
-				res.json(data)
-			})
-			.catch(err => console.error(err))
+	.delete('/images/:id', (req, res) => {
+		res.json({ msg: "Imagem excluída." })
 	})
 
 // -----------------------------------------------------------------------------
@@ -294,9 +306,9 @@ router
 // -----------------------------------------------------------------------------
 
 	.get('/configs', (req, res) => {
-		Config.find()
+		Config.findOne()
 			.populate([
-				{ path: "destaques", select: 'title' }
+				{ path: "destaques", select: 'title type price default_image' }
 			])
 			.then(data => res.json(data))
 	})
@@ -305,7 +317,7 @@ router
 			.then(data => res.json({ msg: "Alterações salvas.", data }))
 		})
 		
-		.put('/cidades', (req, res) => {
+	.put('/cidades', (req, res) => {
 			Cidade.updateMany({ _id: '6064184096ed1404cf50c20e'}, req.body)
 			.then(data => res.json({ msg: "Alterações salvas.", data }))
 	})

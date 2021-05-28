@@ -1,5 +1,6 @@
 import React from 'react'
-import { Container } from 'reactstrap'
+import { Container, Row, Col } from 'reactstrap'
+import { FiSearch } from "react-icons/fi"
 import api from '../api/'
 
 export default class SearchBox extends React.Component {
@@ -37,8 +38,8 @@ export default class SearchBox extends React.Component {
 			<div className="pt-3" id="search">
 				<Container>
 					<form method="get" action="/empreendimentos">
-						<div className="row">
-							<div className="col-sm pb-3">
+						<Row>
+							<Col xs={12} sm={12} xl={3} className="pb-3 d-grid">
 								<div className="btn-group btn-group-lg">
 									<input type="radio" className="btn-check" name="type" id="aluguelButton" value="1" autoComplete="off" />
 									<label className="btn btn-outline-warning" htmlFor="aluguelButton">Aluguel</label>
@@ -46,8 +47,8 @@ export default class SearchBox extends React.Component {
 									<input type="radio" className="btn-check" name="type" id="vendaButton" value="2" autoComplete="off" />
 									<label className="btn btn-outline-warning" htmlFor="vendaButton">Venda</label>
 								</div>
-							</div>
-							<div className="col-sm pb-3">
+							</Col>
+							<Col xs={12} sm={12} lg={2} className="pb-3">
 								<select className="form-select form-select-lg" name="cidade" id="cidadeForm">
 									<option value="">Cidade</option>
 								{(
@@ -56,8 +57,8 @@ export default class SearchBox extends React.Component {
 									: <option>Carregando cidades</option>
 								)}
 								</select>
-							</div>
-							<div className="col-sm pb-3">
+							</Col>
+							<Col xs={12} sm={12} lg={2} className="pb-3">
 								<select className="form-select form-select-lg" name="bairro">
 									<option value="">Bairro</option>
 									{(
@@ -66,8 +67,8 @@ export default class SearchBox extends React.Component {
 											: <option>Carregando bairros</option>
 									)}
 								</select>
-							</div>
-							<div className="col-sm pb-3">
+							</Col>
+							<Col xs={12} sm={12} lg={2} className="pb-3">
 								<select className="form-select form-select-lg" name="categoria">
 									<option value="">Categoria</option>
 									<option value="1">Casa</option>
@@ -77,19 +78,19 @@ export default class SearchBox extends React.Component {
 									<option value="5">Lote</option>
 									<option value="6">Ponto Comercial</option>
 								</select>
-							</div>
-							<div className="col-sm pb-3">
+							</Col>
+							<Col xs={12} sm={12} lg={2} className="pb-3">
 								<input type="number"
 									className="form-control form-control-lg"
 									placeholder="Quartos"
 									aria-label="Quartos" min="1" max="7"
 									name="quartos"
 								/>
-							</div>
-							<div className="col-sm d-grid pb-3">
-								<button className="btn btn-warning btn-lg">Buscar</button>
-							</div>
-						</div>
+							</Col>
+							<Col xs={12} sm={1} className="pb-3 d-grid">
+								<button className="btn btn-warning btn-lg" title="Buscar"><FiSearch /></button>
+							</Col>
+						</Row>
 					</form>
 				</Container>
 			</div>

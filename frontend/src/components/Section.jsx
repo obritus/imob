@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
-import { Container, Spinner } from 'reactstrap'
+import { Container, Spinner, Col } from 'reactstrap'
 import styled from 'styled-components'
 import Destaque from './Destaque'
 import BannerImage from '../images/banner-home.jpg'
 import SearchBar from './SearchBar'
+import api from '../api'
 
 const BannerFull = styled.div`
 	border-top-left-radius: 25px;
@@ -42,10 +43,17 @@ export default class Section extends Component {
 	}
 
 	componentDidMount = () => {
-		
+		this._asyncRequest = api.GetConfigs()
+			.then(response => {
+				this._asyncRequest = null
+				this.setState({ destaques: response.data.destaques })
+				console.log(this.state.destaques)
+			})
+			.catch(err => console.error(err))		
 	}
 
 	render () {
+		const { destaques } = this.state
 		return (
 			<section className="pb-5">
 				<BannerFull className="container p-0">
@@ -55,15 +63,15 @@ export default class Section extends Component {
 				<Container>
 					<h2 className="text-center my-4 text-dark">Destaques</h2>
 					<div className="row">
-						<div className="col-sm pt-3">
-							<Destaque price={750} type={1} default_image="http://192.168.1.6:3001/images/empreendimentos/60875cd0d478e83e30169403/1304cda569e38bf8e0791c723acb77e4.jpg" />
-						</div>
-						<div className="col-sm pt-3">
-							<Destaque price={2500000} type={2} default_image="http://192.168.1.6:3001/images/empreendimentos/60875cd0d478e83e30169403/9e033a01ca62c99d973043ba02980073.jpg" />
-						</div>
-						<div className="col-sm pt-3">
-							<Destaque price={1100} type={1} default_image="http://192.168.1.6:3001/images/empreendimentos/6093555b3154982f68c50815/22932213ff006b258a6089908b173764.jpg"/>
-						</div>
+
+						{destaques.length > 0
+							? destaques.map(({_id, type, price, title, default_image}) =>
+								<Col className="mb-3" xs={12} sm={4}>
+									<Destaque _id={_id} type={type} title={title} price={price} default_image={default_image} />
+								</Col>)
+							: null
+						}
+
 					</div>
 				</Container>
 			</section>

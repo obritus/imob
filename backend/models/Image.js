@@ -5,6 +5,8 @@ const Image = new Schema(
 	{
 		title: { type: String },
 		filename: { type: String, required: true },
+		width: { type: Number, required: true},
+		height: { type: Number, required: true},
 		empreendimento: { type: Schema.Types.ObjectId, ref: "empreendimentos", required: true }
 	},
 	{ timestamps: true }
