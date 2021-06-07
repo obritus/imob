@@ -29,12 +29,12 @@ export default () =>
 		<Container fluid>
 			<Row>
 				<Col md={1}>
-					<h1 className="d-block d-sm-none">XS</h1>
+					{/* <h1 className="d-block d-sm-none">XS</h1>
 					<h1 className="d-none d-sm-block d-md-none">SM</h1>
 					<h1 className="d-none d-md-block d-lg-none">MD</h1>
 					<h1 className="d-none d-lg-block d-xl-none">LG</h1>
 					<h1 className="d-none d-xl-block d-xxl-none">XL</h1>
-					<h1 className="d-none d-xxl-block">XXL</h1>
+					<h1 className="d-none d-xxl-block">XXL</h1> */}
 				</Col>
 				<Col md={10}>
 					<Link to="/" key={Math.random()}>

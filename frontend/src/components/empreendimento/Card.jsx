@@ -1,11 +1,5 @@
 import React from "react"
-import styled from 'styled-components'
 
-const ImageBox = styled.div`
-	height: 100px;
-	background: #CCC url('${process.env.REACT_APP_BACKEND_URL}images/empreendimentos/${props => props.img}');
-	background-size: cover;
-`
 export default props => {
 	const {
 		_id,
@@ -17,13 +11,12 @@ export default props => {
 		categoria,
 		cidade,
 		condominio,
+		google_maps,
 		createdAt,
 		quartos,
 		suites,
 		type,
 		vagas_garagem } = props.data
-	
-	console.log("Props Images:", props.images)
 
 	const toBRL = data => data.
 		toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })

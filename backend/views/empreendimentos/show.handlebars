@@ -92,15 +92,21 @@
 		setTimeout(() => {
 			divImagem.removeChild(divP)
 			divImagem.style.backgroundImage = `url(${imgUrl})`
-			document
-				.querySelector(`input[value="${default_image}"]`).checked = true
+			if(default_image) {
+				document.querySelector(`input[value="${default_image}"]`)
+					.checked = true
+			} else {
+				document.querySelector(`input[name="default_image"]`)
+					.checked = true
+			}
 		}, 2000)
 	}
 
 	const ShowImagesBox = () => imagesBox.scrollIntoView()
 
-	Empreendimento.then(data => {
-		data.json().then(empreendimento => {
+	Empreendimento
+		.then(response => response.json())
+		.then(empreendimento => {
 			const {
 				_id,
 				title,
@@ -148,7 +154,6 @@
 				).catch(err => console.error(err))
 
 		}).catch(err => console.error(err))
-	})
 
 	cidadeForm.addEventListener('change', function (e) {
 		const cidade_id = this.value
@@ -158,6 +163,14 @@
 	document.querySelector('#form_empreendimento')
 		.addEventListener('submit', function(e) {
 			e.preventDefault()
+
+			const DefaultImageCheck = () => {
+				if(document.querySelector('input[name="default_image"]:checked')) {
+					return document.querySelector('input[name="default_image"]:checked').value
+				} else {
+					return null
+				}
+			}
 
 			const dados = {
 				title: titleForm.value,
@@ -176,7 +189,7 @@
 				details: detailsForm.value,
 
 				status: statusForm.checked,
-				default_image: document.querySelector('input[name="default_image"]:checked').value || null
+				default_image: DefaultImageCheck()
 			}
 
 			sessionStorage.setItem('dados', JSON.stringify(dados))
@@ -188,7 +201,7 @@
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify(dados)
 			})
-				.then(res => res.json())
+				.then(response => response.json())
 				.then(data => {
 					if (data.msg) {
 						const alertBox = document.querySelector('[data-js="alert"]')
@@ -203,13 +216,18 @@
 		})
 
 	dropZone.ondragover = function () {
+		e.stopPropagation()
 		this.classList.add('active')
 		return false
 	}
 	dropZone.ondragleave = function () {
+		e.stopPropagation()
 		this.classList.remove('active')
+		return false
 	}
 	dropZone.ondrop = function (e) {
+		e.stopPropagation()
+		this.classList.remove('active')
 		const upload = files => {
 			const data = new FormData()
 			data.append('_id', '{{_id}}')
@@ -226,4 +244,10 @@
 		e.preventDefault()
 		upload(e.dataTransfer.files)
 	}
+
+	const alert_buttons = document.querySelector('[data-bs-dismiss="alert"]')
+	alert_buttons.addEventListener('click', function (e) {
+		e.preventDefault()
+		e.path[1].classList.add('visually-hidden')
+	})
 </script>

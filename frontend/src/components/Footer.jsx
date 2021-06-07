@@ -33,7 +33,7 @@ const FooterMap = Styled.div`
 
 export default () =>
 	<footer>
-		<FooterMap></FooterMap>
+		{/* <FooterMap></FooterMap> */}
 		<Container className="pt-3 bg-secondary" fluid>
 			<Container>
 				<Row>

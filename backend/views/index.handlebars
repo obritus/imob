@@ -2,18 +2,20 @@
 	<div class="card mr-3 mb-3">
 		<div class="card-body">
 			<h5 class="card-title">Clientes</h5>
-			<p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse aliquet massa ac auctor convallis. Aliquam ac orci
-			sagittis dolor imperdiet molestie.</p>
+			<p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse aliquet massa ac
+				auctor convallis. Aliquam ac orci
+				sagittis dolor imperdiet molestie.</p>
 			<a href="#" class="btn btn-primary">Cadastrar</a>
 		</div>
 	</div>
-	
+
 	<div class="card mr-3 mb-3">
 		<div class="card-body">
 			<h5 class="card-title">Empreendimentos</h5>
-			<p class="card-text">Etiam molestie justo vitae arcu tincidunt, et accumsan odio posuere. Ut sodales ante eu lacus feugiat gravida. Nullam
-			luctus est tortor, sit amet tempus magna commodo non.</p>
-			<a href="#" class="btn btn-primary">Cadastrar</a>
+			<p class="card-text">Etiam molestie justo vitae arcu tincidunt, et accumsan odio posuere. Ut sodales ante eu
+				lacus feugiat gravida. Nullam
+				luctus est tortor, sit amet tempus magna commodo non.</p>
+			<a href="/dashboard/empreendimentos/create" class="btn btn-primary">Adicionar empreendimento</a>
 		</div>
 	</div>
 	<div class="card mr-3 mb-3">
@@ -30,10 +32,18 @@
 			<h1 class="display-1">{{users_number}}</h1>
 		</div>
 	</div>
+	<a href="/dashboard/empreendimentos" class="card-link">
+		<div class="card mr-3 mb-3">
+			<div class="card-body text-center">
+				<h4>Empreendimentos Cadastrados</h4>
+				<h1 class="display-1">{{empreendimentos_number}}</h1>
+			</div>
+		</div>
+	</a>
 	<div class="card mr-3 mb-3">
 		<div class="card-body text-center">
-			<h4>Empreendimentos Cadastrados</h4>
-			<h1 class="display-1">{{empreendimentos_number}}</h1>
+			<h4>Empreendimentos Publicados</h4>
+			<h1 class="display-1">{{emp_publicados_number}}</h1>
 		</div>
 	</div>
 </div>

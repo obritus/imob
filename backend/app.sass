@@ -39,9 +39,6 @@ header
 .nav-link
 	color: $white
 
-section
-	padding: 35px 35px 0 64px
-
 footer
 	background: darken($dark, 4%)
 	font-size: 0.8em
@@ -88,7 +85,7 @@ div[data-id="flex-home"]
 #uploaded
 	display: grid
 	padding-bottom: 50px
-	grid-template-columns: 1fr 1fr 1fr
+	grid-template-columns: 1fr 1fr 1fr 1fr
 	grid-gap: 1em
 	input
 		cursor: pointer
@@ -123,3 +120,8 @@ div[data-id="flex-home"]
 			line-height: 140px
 			color: $white
 			text-align: center
+
+@media (max-width: 575px)
+	#uploaded
+		grid-template-columns: 1fr
+	

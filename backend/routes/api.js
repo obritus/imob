@@ -63,7 +63,9 @@ router
 // -----------------------------------------------------------------------------
 
 	.get('/messages', (req, res) => {
-		Message.find()
+		Message
+			.find()
+			.sort('createdOn')
 			.then(data => res.json(data))
 			.catch(err => console.log(err))
 	})
@@ -72,9 +74,10 @@ router
 // -----------------------------------------------------------------------------
 
 	.post('/messages/send', (req, res) => {
-		new Message(req.body).save().then(
-			res.sendStatus(200)
-		).catch(err => console.error(err))
+		new Message(req.body)
+			.save()
+			.then(() => res.sendStatus(200))
+			.catch(err => console.error(err))
 	})
 
 // -----------------------------------------------------------------------------
@@ -82,19 +85,12 @@ router
 
 	.get('/empreendimentos', (req, res) => {
 		const GetStatus = s => {
-			switch (s) {
-				case 'true':
-					return true
-					break
-			
-				case 'false':
-					return false
-					break
-				
-				default:
-					return ''
-					break
+			const tipos = {
+				'true': true,
+				'false': false,
+				'undefined': ''
 			}
+			return tipos[s]
 		}
 
 		const query = {
@@ -116,19 +112,26 @@ router
 			if (key === 'bairro' && query.bairro._id === '') delete query.bairro
 		})
 
-		Empreendimento.find(Object.assign({ status: true }, query))
+		const GetPage = () =>
+			(req.query.page) ? (parseInt(req.query.page) - 1) * 10 : 0
+		console.log(GetPage())
+		Empreendimento
+			.find(Object.assign({ status: true }, query))
 			.populate([
 				{ path: "bairro", select: 'name' },
-				{ path: "cidade", select: 'name' }
+				{ path: "cidade", select: 'name' },
+				{ path: "default_image", select: 'filename' }
 			])
+			.skip(GetPage())
 			.limit(10)
+			.sort('createdOn')
 			.then(data => res.json(data))
 			.catch(err => console.log(err))
 	})
 
 	.get('/empreendimentos/:id', async (req, res) => {
-		req.flash('error_msg', 'Houve um erro ao tentar excluir o empreendimento.')
-		await Empreendimento.findOne({ _id: req.params.id })
+		await Empreendimento
+			.findOne({ _id: req.params.id })
 			.populate([
 				{ path: "bairro", select: 'name' },
 				{ path: "cidade", select: 'name' }
@@ -157,7 +160,8 @@ router
 		if(req.body.status) {
 			req.body.status = (req.body.status) ? true : false
 		}
-		Empreendimento.updateOne({ _id: req.params.id }, req.body)
+		Empreendimento
+			.updateOne({ _id: req.params.id }, req.body)
 			.then(() => res.json({ msg: 'Alterações aplicadas.' }))
 			.catch(err => {
 				res.json({ 
@@ -171,7 +175,28 @@ router
 	// })
 
 	.delete('/empreendimentos', (req, res) => {
-		res.json({ "msg": "Empreendimento excluído com sucesso.", "_id": req.body._id })
+		Empreendimento
+			.deleteOne({ _id: req.body._id })
+			.then(() => {
+				Image.deleteMany({ empreendimento: req.body._id })
+					.then(() => {
+						const fs = require('fs')
+						const path = require('path')
+						const EmpreendimentoFolder =
+							path.resolve(`public/images/empreendimentos/${req.body._id}`)
+
+						fs.rmdir(EmpreendimentoFolder, { recursive: true }, (err) => {
+							if (err) {
+								console.error(err)
+								return
+							}
+							res.json({
+								"msg": "Empreendimento excluído com sucesso.",
+								"_id": req.body._id
+							})
+						})
+					})
+			})
 	})
 
 // -----------------------------------------------------------------------------
@@ -179,35 +204,39 @@ router
 
 	.get('/cidades', (req, res) => {
 		Cidade
-			.find()
+			.find().sort('name')
 			.populate('bairros', 'name')
 			.then(data => res.json(data))
 			.catch(err => console.log(err))
 	})
 	.post('/cidades', (req, res) => {
-		new Cidade(req.body).save().then(
-			res.sendStatus(200)
-		).catch(err => console.error(err))
+		new Cidade(req.body)
+			.save()
+			.then(() => res.sendStatus(200))
+		.catch(err => console.error(err))
 	})
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
 	.get('/bairros', (req, res) => {
-		Bairro.find({ cidade: '6064184096ed1404cf50c20e' })
-			.skip()
+		Bairro
+			.find()
+			.sort('name')
 			.select({_id: true})
-			.limit(0)
 			.then(data => res.json(data))
 			.catch(err => console.log(err))
 	})
 	.get('/bairros/:id', (req, res) => {
-		Bairro.find({ cidade: req.params.id})
+		Bairro
+			.find({ cidade: req.params.id})
+			.sort('name')
 			.then(data => res.json(data))
 			.catch(err => console.log(err))
 	})
 	.post('/bairros', (req, res) => {
-		Bairro.insertMany(req.body)
+		Bairro
+			.insertMany(req.body)
 			.then(res.sendStatus(200))
 			.catch(err => console.error(err))
 	})
@@ -224,19 +253,21 @@ router
 	})
 
 	.get('/images/:id', (req, res) => {
-		Image.find({ empreendimento: req.params.id })
+		Image
+			.find({ empreendimento: req.params.id })
 			.select({ createdAt: false, updatedAt: false })
 			.then(data => res.json(data))
 			.catch(err => console.log(err))
 	})
 
 	.put('/images/:id', (req, res) => {
-		Image.updateOne({ _id: req.params.id }, req.body)
+		Image
+			.updateOne({ _id: req.params.id }, req.body)
 			.then(() => res.sendStatus(202))
 			.catch(err => console.log(err))
 	})
 
-	.post('/images', multer(upld).array('images', 15), (req, res, next) => {
+	.post('/images', multer(upld).array('images', 15), async (req, res, next) => {
 		const fs = require('fs')
 		const sharp = require('sharp')
 		
@@ -248,31 +279,41 @@ router
 		// CRIA UMA NOVA PASTA PARA O EMPREENDIMENTO SE ELA NÃO EXISTIR
 		if (!fs.existsSync(new_folder)) { fs.mkdirSync(new_folder) }
 
-		req.files.forEach(async ({ filename }) => {
-			await sharp(path.resolve(__dirname, '..', 'tmp/uploads', filename))
+		for await(const file of req.files) {
+			await sharp(path.resolve(__dirname, '..', 'tmp/uploads', file.filename))
 				.resize(1366)
-				.toFile(path.resolve(new_folder, filename))
+				.toFile(path.resolve(new_folder, file.filename))
 					.then(info => {
-						uploaded.push(info)
+						uploaded.push({
+							filename: file.filename,
+							empreendimento: _id,
+							width: info.width,
+							height: info.height
+						})
 					})
-		})
-		
-		console.log(uploaded)
-		res.sendStatus(200)
+		}
 
-		// req.files.forEach(({ filename }) => {
-		// 	uploaded.push({ filename, empreendimento: _id })
-		// })
-
-		// Image.insertMany(uploaded)
-		// 	.then(data => {
-		// 		res.json(data)
-		// 	})
-		// 	.catch(err => console.error(err))
+		Image
+			.insertMany(uploaded)
+			.then(data => res.json(data))
+			.catch(err => console.error(err))
 	})
 
 	.delete('/images/:id', (req, res) => {
-		res.json({ msg: "Imagem excluída." })
+		const fs = require('fs')
+		const path = require('path')
+		Image.findOneAndDelete({ _id: req.params.id })
+			.then(data => {
+				const EmpreendimentoFolder =
+					path.resolve(`public/images/empreendimentos/${data.empreendimento}/${data.filename}`)
+				fs.unlink(EmpreendimentoFolder, (err) => {
+					if (err) {
+						console.error(err)
+						return
+					}
+					res.json({ msg: "Imagem excluída." })
+				})
+			})
 	})
 
 // -----------------------------------------------------------------------------
@@ -308,7 +349,11 @@ router
 	.get('/configs', (req, res) => {
 		Config.findOne()
 			.populate([
-				{ path: "destaques", select: 'title type price default_image' }
+				{
+					path: "destaques",
+					select: 'title type price',
+					populate: { path: "default_image", select: 'filename'}
+				}
 			])
 			.then(data => res.json(data))
 	})

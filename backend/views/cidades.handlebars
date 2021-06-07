@@ -1,0 +1,40 @@
+<h2>Cidades</h2>
+<p>Cidades e bairros cadastrados no banco de dados.</p>
+
+<div class="accordion accordion-flush text-dark" id="accordionCidades">
+{{#each data.cidades}}
+	<div class="accordion-item">
+		<h2 class="accordion-header" id="flush-headingOne">
+			<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#{{_id}}">
+				{{name}} <span class="badge bg-info text-dark m-2" title="Bairros cadastrados">0</span>
+			</button>
+		</h2>
+		<div id="{{_id}}" class="accordion-collapse collapse show"data-bs-parent="#accordionCidades">
+			<div class="accordion-body">
+				<input type="text" class="form-control" name="bairro" placeholder="Adicionar novo bairro."/>
+				<div class="bairros d-flex flex-row flex-wrap py-3" data-cidade="{{_id}}"></div>
+			</div>
+		</div>
+	</div>
+{{/each}}
+</div>
+
+<script>
+	document.querySelectorAll('.bairros').forEach(async div => {
+		const _id = div.dataset.cidade
+		const Bairros = await fetch('/api/bairros/' + _id)
+		const Response = await Bairros.json()
+
+		document.querySelector(`[data-bs-target="#${_id}"] span`)
+			.innerHTML = Response.length
+
+		Response.forEach(bairro => {
+			const DivBairro = document.createElement('div')
+			DivBairro.className = 'p-3 bg-primary text-light'
+			DivBairro.innerHTML = bairro.name
+
+			document.querySelector(`.bairros[data-cidade="${_id}"]`)
+				.appendChild(DivBairro)
+		})
+	})
+</script>

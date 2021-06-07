@@ -34,7 +34,7 @@
 			})
 	}
 
-	const GetImagens = async ({ _id, filename, empreendimento }) => {
+	const GetImagens = async ({ _id, filename, empreendimento }, default_image) => {
 		const imgUrl = `/images/empreendimentos/${empreendimento}/${filename}`
 
 		const divImagem = document.createElement('div')
@@ -53,11 +53,16 @@
 		divLabel.htmlFor = _id
 
 		divImagem.className = 'image'
-
+		eraseButton.dataset.id = _id
+		eraseButton.className = 'btn-close erase_button'
+		eraseButton.type = 'button'
+		eraseButton.title = 'Excluir imagem'
+		eraseButton.onclick = () => EraseImage(_id)
 		divP.innerHTML = 'Carregando...'
 
 		divImagem.appendChild(divP)
 		divLabel.appendChild(divImagem)
+		divLabel.appendChild(eraseButton)
 
 		document.getElementById('uploaded').appendChild(divRadio)
 		document.getElementById('uploaded').appendChild(divLabel)
@@ -65,10 +70,13 @@
 		setTimeout(() => {
 			divImagem.removeChild(divP)
 			divImagem.style.backgroundImage = `url(${imgUrl})`
-			divRadio.checked = true
-			divRadio.addEventListener('change', function () {
-				console.log(this.id)
-			})
+			if (default_image) {
+				document.querySelector(`input[value="${default_image}"]`)
+					.checked = true
+			} else {
+				document.querySelector(`input[name="default_image"]`)
+					.checked = true
+			}
 		}, 2000)
 	}
 
@@ -79,9 +87,17 @@
 
 	GetCidade()
 
-	document.querySelector('[data-js="form_empreendimento"]')
-		.addEventListener('submit', async function(e) {
+	document.querySelector('#form_empreendimento')
+		.addEventListener('submit', async function (e) {
 			e.preventDefault()
+
+			const DefaultImageCheck = () => {
+				if (document.querySelector('input[name="default_image"]:checked')) {
+					return document.querySelector('input[name="default_image"]:checked').value
+				} else {
+					return null
+				}
+			}
 			const response =
 				await new Response(
 					new URLSearchParams(new FormData(e.target).entries())
@@ -112,10 +128,21 @@
 							}
 							alertBox.scrollIntoView({ block: "end", behavior: "smooth" })
 						}
-
 						BlockInputs()
 						ShowImagesBox()
+
 						document.querySelector('#form_empreendimento .btn').innerText = 'Concluir'
+						document.querySelector('#form_empreendimento')
+							.addEventListener('submit', function (e) {
+								e.preventDefault()
+								fetch('/api/empreendimentos/' + data._id, {
+									method: 'PUT',
+									headers: { 'Content-Type': 'application/json' },
+									body: JSON.stringify({ default_image: DefaultImageCheck() })
+								})
+									.then(response => response.json())
+									.then(data => console.log('Atualizado:', data))
+							})
 					}
 					if(data.err) {
 						const alertBox = document.querySelector('[data-js="alert"]')
@@ -138,11 +165,12 @@
 		return false
 	}
 	dropZone.ondrop = function (e) {
+		this.classList.remove('active')
 		const upload = files => {
 			const data = new FormData()
 			data.append('_id', sessionStorage.getItem('empreendimento_id'))
 
-			for(x = 0; x < files.length; x++) {
+			for (x = 0; x < files.length; x++) {
 				data.append('images', files[x])
 			}
 

@@ -47,7 +47,6 @@ export default class Section extends Component {
 			.then(response => {
 				this._asyncRequest = null
 				this.setState({ destaques: response.data.destaques })
-				console.log(this.state.destaques)
 			})
 			.catch(err => console.error(err))		
 	}
@@ -56,7 +55,7 @@ export default class Section extends Component {
 		const { destaques } = this.state
 		return (
 			<section className="pb-5">
-				<BannerFull className="container p-0">
+				<BannerFull className="container py-0">
 					<Slide/>
 					<SearchBar/>
 				</BannerFull>

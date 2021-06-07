@@ -5,9 +5,10 @@ import styled from 'styled-components'
 const Box = styled.div`
 	display: grid;
 	width: 100%;
-	height: 200px;
+	height: 240px;
 	background: #CCC;
-	background-image: ${props => "url('" + process.env.REACT_APP_BACKEND_URL + props._id + "/" + props.image + "')" || "none"};
+	background-image:
+		${props => "url('" + process.env.REACT_APP_BACKEND_URL + "images/empreendimentos/" + props.id + "/" + props.image.filename + "')" || "none"};
 	background-size: cover;
 	background-position: 50% 50%;
 	grid-template-rows: auto 20px 40px 35px;
@@ -47,7 +48,7 @@ const GetBRL = n => {
 
 export default props =>
 	<Link to={`/empreendimentos/${props._id}`} className="card-link">
-		<Box image={props.default_image}>
+		<Box id={props._id} image={props.default_image}>
 			<Item></Item>
 			<Type className="bg-light text-dark">{Types[props.type]}</Type>
 			<Price className="bg-warning text-dark">{GetBRL(props.price)}</Price>

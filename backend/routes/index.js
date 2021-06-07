@@ -8,6 +8,8 @@ const axios = require('axios')
 const Config = require('../models/Config') //CONFIGURAÇÕES DO APP
 const Usuario = require('../models/Usuario') //ESTRUTURA DOS USUÁRIOS NO DB
 const Empreendimento = require('../models/Empreendimento') //EMPREENDIMENTOS
+const Cidade = require('../models/Cidade') //EMPREENDIMENTOS
+const Bairro = require('../models/Bairro') //EMPREENDIMENTOS
 const Message = require('../models/Message') //MENSAGENS
 const Image = require('../models/Image') //IMAGE
 
@@ -41,22 +43,26 @@ const multerConfigs = {
 		}
 	}
 }
-const read_messages = async () => await Message.find({ read: false }).then(res => res.length)
+const read_messages = Message.find({ read: false })
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
 	router.get('/', async (req, res) => {
-		const users = await Usuario.find().then(res => res.length)
-		const empreendimentos = await Empreendimento.find().then(res => res.length)
-		const messages = await Message.find().then(res => res.length)
+		const users = Usuario.find()
+		const empreendimentos = Empreendimento.find()
+		const empreendimentos_publicados = Empreendimento.find({ status: true })
+		const imagens = Image.find()
+		const messages = Message.find()
 
 		res.render('index', {
-			title: 'Página Inicial',
-			users_number: users,
-			empreendimentos_number: empreendimentos,
-			messages_number: messages,
-			messages_read_number: read_messages(),
+			title: 'Página Inícial',
+			empreendimentos_number: (await empreendimentos).length,
+			emp_publicados_number: (await empreendimentos_publicados).length,
+			images_number: (await imagens).length,
+			users_number: (await users).length,
+			messages_number: (await messages).length,
+			messages_read_number: (await read_messages).length,
 			home: true
 		})
 	})
@@ -74,27 +80,27 @@ const read_messages = async () => await Message.find({ read: false }).then(res =
 
 		const GetTitle = t => {
 			const titulos = {
-				undefined: '',
+				empreendimentos: 'Empreendimentos',
+				cidades: 'Cidades',
 				usuarios: 'Usuários',
 				clientes: 'Clientes',
-				empreendimentos: 'Empreendimentos',
 				messages: 'Mensagens',
 				config: 'Configurações',
-				login: 'Entrar'
+				login: 'Entrar',
+				undefined: ''
 			}
 			return titulos[t]
 		}
 		const titulo = GetTitle(page)
 
-		const RenderPage = args => {
+		const RenderPage = async args => {
 			const data = {
 				title: args.titulo,
 				data: args.data,
-				messages_read_number: read_messages()
+				messages_read_number: (await read_messages).length
 			}
 			data[args.page] = true
-			console.log(page)
-			return res.render(`${args.page}`, data)
+			res.render(args.page, data)
 		}
 
 		if (page === 'empreendimentos') {
@@ -116,9 +122,7 @@ const read_messages = async () => await Message.find({ read: false }).then(res =
 		}
 		if (page === 'config') {
 			Config.findOne().lean().then(config => {
-				const data = {
-					config: config
-				}
+				const data = { config }
 				RenderPage({page, titulo, data})
 			}).catch(err => {
 				console.error(err)
@@ -127,13 +131,16 @@ const read_messages = async () => await Message.find({ read: false }).then(res =
 		if (page === 'messages') {
 			Message.find().limit().lean()
 				.then(messages => {
-					const data = {
-						messages: messages
-					}
+					const data = { messages }
 					RenderPage({page, titulo, data})
 				})
 				.catch(err => console.error(err))
-			}
+		}
+		if (page === 'cidades') {
+			const cidades = Cidade.find().lean().sort('name')
+			const data = { cidades: await cidades }
+			RenderPage({ page, titulo, data })
+		}
 		else {
 			RenderPage({ page, titulo, data })
 		}

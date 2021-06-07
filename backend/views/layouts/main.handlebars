@@ -8,6 +8,9 @@
 
 	<link rel="stylesheet" href="/css/app.sass.min.css" type="text/css">
 	<link rel="shortcut icon" href="/favicon.ico">
+
+	<script src="/js/bootstrap.min.js" type="text/javascript"></script>
+	<script src="/js/bootstrap.bundle.js" type="text/javascript"></script>
 </head>
 
 <body>
@@ -17,9 +20,17 @@
 			<nav class="nav">
 				<a class="nav-link small {{#if home}}active{{/if}}" href="/">Início</a>
 				<a class="nav-link small {{#if empreendimentos}}active{{/if}}" href="/dashboard/empreendimentos">Empreendimentos</a>
+				<a class="nav-link small {{#if cidades}}active{{/if}}" href="/dashboard/cidades">Cidades</a>
 				<a class="nav-link small {{#if clientes}}active{{/if}}" href="/dashboard/clientes">Clientes</a>
 				<a class="nav-link small {{#if usuarios}}active{{/if}}" href="/dashboard/usuarios">Usuários</a>
-				<a class="nav-link small {{#if messages}}active{{/if}}" href="/dashboard/messages">Mensagens {{#if messages_read_number}}<span class="badge badge-danger ml-2">{{messages_read_number}}</span>{{/if}}</a>
+				<a class="nav-link small {{#if messages}}active{{/if}} position-relative" href="/dashboard/messages">
+					Mensagens
+					{{#if messages_read_number}}
+						<span class="position-absolute top-50 start-100 translate-middle badge rounded-pill bg-danger">
+							{{messages_read_number}}<span class="visually-hidden">unread messages</span>
+						</span>
+					{{/if}}
+				</a>
 				<a class="nav-link small {{#if config}}active{{/if}}" href="/dashboard/config">Configurações</a>
 				<a class="nav-link small" href="/dashboard/logout">Sair</a>
 			</nav>
@@ -27,7 +38,7 @@
 	</header>
 
 	<section>
-		<div class="container pt-4 pb-4">
+		<div class="container py-5">
 			{{{body}}}		
 		</div>
 	</section>

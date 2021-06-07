@@ -42,21 +42,28 @@ export default class extends Component {
 					<h1 className="pb-3">Empreendimentos</h1>
 					<Row>
 						<Col sm={3} className="bg-light">
-							<h4 className="my-4 text-dark text-center">Refinar busca:</h4>
 							<SideSearchBar />
 						</Col>
-						<Col sm={9}>
-							<Row data-id="empreendimentos">
+						<Col sm={9} id="empreendimentos_lista">
 							{empreendimentos.length > 0
-								? empreendimentos.map(data =>
-									<Col className="mb-3" xs={12} sm={4}>
-										<Card data={data} />
-									</Col>)
+								? empreendimentos.map(data => <Card data={data} />)
 								: <p>{this.state.msg}</p>
 							}
-							</Row>
 						</Col>
 					</Row>
+					<nav className="py-3">
+						<ul className="pagination justify-content-center">
+							<li className="page-item disabled">
+								<a className="page-link" href="#" tabindex="-1" aria-disabled="true">Anterior</a>
+							</li>
+							<li className="page-item"><a className="page-link" href="?page=1">1</a></li>
+							<li className="page-item"><a className="page-link" href="?page=2">2</a></li>
+							<li className="page-item"><a className="page-link" href="?page=3">3</a></li>
+							<li className="page-item">
+								<a className="page-link" href="#">Próxima</a>
+							</li>
+						</ul>
+					</nav>
 				</Container>
 			</section>
 		)
