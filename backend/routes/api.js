@@ -52,11 +52,10 @@ router
 // -----------------------------------------------------------------------------
 
 	.get('/usuarios', (req, res) => {
-		Usuario.find().then(data => {
-			res.json(data)
-		}).catch(err => {
-			console.log(err)
-		})
+		Usuario
+			.find()
+			.then(data => res.json(data))
+			.catch(err => res.json({ err }))
 	})
 
 // -----------------------------------------------------------------------------
@@ -67,19 +66,34 @@ router
 			.find()
 			.sort('createdOn')
 			.then(data => res.json(data))
-			.catch(err => console.log(err))
+			.catch(err => res.json({ err }))
 	})
-
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-
-	.post('/messages/send', (req, res) => {
+	.post('/messages', (req, res) => {
 		new Message(req.body)
 			.save()
 			.then(() => res.sendStatus(200))
-			.catch(err => console.error(err))
+			.catch(err => res.json({ err }))
 	})
-
+	.get('/messages/:id', (req, res) => {
+		Message
+			.findOneAndUpdate({ _id: req.params.id }, { read: true })
+			.then(data => res.json(data))
+			.catch(err => res.json({ err }))
+	})
+	.put('/messages/:id', (req, res) => {
+		//MARCAR MENSAGEM COMO LIDA
+		Message
+			.updateOne({ _id: req.params.id }, { read: false })
+			.then(() => res.sendStatus(200))
+			.catch(err => res.json({ err }))
+	})
+	.delete('/messages/:id', (req, res) => {
+		//EXCLUIR MENSAGEM
+		Message
+			.deleteOne({ _id: req.params.id })
+			.then(() => res.sendStatus(200))
+			.catch(err => res.json({ err }))
+	})
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
@@ -126,7 +140,7 @@ router
 			.limit(10)
 			.sort('createdOn')
 			.then(data => res.json(data))
-			.catch(err => console.log(err))
+			.catch(err => res.json({ err }))
 	})
 
 	.get('/empreendimentos/:id', async (req, res) => {
@@ -137,7 +151,7 @@ router
 				{ path: "cidade", select: 'name' }
 			])
 			.then(data => res.json(data))
-			.catch(err => console.log(err))
+			.catch(err => res.json({ err }))
 	})
 
 	.post('/empreendimentos', (req, res) => {
@@ -149,10 +163,13 @@ router
 		req.body.status = true
 
 		new Empreendimento(req.body).save()
-			.then(data => res.json({_id: data._id, msg: 'Empreendimento adicionado com sucesso.'}))
+			.then(data => res.json({
+				_id: data._id,
+				msg: 'Empreendimento adicionado com sucesso.'
+			}))
 			.catch(err => {
 				console.error(err)
-				res.json({'err': err, msg: 'Ocorreu um erro ao tentar adicionar o empreendimento.'})
+				res.json({err, msg: 'Ocorreu um erro ao tentar adicionar o empreendimento.'})
 			})
 	})
 
@@ -170,9 +187,6 @@ router
 				})
 			})
 	})
-	// .put('/empreendimentos/:id', (req, res) => {
-	// 	Empreendimento.updateOne({ _id: req.params.id }, req.params.)
-	// })
 
 	.delete('/empreendimentos', (req, res) => {
 		Empreendimento
@@ -207,15 +221,21 @@ router
 			.find().sort('name')
 			.populate('bairros', 'name')
 			.then(data => res.json(data))
-			.catch(err => console.log(err))
+			.catch(err => res.json({ err }))
 	})
 	.post('/cidades', (req, res) => {
 		new Cidade(req.body)
 			.save()
 			.then(() => res.sendStatus(200))
-		.catch(err => console.error(err))
+			.catch(err => res.json({ err }))
 	})
-
+	.delete('/cidades/:id', (req, res) => {
+		Cidade
+			.findOneAndDelete({ _id: req.params.id })
+			.then(data => Bairro.deleteMany({ cidade: data._id }))
+			.then(() => res.json({ msg: "Cidade excluída." }))
+			.catch(err => res.json({ err }))
+	})
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
@@ -223,33 +243,34 @@ router
 		Bairro
 			.find()
 			.sort('name')
-			.select({_id: true})
 			.then(data => res.json(data))
-			.catch(err => console.log(err))
+			.catch(err => res.json({ err }))
 	})
+	// OBTER BAIRROS DA CIDADE _id
 	.get('/bairros/:id', (req, res) => {
 		Bairro
 			.find({ cidade: req.params.id})
 			.sort('name')
 			.then(data => res.json(data))
-			.catch(err => console.log(err))
+			.catch(err => res.json({ err }))
 	})
 	.post('/bairros', (req, res) => {
-		Bairro
-			.insertMany(req.body)
-			.then(res.sendStatus(200))
-			.catch(err => console.error(err))
+		new Bairro(req.body)
+			.save()
+			.then(() => res.json({ msg: "Bairro adicionado." }))
+			.catch(err => res.json({ err }))
 	})
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
 	.get('/images', (req, res) => {
-		Image.find()
+		Image
+			.find()
 			.select({ createdAt: false, updatedAt: false })
 			.populate('cidade', 'name')
 			.then(data => res.json(data))
-			.catch(err => console.log(err))
+			.catch(err => res.json({ err }))
 	})
 
 	.get('/images/:id', (req, res) => {
@@ -257,14 +278,14 @@ router
 			.find({ empreendimento: req.params.id })
 			.select({ createdAt: false, updatedAt: false })
 			.then(data => res.json(data))
-			.catch(err => console.log(err))
+			.catch(err => res.json({ err }))
 	})
 
 	.put('/images/:id', (req, res) => {
 		Image
 			.updateOne({ _id: req.params.id }, req.body)
 			.then(() => res.sendStatus(202))
-			.catch(err => console.log(err))
+			.catch(err => res.json({ err }))
 	})
 
 	.post('/images', multer(upld).array('images', 15), async (req, res, next) => {
@@ -296,7 +317,7 @@ router
 		Image
 			.insertMany(uploaded)
 			.then(data => res.json(data))
-			.catch(err => console.error(err))
+			.catch(err => res.json({ err }))
 	})
 
 	.delete('/images/:id', (req, res) => {
@@ -314,13 +335,41 @@ router
 					res.json({ msg: "Imagem excluída." })
 				})
 			})
+			.catch(err => res.json({ err }))
+	})
+
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
+	.get('/configs', (req, res) => {
+		Config
+			.findOne()
+			.populate([
+				{
+					path: "destaques",
+					select: 'title type price',
+					populate: { path: "default_image", select: 'filename'}
+				},
+				{
+					path: "default_banner",
+					select: 'title type price',
+					populate: { path: "default_image", select: 'filename' }
+				}
+			])
+			.then(data => res.json(data))
+			.catch(err => res.json({ err }))
+	})
+	.put('/configs', (req, res) => {
+		Config
+			.updateOne({}, req.body)
+			.then(data => res.json({ msg: "Alterações salvas.", data }))
+			.catch(err => res.json({ err }))
 	})
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
 	.post('/testes', (req, res, next) => {
-		req.flash('success_msg', 'Atualizado com sucesso.')
 		res.redirect('back')
 	})
 
@@ -332,8 +381,8 @@ router
 	.get('/images_teste', async (req, res, next) => {
 		const sharp = require('sharp')
 		const imagens = ['96fade58b9a09e8f24892b19d8eee884.jpg',
-		'21113d1a004a8246978ab16aada1d061.jpg',
-		'da75bf3f69d3b8ee2def5c55136410bc.jpg']
+			'21113d1a004a8246978ab16aada1d061.jpg',
+			'da75bf3f69d3b8ee2def5c55136410bc.jpg']
 
 		imagens.forEach(image => {
 			sharp(path.resolve(__dirname, '..', 'tmp/uploads', image))
@@ -343,28 +392,5 @@ router
 		res.send('Okay')
 	})
 
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-
-	.get('/configs', (req, res) => {
-		Config.findOne()
-			.populate([
-				{
-					path: "destaques",
-					select: 'title type price',
-					populate: { path: "default_image", select: 'filename'}
-				}
-			])
-			.then(data => res.json(data))
-	})
-	.put('/configs', (req, res) => {
-		Config.updateOne({ _id: '5fa0412d48b94e17a8f1ea6a' }, req.body)
-			.then(data => res.json({ msg: "Alterações salvas.", data }))
-		})
-		
-	.put('/cidades', (req, res) => {
-			Cidade.updateMany({ _id: '6064184096ed1404cf50c20e'}, req.body)
-			.then(data => res.json({ msg: "Alterações salvas.", data }))
-	})
 
 module.exports = router

@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-	<title>Painel Administrativo &bull; {{title}} &bull; ImobJS</title>
+	<title>Painel de Controle &bull; {{title}} &bull; ImobJS</title>
 
 	<link rel="stylesheet" href="/css/app.sass.min.css" type="text/css">
 	<link rel="shortcut icon" href="/favicon.ico">
@@ -15,37 +15,42 @@
 
 <body>
 <main>
-	<header class="fixed-top">
-		<div class="container-fluid">
+	<section>
+		<aside class="px-3">
+			<div class="py-3 d-flex justify-content-center">
+				<div id="logo"></div>
+				<h1 class="ml-3 user-select-none">Painel de controle</h1>
+			</div>
 			<nav class="nav">
-				<a class="nav-link small {{#if home}}active{{/if}}" href="/">Início</a>
-				<a class="nav-link small {{#if empreendimentos}}active{{/if}}" href="/dashboard/empreendimentos">Empreendimentos</a>
-				<a class="nav-link small {{#if cidades}}active{{/if}}" href="/dashboard/cidades">Cidades</a>
-				<a class="nav-link small {{#if clientes}}active{{/if}}" href="/dashboard/clientes">Clientes</a>
-				<a class="nav-link small {{#if usuarios}}active{{/if}}" href="/dashboard/usuarios">Usuários</a>
-				<a class="nav-link small {{#if messages}}active{{/if}} position-relative" href="/dashboard/messages">
+				<a class="nav-link {{#if home}}active{{/if}}" href="/">Início</a>
+				<a class="nav-link {{#if empreendimentos}}active{{/if}}" href="/dashboard/empreendimentos">Empreendimentos</a>
+				<a class="nav-link {{#if cidades}}active{{/if}}" href="/dashboard/cidades">Cidades</a>
+				<a class="nav-link {{#if usuarios}}active{{/if}}" href="/dashboard/usuarios">Usuários</a>
+				<a class="nav-link {{#if messages}}active{{/if}} position-relative" href="/dashboard/messages">
 					Mensagens
 					{{#if messages_read_number}}
-						<span class="position-absolute top-50 start-100 translate-middle badge rounded-pill bg-danger">
-							{{messages_read_number}}<span class="visually-hidden">unread messages</span>
-						</span>
+					<span class="position-absolute top-50 start-100 translate-middle badge rounded-pill bg-danger">
+						{{messages_read_number}}<span class="visually-hidden">unread messages</span>
+					</span>
 					{{/if}}
 				</a>
-				<a class="nav-link small {{#if config}}active{{/if}}" href="/dashboard/config">Configurações</a>
-				<a class="nav-link small" href="/dashboard/logout">Sair</a>
+				<a class="nav-link {{#if config}}active{{/if}}" href="/dashboard/config">Configurações</a>
+				<a class="nav-link" href="/dashboard/logout">Sair</a>
 			</nav>
-		</div>
-	</header>
-
-	<section>
-		<div class="container py-5">
-			{{{body}}}		
+			<footer class="fixed-bottom">
+				<div class="container">
+					<p class="p-0 m-0 pt-1 pb-1">&copy; 2021. Todos os direitos reservados.</p>
+				</div>
+			</footer>
+		</aside>
+		<div class="container-fluid p-3">
+			{{{body}}}
 		</div>
 	</section>
 
 	<footer class="fixed-bottom">
 		<div class="container">
-			<p class="p-0 m-0 pt-1 pb-1">Aplicação construída com Node.js e Express.</p>
+			<p class="p-0 m-0 pt-1 pb-1">&copy; 2021. Todos os direitos reservados.</p>
 		</div>
 	</footer>
 </main>

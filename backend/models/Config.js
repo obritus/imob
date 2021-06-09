@@ -5,6 +5,7 @@ const Config = new Schema(
 	{
 		site_title: { type: String },
 		carousel: { type: Object },
+		default_banner: { type: Schema.Types.ObjectId, ref: "empreendimentos" },
 		destaques: [{ type: Schema.Types.ObjectId, ref: "empreendimentos" }],
 	},
 	{ timestamps: true }

@@ -54,6 +54,8 @@ const read_messages = Message.find({ read: false })
 		const empreendimentos_publicados = Empreendimento.find({ status: true })
 		const imagens = Image.find()
 		const messages = Message.find()
+		const cidades = Cidade.find()
+		const bairros = Bairro.find()
 
 		res.render('index', {
 			title: 'Página Inícial',
@@ -63,6 +65,8 @@ const read_messages = Message.find({ read: false })
 			users_number: (await users).length,
 			messages_number: (await messages).length,
 			messages_read_number: (await read_messages).length,
+			cidades_number: (await cidades).length,
+			bairros_number: (await bairros).length,
 			home: true
 		})
 	})
@@ -83,7 +87,6 @@ const read_messages = Message.find({ read: false })
 				empreendimentos: 'Empreendimentos',
 				cidades: 'Cidades',
 				usuarios: 'Usuários',
-				clientes: 'Clientes',
 				messages: 'Mensagens',
 				config: 'Configurações',
 				login: 'Entrar',
@@ -110,30 +113,24 @@ const read_messages = Message.find({ read: false })
 			RenderPage({ page, titulo, data })
 		}
 		if (page === 'usuarios') {
-			Usuario.find().lean().then(usuarios => {
-				const data = {
-					usuarios: usuarios,
-					usuarios_total: usuarios.length,
-				}
-				RenderPage({ page, titulo, data })
-			}).catch(err => {
-				console.error(err)
-			})
+			Usuario.find().lean()
+				.then(usuarios => {
+					const data = {
+						usuarios: usuarios,
+						usuarios_total: usuarios.length,
+					}
+					RenderPage({ page, titulo, data })
+				})
+				.catch(err => console.error(err))
 		}
 		if (page === 'config') {
-			Config.findOne().lean().then(config => {
-				const data = { config }
-				RenderPage({page, titulo, data})
-			}).catch(err => {
-				console.error(err)
-			})
+			Config.findOne()
+				.then(conf => RenderPage({ page, titulo, data: conf }))
+				.catch(err => console.error(err))
 		}
 		if (page === 'messages') {
 			Message.find().limit().lean()
-				.then(messages => {
-					const data = { messages }
-					RenderPage({page, titulo, data})
-				})
+				.then(messages => RenderPage({ page, titulo, data: messages }))
 				.catch(err => console.error(err))
 		}
 		if (page === 'cidades') {
@@ -257,11 +254,8 @@ const read_messages = Message.find({ read: false })
 		rb.updatedAt = Date.now() //ADICIONAR A DATA ATUAL DA ATUALIZAÇÃO
 
 		Usuario.updateOne({ _id: usuario_id }, rb).then(() => {
-			req.flash('success_msg', 'Atualizado com sucesso.')
 			res.send('Atualizado com sucesso.')
-		}).catch((err) => {
-			req.flash('error_msg', 'Houve um erro ao tentar excluir o usuário.')
-		})
+		}).catch((err) => {})
 	})
 	.post('/upload/', multer(multerConfigs).single('file') ,(req, res) => {
 		res.sendStatus(200)
@@ -270,64 +264,6 @@ const read_messages = Message.find({ read: false })
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-	.get('/messages/:id', (req, res) => {
-		Message.updateOne({_id: req.params.id}, {read: true}).then(() => {
-			Message.findOne({_id: req.params.id})
-				.then(data => res.json(data))
-				.catch(err => console.error(err))
-		}).catch(err => console.error(err))
-	})
-	.put('/messages/:id', (req, res) => {
-		//MARCAR MENSAGEM COMO LIDA
-		Message.updateOne({_id: req.params.id}, {read: false})
-			.then(() => res.sendStatus(200))
-			.catch(err => console.error(err))
-	})
-	.delete('/messages/:id', (req, res) => {
-		//EXCLUIR MENSAGEM
-		Message.deleteOne({_id: req.params.id})
-			.then(() => res.sendStatus(200))
-			.catch(err => console.error(err))
-	})
-
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-
-	.post('/config', (req, res) => {
-		// res.json(req.body)
-		const status = req.body.carousel.status === 'on' ? true : false
-		const dados = {
-			$set: {
-				"site_title": req.body.site_title,
-				"carousel.status": req.body.carousel.status,
-				"carousel.itens": req.body.carousel.itens		
-			}
-		}
-		Config.updateOne({_id: '5fa0412d48b94e17a8f1ea6a'}, dados)
-			.then(() => {
-				res.sendStatus(200)
-			}).catch(err => {
-				res.sendStatus(404)
-				console.error(err)
-			})
-	})
-	.put('/config', (req, res) => {
-		const data = {
-			$set: {
-				"carousel.status": req.body.status
-			}
-		}
-		Config.updateOne({_id: '5fa0412d48b94e17a8f1ea6a'}, data)
-			.then(() => res.sendStatus(200))
-			.catch(err => console.error(err))
-	})
-
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-
-	.post('/clientes', (req, res) => {
-		res.sendStatus(200)
-	})
 	.post('/teste_images', multer(multerConfigs).array('images'), (req, res) => {
 		console.log(req.body)
 		const imagens = req.files.map(image => {

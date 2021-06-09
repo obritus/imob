@@ -4,12 +4,12 @@ const handlebars = require('express-handlebars')
 const path = require('path')
 
 const app = express()
-const port = 3001
+const port = process.env.PORT || 3001
+const mongooseURL = process.env.DB || 'mongodb+srv://britus:Newaccount1@clusterprincipal.an0h9.gcp.mongodb.net/lojs?retryWrites=true&w=majority'
 const pages = require('./routes')
 const api = require('./routes/api')
 const mongoose = require('mongoose')
 const session = require('express-session')
-const flash = require('connect-flash')
 
 // DEFINIÇÕES
 	// SESSIONS
@@ -18,13 +18,7 @@ const flash = require('connect-flash')
 			resave: true,
 			saveUninitialized: true
 		}))
-		app.use(flash())
 	// MIDDLEWARE
-		app.use((req, res, next) => {
-			res.locals.success_msg = req.flash("success_msg")
-			res.locals.error_msg = req.flash("error_msg")
-			next()
-		})
 	// BODY PARSER
 		app.use(cors())
 		app.use(express.urlencoded({ extended: true }))
@@ -42,7 +36,7 @@ const flash = require('connect-flash')
 
 	// BANCO DE DADOS
 		mongoose.Promise = global.Promise
-		mongoose.connect('mongodb+srv://britus:Newaccount1@clusterprincipal.an0h9.gcp.mongodb.net/lojs?retryWrites=true&w=majority',
+		mongoose.connect(mongooseURL,
 			{ useNewUrlParser: true, useUnifiedTopology: true }, () => {
 				console.log('Conectado ao Banco de Dados')
 			})

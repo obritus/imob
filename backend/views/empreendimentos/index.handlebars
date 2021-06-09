@@ -1,9 +1,10 @@
-<h2 class="mb-5">Empreendimentos</h2>
+<p class="m-0 fs-1">Empreendimentos</p>
+<p class="mb-3">Gerenciar todos os empreendimentos cadastrados.</p>
 
-<div class="btn-group mb-4" role="group">
-	<a href="/dashboard/empreendimentos/create" class="btn btn-outline-success" role="button" data-bs-toggle="button">Adicionar</a>
-	<a href="/dashboard/empreendimentos" class="btn btn-outline-primary" role="button" data-bs-toggle="button">Publicados</a>
-	<a href="/dashboard/empreendimentos?status=false" class="btn btn-outline-warning" role="button" data-bs-toggle="button">Não publicados</a>
+<div class="btn-group mb-3" role="group">
+	<a href="/dashboard/empreendimentos/create" class="btn btn-outline-success">Adicionar</a>
+	<a href="/dashboard/empreendimentos" class="btn btn-outline-primary">Publicados</a>
+	<a href="/dashboard/empreendimentos?status=false" class="btn btn-outline-warning">Não publicados</a>
 </div>
 
 <table class="table table-striped table-dark table-hover table-bordered table-sm">
@@ -78,9 +79,7 @@
 					<td><a href="?cidade=${cidade._id}">${cidade.name}</a></td>
 					<td><a href="?cidade=${cidade._id}&bairro=${bairro._id}">${bairro.name}</a></td>
 					<td class="text-center align-middle">
-						<span class="badge bg-danger text-dark">
-							<button type="button" class="btn-close btn-close-white erase" aria-label="Close" data-id="${_id}"></button>
-						</span>
+						<button type="button" class="btn-close btn-close-white erase" title="Excluir empreendimento" data-id="${_id}"></button>
 					</td>
 				</tr>`)
 			}).join('')
@@ -100,10 +99,9 @@
 							body: JSON.stringify({ _id: id })
 						})
 						.then(response => response.json())
-						.then(data => {
-							console.log(document.querySelector(`tr[data-id="${id}"]`))
-							document.querySelector(`tr[data-id="${id}"]`)
-								.classList.add('d-none')
+						.then(() => {
+							document
+								.querySelector(`tr[data-id="${id}"]`).remove()
 						})
 						.catch(err => alert(err))
 					}

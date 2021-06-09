@@ -3,7 +3,7 @@ const Schema = mongoose.Schema
 
 const Cidade = new Schema(
 	{
-		name: { type: String, required: true },
+		name: { type: String, required: true, unique: true },
 	},
 	{ timestamps: true }
 )
