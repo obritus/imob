@@ -1,14 +1,14 @@
-<p class="m-0 fs-1">Empreendimentos</p>
+<p class="m-0 fs-1">Empreendimentos {{ data.empreendimentos_length }}</p>
 <p class="mb-3">Gerenciar todos os empreendimentos cadastrados.</p>
 
 <div class="btn-group mb-3" role="group">
-	<a href="/dashboard/empreendimentos/create" class="btn btn-outline-success">Adicionar</a>
-	<a href="/dashboard/empreendimentos" class="btn btn-outline-primary">Publicados</a>
-	<a href="/dashboard/empreendimentos?status=false" class="btn btn-outline-warning">Não publicados</a>
+	<a href="/dashboard/empreendimentos/create" class="btn btn-outline-success text-light">Adicionar novo</a>
+	<a href="/dashboard/empreendimentos" class="btn btn-outline-primary" data-id="on">Publicados</a>
+	<a href="/dashboard/empreendimentos?status=false" class="btn btn-outline-warning" data-id="off">Não publicados</a>
 </div>
 
-<table class="table table-striped table-dark table-hover table-bordered table-sm">
-	<thead>
+<table class="table table-striped table-dark table-hover table-borderless table-sm">
+	<thead class="table-light">
 		<tr>
 			<th scope="col">Título do Anúncio</th>
 			<th scope="col">Preço</th>
@@ -29,16 +29,19 @@
 </div>
 
 <div class="btn-toolbar" role="toolbar">
-	<div class="btn-group me-2" role="group" aria-label="First group">
-		<button type="button" class="btn btn-primary">1</button>
-		<button type="button" class="btn btn-primary">2</button>
-		<button type="button" class="btn btn-primary">3</button>
-		<button type="button" class="btn btn-primary">4</button>
-	</div>
+	<div class="btn-group me-2" role="group" data-id="paginate"></div>
 </div>
 
 <script>
-	const Empreendimentos = fetch(`http://localhost:3001/api/empreendimentos${document.location.search}`)
+	const QuerySearch = document.location.search
+
+	if (QuerySearch.includes('status=false')) {
+		document.querySelector('[data-id="off"]').classList.add('active')
+	} else {
+		document.querySelector('[data-id="on"]').classList.add('active')
+	}
+
+	const Empreendimentos = fetch(`http://localhost:3001/api/empreendimentos${QuerySearch}`)
 	const Tabela = document.querySelector('tbody')
 	const Spinner = document.querySelector('.spinner')
 
@@ -68,16 +71,17 @@
 				}
 				return type[t]
 			}
-			const Result = empreendimentos.map(({ _id, title, price, status, categoria, cidade, bairro, type }) => {
+			const Result = empreendimentos.data.map(({ _id, title, price, status, categoria, cidade, bairro, type }) => {
+				const QueryAtual = (QuerySearch) ? QuerySearch + '&' : '?'
 				return (`<tr data-id="${_id}">
 					<td>
-						<a href="empreendimentos/show/${_id}" title="Editar empreendimento">${title}</a>
+						<a href="empreendimentos/edit/${_id}" title="Editar empreendimento">${title}</a>
 					</td>
 					<td>${Price(price)}</td>
-					<td><a href="?categoria=${categoria}">${Categoria(categoria)}</a></td>
-					<td><a href="?type=${type}">${Type(type)}</a></td>
-					<td><a href="?cidade=${cidade._id}">${cidade.name}</a></td>
-					<td><a href="?cidade=${cidade._id}&bairro=${bairro._id}">${bairro.name}</a></td>
+					<td><a href="${QueryAtual}categoria=${categoria}">${Categoria(categoria)}</a></td>
+					<td><a href="${QueryAtual}type=${type}">${Type(type)}</a></td>
+					<td><a href="${QueryAtual}cidade=${(cidade) ? cidade._id : ''}">${(cidade) ? cidade.name : ''}</a></td>
+					<td><a href="${QueryAtual}cidade=${(cidade) ? cidade._id : ''}&bairro=${(bairro) ? bairro._id : ''}">${(bairro) ? bairro.name : ''}</a></td>
 					<td class="text-center align-middle">
 						<button type="button" class="btn-close btn-close-white erase" title="Excluir empreendimento" data-id="${_id}"></button>
 					</td>
@@ -92,20 +96,42 @@
 			document.querySelectorAll('.erase').forEach(e => {
 				e.addEventListener('click', function (e) {
 					const id = this.dataset.id
-					if(confirm('Deseja realmente excluir esta publicação?')) {
+					if (confirm('Deseja realmente excluir esta publicação?')) {
 						fetch('/api/empreendimentos', {
 							method: 'DELETE',
 							headers: { "Content-Type": "application/json" },
 							body: JSON.stringify({ _id: id })
 						})
-						.then(response => response.json())
-						.then(() => {
-							document
-								.querySelector(`tr[data-id="${id}"]`).remove()
-						})
-						.catch(err => alert(err))
+							.then(response => response.json())
+							.then(() => {
+								document
+									.querySelector(`tr[data-id="${id}"]`).remove()
+							})
+							.catch(err => alert(err))
 					}
 				})
 			})
-		}).catch(err => console.error(err))
+
+			const TotalEmpreendimentos = () => {
+				if (QuerySearch.includes('status=false')) {
+					return empreendimentos.all_off
+				} else {
+					return empreendimentos.all_on
+				}
+			}
+			if(TotalEmpreendimentos() > 10) {
+				const PaginateBox = document.querySelector('[data-id="paginate"]')
+				const Pages = Math.ceil(parseInt(TotalEmpreendimentos()) / 10)
+
+				for(x = 1; x <= Pages; x++) {
+					const Button = document.createElement('a')
+					Button.className = 'btn btn-primary'
+					Button.innerHTML = x
+					Button.setAttribute('href', `?page=${x}`)
+
+					PaginateBox.appendChild(Button)
+				}
+			}
+
+		}).catch(err => console.error(err))	
 </script>

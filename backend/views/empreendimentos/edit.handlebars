@@ -9,30 +9,32 @@
 	const Cidades = fetch('/api/cidades/')
 
 	const GetBairro = (cidade_id, bairro_id) => {
-		bairroForm.innerHTML = null //LIMPA A LISTA ATUAL
-		const Bairro = fetch('/api/bairros/' + cidade_id)
-		Bairro.then(data => {
-			data.json().then(bairros => {
-				bairros.map(({ _id, name }) => {
-					const Render = `<option value="${_id}">${name}</option>`
-					bairroForm.innerHTML += Render
+		if(cidade_id) {
+			bairroForm.innerHTML = null //LIMPA A LISTA ATUAL
+			const Bairro = fetch('/api/bairros/' + cidade_id)
+			Bairro
+				.then(response => response.json())
+				.then(bairros => {
+					bairros.map(({ _id, name }) => {
+						const Render = `<option value="${_id}">${name}</option>`
+						bairroForm.innerHTML += Render
+					})
+					bairroForm.value = bairro_id || null
 				})
-				bairroForm.value = bairro_id || null
-			})
-		})
+		}
 	}
 
 	const GetCidade = (cidade_id, bairro_id) => {
-		Cidades.then(data => {
-			data.json().then(cidades => {
+		Cidades
+			.then(response => response.json())
+			.then(cidades => {
 				cidades.map(({ _id, name }) => {
 					const Render = `<option value="${_id}">${name}</option>`
 					cidadeForm.innerHTML += Render
 				})
 				cidadeForm.value = cidade_id || null
+				return GetBairro(cidade_id, bairro_id)
 			})
-			return GetBairro(cidade_id, bairro_id)
-		})
 	}
 
 	const EraseImage = _id => {
@@ -142,12 +144,13 @@
 			fetch('/api/images/{{_id}}')
 				.then(response => response.json().then(data => {
 					const divImagens = document.getElementById('uploaded')
-					console.log(data)
 					data.forEach(data => GetImagens(data, default_image))
 					document.querySelector('[data-js="total_images"]').innerHTML = data.length
 					btn_form.innerHTML = 'Aplicar alterações'
 
-					return GetCidade(cidade._id, bairro._id)
+					const cidade_id = (cidade) ? cidade._id : null
+					const bairro_id = (bairro) ? bairro._id : null
+					return GetCidade(cidade_id, bairro_id)
 				})
 				).catch(err => console.error(err))
 
@@ -213,12 +216,12 @@
 				.catch(err => console.error(err))
 		})
 
-	dropZone.ondragover = function () {
+	dropZone.ondragover = function (e) {
 		e.stopPropagation()
 		this.classList.add('active')
 		return false
 	}
-	dropZone.ondragleave = function () {
+	dropZone.ondragleave = function (e) {
 		e.stopPropagation()
 		this.classList.remove('active')
 		return false

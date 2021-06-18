@@ -1,9 +1,14 @@
 import React, { Component } from 'react'
-import { Container, Spinner, Row, Col } from 'reactstrap'
+import { Container, Row, Col } from 'reactstrap'
 import queryString from 'query-string'
 import SideSearchBar from '../SideSearchBar'
 import Card from './Card'
 import api from '../../api'
+
+const Msg = props =>
+	<div class="alert d-flex">
+		<h2 class="m-0 p-0">{props}</h2>
+	</div>
 
 export default class extends Component {
 	constructor(props) {
@@ -13,25 +18,6 @@ export default class extends Component {
 			empreendimentos: [],
 			msg: null
 		}
-	}
-
-	componentWillMount = () => {
-		const query = queryString.parse(this.props.location.search)
-		console.log(document.location.search)
-		this._asyncRequest = api.GetEmpreendimentos(document.location.search)
-			.then(
-				empreendimentos => {
-					this._asyncRequest = null
-					console.log('empreendimentos.data', empreendimentos.data)
-					if(empreendimentos.data.length > 0) {
-						this.setState({ empreendimentos: empreendimentos.data })
-					} else {
-						this.setState({ msg: 'Sua busca não retornou resultados.' })
-					}
-				}
-			).catch(err => {
-				console.error(err)
-			})
 	}
 
 	render() {
@@ -45,9 +31,10 @@ export default class extends Component {
 							<SideSearchBar />
 						</Col>
 						<Col sm={9} id="empreendimentos_lista">
+							{(this.state.msg) ? Msg(this.state.msg) : null}
 							{empreendimentos.length > 0
 								? empreendimentos.map(data => <Card data={data} />)
-								: <p>{this.state.msg}</p>
+								: null
 							}
 						</Col>
 					</Row>
@@ -67,5 +54,22 @@ export default class extends Component {
 				</Container>
 			</section>
 		)
+	}
+
+	componentDidMount = () => {
+		const query = queryString.parse(this.props.location.search)
+		this._asyncRequest = api.GetEmpreendimentos(document.location.search)
+			.then(
+				empreendimentos => {
+					this._asyncRequest = null
+					if (empreendimentos.data.data.length > 0) {
+						this.setState({ empreendimentos: empreendimentos.data.data })
+					} else {
+						this.setState({ msg: 'Sua busca não retornou resultados.' })
+					}
+				}
+			).catch(err => {
+				console.error(err)
+			})
 	}
 }

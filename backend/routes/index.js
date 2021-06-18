@@ -5,13 +5,17 @@ const multer = require('multer')
 const path = require('path')
 const axios = require('axios')
 
-const Config = require('../models/Config') //CONFIGURAÇÕES DO APP
+const Setting = require('../models/Setting') //CONFIGURAÇÕES DO APP
 const Usuario = require('../models/Usuario') //ESTRUTURA DOS USUÁRIOS NO DB
 const Empreendimento = require('../models/Empreendimento') //EMPREENDIMENTOS
 const Cidade = require('../models/Cidade') //EMPREENDIMENTOS
 const Bairro = require('../models/Bairro') //EMPREENDIMENTOS
 const Message = require('../models/Message') //MENSAGENS
 const Image = require('../models/Image') //IMAGE
+
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 const multerConfigs = {
 	dest: path.resolve(__dirname, '..', 'tmp', 'uploads'),
@@ -43,119 +47,68 @@ const multerConfigs = {
 		}
 	}
 }
-const read_messages = Message.find({ read: false })
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
-	router.get('/', async (req, res) => {
-		const users = Usuario.find()
-		const empreendimentos = Empreendimento.find()
-		const empreendimentos_publicados = Empreendimento.find({ status: true })
-		const imagens = Image.find()
-		const messages = Message.find()
-		const cidades = Cidade.find()
-		const bairros = Bairro.find()
+const read_messages = Message.find({ read: false }).countDocuments()
+
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
+module.exports = router
+	.get('/', async (req, res) => {
+		const empreendimentos = Empreendimento.find().countDocuments()
+		const publicados = Empreendimento.find({ status: true }).countDocuments()
+		const imagens = Image.find().countDocuments()
+		const messages = Message.find().countDocuments()
+		const cidades = Cidade.find().countDocuments()
+		const bairros = Bairro.find().countDocuments()
 
 		res.render('index', {
 			title: 'Página Inícial',
-			empreendimentos_number: (await empreendimentos).length,
-			emp_publicados_number: (await empreendimentos_publicados).length,
-			images_number: (await imagens).length,
-			users_number: (await users).length,
-			messages_number: (await messages).length,
-			messages_read_number: (await read_messages).length,
-			cidades_number: (await cidades).length,
-			bairros_number: (await bairros).length,
+			empreendimentos_number: await empreendimentos,
+			emp_publicados_number: await publicados,
+			images_number: await imagens,
+			messages_number: await messages,
+			messages_read_number: await read_messages,
+			cidades_number: await cidades,
+			bairros_number: await bairros,
 			home: true
 		})
 	})
 
-	.get('/logout', (req, res) => {
-		res.redirect('/')
-	})
-
+// -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-	.get('/:page', async (req, res) => {
-		const data = {}
-		const page = req.params.page
-
-		const GetTitle = t => {
-			const titulos = {
-				empreendimentos: 'Empreendimentos',
-				cidades: 'Cidades',
-				usuarios: 'Usuários',
-				messages: 'Mensagens',
-				config: 'Configurações',
-				login: 'Entrar',
-				undefined: ''
-			}
-			return titulos[t]
-		}
-		const titulo = GetTitle(page)
-
-		const RenderPage = async args => {
-			const data = {
-				title: args.titulo,
-				data: args.data,
-				messages_read_number: (await read_messages).length
-			}
-			data[args.page] = true
-			res.render(args.page, data)
-		}
-
-		if (page === 'empreendimentos') {
-			const data = {
-				search: req._parsedUrl.search
-			}
-			RenderPage({ page, titulo, data })
-		}
-		if (page === 'usuarios') {
-			Usuario.find().lean()
-				.then(usuarios => {
-					const data = {
-						usuarios: usuarios,
-						usuarios_total: usuarios.length,
-					}
-					RenderPage({ page, titulo, data })
-				})
-				.catch(err => console.error(err))
-		}
-		if (page === 'config') {
-			Config.findOne()
-				.then(conf => RenderPage({ page, titulo, data: conf }))
-				.catch(err => console.error(err))
-		}
-		if (page === 'messages') {
-			Message.find().limit().lean()
-				.then(messages => RenderPage({ page, titulo, data: messages }))
-				.catch(err => console.error(err))
-		}
-		if (page === 'cidades') {
-			const cidades = Cidade.find().lean().sort('name')
-			const data = { cidades: await cidades }
-			RenderPage({ page, titulo, data })
-		}
-		else {
-			RenderPage({ page, titulo, data })
-		}
-	})
-
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-
-	.get('/empreendimentos/show/:id', (req, res) => {
-		res.render('empreendimentos/show', {
-			_id: req.params.id,
-			show: true,
+	.get('/empreendimentos', async (req, res) =>
+		res.render('empreendimentos', {
+			title: `Empreendimentos`,
+			messages_read_number: await read_messages,
 			empreendimentos: true
 		})
-	})
+	)
+
+// -----------------------------------------------------------------------------
+
+	.get('/empreendimentos/edit/:id', (req, res) =>
+		res.render('empreendimentos/edit', {
+			_id: req.params.id,
+			title: `Editar empreendimento ${req.params.id}`,
+			edit: true,
+			empreendimentos: true
+		})
+	)
+
+// -----------------------------------------------------------------------------
+
 	.get('/empreendimentos/create', (req, res) => {
 		res.render('empreendimentos/create', {
 			_id: req.params.id,
+			title: 'Adicionar novo empreendimento',
 			create: true,
 			empreendimentos: true
 		})
@@ -163,116 +116,92 @@ const read_messages = Message.find({ read: false })
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
-	.post('/usuarios/create', (req, res) => {
-		const rb = req.body
-		const erros = []
+	.get('/cidades', async (req, res) => {
+		const cidade = Cidade.find().lean().sort('name')
+		return res.render('cidades', {
+			title: `Cidades`,
+			cidade: await cidade,
+			messages_read_number: await read_messages,
+			cidades: true,
+			active: 'cidades'
+		})
+	})
 
-		if (!rb.nome || typeof rb.nome == undefined || rb.nome == null) {
-			erros = [...erros, 'Nome inválido.']
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
+	.get('/usuarios', async (req, res) => {
+		const usuario = Usuario.find().lean().sort('name')
+		const data = {
+			usuario: await usuario,
+			title: `Usuários`,
+			messages_read_number: await read_messages,
+			usuarios: true
 		}
-		if (!rb.email || typeof rb.email == undefined || rb.email == null) {
-			erros = [...erros, 'Email inválido.']
-		}
-		if (!rb.senha || typeof rb.senha == undefined || rb.senha == null) {
-			erros = [...erros, 'Senha inválida.']
-		}
+		return res.render('usuarios', data)
+	})
 
-		if (erros.length > 0) {
-			req.flash('error_msg', erros)
-			res.sendStatus(200)
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
+	.get('/messages', async (req, res) => {
+		const message = Message.find().lean().sort('createdAt')
+		const data = {
+			message: await message,
+			title: `Mensagens`,
+			messages_read_number: await read_messages,
+			messages: true
 		}
-		else {
-			const senha = crypto.createHash('md5').update(rb.senha).digest("hex")
-			var admin = ((rb.admin == 'true') ? true : false)
+		return res.render('messages', data)
+	})
 
-			const novoUsuario = {
-				nome: rb.nome,
-				email: rb.email,
-				senha: senha,
-				admin: admin,
-				status: true,
-			}
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
-			new Usuario(novoUsuario).save().then(() => {
-				req.flash('success_msg', 'Usuário adicionado com sucesso.')
-				res.sendStatus(200)
-			}).catch((e) => {
-				req.flash('error_msg', 'Erro ao criar o novo usuário.')
+	.get('/settings', async (req, res) => {
+		const GetSetting = Setting.findOne().lean()
+			.populate([
+				{
+					path: 'destaques',
+					populate: { path: "default_image", select: 'filename' }
+				},
+				{
+					path: 'default_banner',
+					populate: { path: "default_image", select: 'filename' }
+				}
+			])
+		const Emps = Empreendimento.find({ status: true }).lean().sort('name')
+
+		try {
+			res.render('settings', {
+				settings_page: true,
+				title: `Configurações`,
+				configs: await GetSetting,
+				emps: await Emps
 			})
+		} catch (error) {
+			res.render('404')
 		}
 	})
 
 // -----------------------------------------------------------------------------
-// DELETE ----------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
-	.get('/usuarios/:id/delete', (req, res) => {
-		usuario_id = req.params.id
-		Usuario.deleteOne({
-			_id: usuario_id
-		}).then(() => {
-			res.send('Deletado com sucesso.')
-		}).catch((err) => {
-			req.flash('error_msg', 'Houve um erro ao tentar excluir o usuário.')
+	.get('/login', (req, res) => {
+		res.render('login', {
+			login: true,
+			title: 'Entrar'
 		})
 	})
-
-// -----------------------------------------------------------------------------
-// SHOW ------------------------------------------------------------------------
-
-	.get('/usuarios/:id', (req, res) => {
-		usuario_id = req.params.id
-		Usuario.findOne({
-			_id: usuario_id
-		}).lean().then((user) => {
-			res.render('usuarios', { edit: true, user })
-		}).catch((err) => {
-			req.flash('error_msg', 'Usuário não encontrado.')
-			res.redirect('/usuarios')
-		})
+	.post('/teste', (req, res) => {
+		res.json(req.body)
 	})
-
-// -----------------------------------------------------------------------------
-// EDIT ------------------------------------------------------------------------
-
-	.post('/usuarios/:id/edit', (req, res) => {
-		usuario_id = req.params.id
-		const rb = req.body
-
-		checarKeys = item => {
-			if (!rb[item]) delete rb[item]
-			if (item == 'senha' && rb[item]) {
-				rb.senha = crypto.createHash('md5').update(rb.senha).digest("hex")
-			}
-			if (item == 'admin' && rb[item]) {
-			}
-		}
-
-		Object.keys(rb).forEach(checarKeys)
-
-		admin = ((!rb.admin) ? false : true)
-		rb.updatedAt = Date.now() //ADICIONAR A DATA ATUAL DA ATUALIZAÇÃO
-
-		Usuario.updateOne({ _id: usuario_id }, rb).then(() => {
-			res.send('Atualizado com sucesso.')
-		}).catch((err) => {})
+	.get('/logout', (req, res) => {
+		res.redirect('/')
 	})
-	.post('/upload/', multer(multerConfigs).single('file') ,(req, res) => {
-		res.sendStatus(200)
-	})
-
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-
-	.post('/teste_images', multer(multerConfigs).array('images'), (req, res) => {
-		console.log(req.body)
-		const imagens = req.files.map(image => {
-			return {
-				filename: image.filename,
-				empreendimento: req.body.empreendimento_id
-			}
-		})
-		Image.insertMany(imagens).then(() => res.sendStatus(200))
-	})
-
-module.exports = router

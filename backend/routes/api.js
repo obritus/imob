@@ -10,7 +10,7 @@ const Cidade = require('../models/Cidade') //ESTRUTURA DAS CIDADES NO DB
 const Bairro = require('../models/Bairro') //ESTRUTURA DOS BAIRROSS NO DB
 const Image = require('../models/Image') //ESTRUTURA DAS IMAGENS NO DB
 const Message = require('../models/Message') //ESTRUTURA DAS MENSAGENS NO DB
-const Config = require('../models/Config') //ESTRUTURA DAS CONFIGURAÇÕES NO DB
+const Setting = require('../models/Setting') //ESTRUTURA DAS CONFIGURAÇÕES NO DB
 
 const upld = {
 	dest: path.resolve(__dirname, '..', 'tmp', 'uploads'),
@@ -64,7 +64,7 @@ router
 	.get('/messages', (req, res) => {
 		Message
 			.find()
-			.sort('createdOn')
+			.sort('createdAt')
 			.then(data => res.json(data))
 			.catch(err => res.json({ err }))
 	})
@@ -126,9 +126,10 @@ router
 			if (key === 'bairro' && query.bairro._id === '') delete query.bairro
 		})
 
+		const limit = (req.query.all) ? 0 : 10
 		const GetPage = () =>
-			(req.query.page) ? (parseInt(req.query.page) - 1) * 10 : 0
-		console.log(GetPage())
+			(req.query.page) ? (parseInt(req.query.page) - 1) * limit : 0
+
 		Empreendimento
 			.find(Object.assign({ status: true }, query))
 			.populate([
@@ -136,19 +137,29 @@ router
 				{ path: "cidade", select: 'name' },
 				{ path: "default_image", select: 'filename' }
 			])
+			.limit(limit)
 			.skip(GetPage())
-			.limit(10)
-			.sort('createdOn')
-			.then(data => res.json(data))
+			.lean()
+			.sort('createdAt')
+			.then(async data => {
+				const all_on = await Empreendimento
+					.find({ status: true }).countDocuments()
+				const all_off = await Empreendimento
+					.find({ status: false }).countDocuments()
+
+				const dados = { all_on, all_off, data }
+				res.json(dados)				
+			})
 			.catch(err => res.json({ err }))
 	})
 
-	.get('/empreendimentos/:id', async (req, res) => {
-		await Empreendimento
+	.get('/empreendimentos/:id', (req, res) => {
+		Empreendimento
 			.findOne({ _id: req.params.id })
 			.populate([
 				{ path: "bairro", select: 'name' },
-				{ path: "cidade", select: 'name' }
+				{ path: "cidade", select: 'name' },
+				{ path: "default_image" }
 			])
 			.then(data => res.json(data))
 			.catch(err => res.json({ err }))
@@ -226,7 +237,7 @@ router
 	.post('/cidades', (req, res) => {
 		new Cidade(req.body)
 			.save()
-			.then(() => res.sendStatus(200))
+			.then(data => res.json({ msg: "Bairro adicionado.", _id: data._id }))
 			.catch(err => res.json({ err }))
 	})
 	.delete('/cidades/:id', (req, res) => {
@@ -242,7 +253,7 @@ router
 	.get('/bairros', (req, res) => {
 		Bairro
 			.find()
-			.sort('name')
+			.sort('-createdAt')
 			.then(data => res.json(data))
 			.catch(err => res.json({ err }))
 	})
@@ -257,7 +268,13 @@ router
 	.post('/bairros', (req, res) => {
 		new Bairro(req.body)
 			.save()
-			.then(() => res.json({ msg: "Bairro adicionado." }))
+			.then(data => res.json({ msg: "Bairro adicionado.", _id: data._id }))
+			.catch(err => res.json({ err }))
+	})
+	.delete('/bairros/:id', (req, res) => {
+		Bairro
+			.findOneAndDelete({ _id: req.params.id })
+			.then(data => res.json({ msg: "Bairro excluído.", data }))
 			.catch(err => res.json({ err }))
 	})
 
@@ -341,8 +358,8 @@ router
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-	.get('/configs', (req, res) => {
-		Config
+	.get('/settings', (req, res) => {
+		Setting
 			.findOne()
 			.populate([
 				{
@@ -359,8 +376,15 @@ router
 			.then(data => res.json(data))
 			.catch(err => res.json({ err }))
 	})
-	.put('/configs', (req, res) => {
-		Config
+	.post('/settings', (req, res) => {
+		new Setting(req.body)
+			.save()
+			.then(data => res.json({ msg: "Salvo.", data }))
+			.catch(err => res.json({ err }))
+	})
+	.put('/settings', (req, res) => {
+		console.log(req.body)
+		Setting
 			.updateOne({}, req.body)
 			.then(data => res.json({ msg: "Alterações salvas.", data }))
 			.catch(err => res.json({ err }))

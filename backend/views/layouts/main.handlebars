@@ -16,13 +16,14 @@
 <body>
 <main>
 	<section>
+		{{#unless login}}
 		<aside class="px-3">
 			<div class="py-3 d-flex justify-content-center">
 				<div id="logo"></div>
 				<h1 class="ml-3 user-select-none">Painel de controle</h1>
 			</div>
 			<nav class="nav">
-				<a class="nav-link {{#if home}}active{{/if}}" href="/">Início</a>
+				<a class="nav-link {{#if home}}active{{/if}}" href="/dashboard">Início</a>
 				<a class="nav-link {{#if empreendimentos}}active{{/if}}" href="/dashboard/empreendimentos">Empreendimentos</a>
 				<a class="nav-link {{#if cidades}}active{{/if}}" href="/dashboard/cidades">Cidades</a>
 				<a class="nav-link {{#if usuarios}}active{{/if}}" href="/dashboard/usuarios">Usuários</a>
@@ -34,7 +35,7 @@
 					</span>
 					{{/if}}
 				</a>
-				<a class="nav-link {{#if config}}active{{/if}}" href="/dashboard/config">Configurações</a>
+				<a class="nav-link {{#if settings_page}}active{{/if}}" href="/dashboard/settings">Configurações</a>
 				<a class="nav-link" href="/dashboard/logout">Sair</a>
 			</nav>
 			<footer class="fixed-bottom">
@@ -43,6 +44,7 @@
 				</div>
 			</footer>
 		</aside>
+		{{/unless}}
 		<div class="container-fluid p-3">
 			{{{body}}}
 		</div>

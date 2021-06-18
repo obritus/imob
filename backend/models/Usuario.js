@@ -9,7 +9,7 @@ const Usuario = new Schema(
 		status: { type: Boolean, required: true },
 		admin: { type: Boolean, required: true }
 	},
-	{timestamps: true}
+	{ timestamps: true }
 )
 
 module.exports = mongoose.model('usuarios', Usuario)
