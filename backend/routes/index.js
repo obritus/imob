@@ -164,7 +164,7 @@ module.exports = router
 // -----------------------------------------------------------------------------
 
 	.get('/settings', async (req, res) => {
-		const GetSetting = Setting.findOne().lean()
+		const ObterSettings = Setting.findOne().lean()
 			.populate([
 				{
 					path: 'destaques',
@@ -176,12 +176,12 @@ module.exports = router
 				}
 			])
 		const Emps = Empreendimento.find({ status: true }).lean().sort('name')
-
+		console.log(await ObterSettings)
 		try {
 			res.render('settings', {
 				settings_page: true,
 				title: `Configurações`,
-				configs: await GetSetting,
+				configs: await ObterSettings,
 				emps: await Emps
 			})
 		} catch (error) {
