@@ -7,6 +7,10 @@
     "start": "nodemon index",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "builds": {
+	"src": "./index.js",
+	"use": "@vercel/node"
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
