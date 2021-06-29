@@ -11,7 +11,6 @@ export default props => {
 		categoria,
 		cidade,
 		condominio,
-		google_maps,
 		createdAt,
 		quartos,
 		suites,

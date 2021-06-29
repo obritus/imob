@@ -6,11 +6,17 @@ $secondary: #514F59
 $dark: #090909
 @import '../node_modules/bootstrap/scss/bootstrap'
 
-body
+html, body
 	font-family: 'Poppins', sans-serif
 	color: #333
 	font-size: 12pt
 	background: $primary
+	height: 100%
+
+#root
+	display: flex
+	flex-direction: column
+	min-height: 100%
 
 header
 	background: $light
@@ -77,9 +83,6 @@ h1, h2, h3, h4
 .pswp-thumbnail
 	min-width: 50%
 	background: #CCC
-
-
-
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------

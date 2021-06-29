@@ -3,7 +3,7 @@ const router = express.Router()
 const crypto = require('crypto')
 const multer = require('multer')
 const path = require('path')
-const axios = require('axios')
+const jwt = require('jsonwebtoken')
 
 const Setting = require('../models/Setting') //CONFIGURAÇÕES DO APP
 const Usuario = require('../models/Usuario') //ESTRUTURA DOS USUÁRIOS NO DB
@@ -12,6 +12,22 @@ const Cidade = require('../models/Cidade') //EMPREENDIMENTOS
 const Bairro = require('../models/Bairro') //EMPREENDIMENTOS
 const Message = require('../models/Message') //MENSAGENS
 const Image = require('../models/Image') //IMAGE
+
+const autorize = (req, res, next) => {
+	const AuthHeader = req.headers.authorization
+	if (!AuthHeader)
+		return res.status(401).json({ auth: false, msg: 'Não autorizado.' })
+	
+	const Token = req.headers.authorization.split(' ')[1]
+	jwt.verify(Token, 'NewAccount1',
+		(err, decoded) => {
+			if (err) return res.status(500)
+				.json({ auth: false, msg: 'Falha na autorização' })
+
+			req.userId = decoded.id
+			return next()
+		})
+}
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
@@ -94,22 +110,24 @@ module.exports = router
 
 // -----------------------------------------------------------------------------
 
-	.get('/empreendimentos/edit/:id', (req, res) =>
+	.get('/empreendimentos/edit/:id', async (req, res) =>
 		res.render('empreendimentos/edit', {
 			_id: req.params.id,
 			title: `Editar empreendimento ${req.params.id}`,
 			edit: true,
+			messages_read_number: await read_messages,
 			empreendimentos: true
 		})
 	)
 
 // -----------------------------------------------------------------------------
 
-	.get('/empreendimentos/create', (req, res) => {
+	.get('/empreendimentos/create', async (req, res) => {
 		res.render('empreendimentos/create', {
 			_id: req.params.id,
 			title: 'Adicionar novo empreendimento',
 			create: true,
+			messages_read_number: await read_messages,
 			empreendimentos: true
 		})
 	})
@@ -176,7 +194,6 @@ module.exports = router
 				}
 			])
 		const Emps = Empreendimento.find({ status: true }).lean().sort('name')
-		console.log(await ObterSettings)
 		try {
 			res.render('settings', {
 				settings_page: true,
@@ -193,7 +210,7 @@ module.exports = router
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-	.get('/login', (req, res) => {
+	.get('/login', async (req, res) => {
 		res.render('login', {
 			login: true,
 			title: 'Entrar'

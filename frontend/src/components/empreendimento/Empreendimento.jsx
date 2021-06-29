@@ -24,7 +24,6 @@ export default class extends Component {
 					<span class="visually-hidden">Carregando...</span>
 				</div>
 			</div>
-		// document.querySelector('.pswp__button--share').title = 'Compartilhar'
 		return (
 			<section className="pt-4">
 				<Container className="bg-light">
@@ -37,11 +36,7 @@ export default class extends Component {
 							}
 						</Col>
 						<Col sm={5} xl={4} className="d-flex py-3" data-js="galeria">
-							<PhotoSwipeGallery items={galeria} thumbnailContent={(item) => {
-								return (
-									<img src={item.thumbnail} width={320} className="img-fluid"/>
-								)
-							}} />
+							<PhotoSwipeGallery items={galeria} thumbnailContent={(item) => <img src={item.thumbnail} width={320} className="img-fluid" />} />
 						</Col>
 					</Row>
 				</Container>

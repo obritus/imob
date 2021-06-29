@@ -92,8 +92,8 @@
 		setTimeout(() => {
 			divImagem.removeChild(divP)
 			divImagem.style.backgroundImage = `url(${imgUrl})`
-			if(default_image) {
-				document.querySelector(`input[value="${default_image}"]`)
+			if(default_image._id) {
+				document.querySelector(`input[value="${default_image._id}"]`)
 					.checked = true
 			} else {
 				document.querySelector(`input[name="default_image"]`)
@@ -138,7 +138,10 @@
 			googleForm.value = google_maps
 			detailsForm.value = details
 			if(status) { statusForm.checked = true || false }
-			
+			if(status == false) {
+				document.querySelector('[data-js="ocultar"]').innerHTML = 'Publicar'
+			}
+			HideCategoria(categoria)
 			imagesBox.classList.add('show')
 
 			fetch('/api/images/{{_id}}')
@@ -205,12 +208,9 @@
 				.then(response => response.json())
 				.then(data => {
 					if (data.msg) {
-						const alertBox = document.querySelector('[data-js="alert"]')
-						alertBox.children[0].innerHTML = data.msg
-						if(alertBox.classList.contains('visually-hidden')) {
-							alertBox.classList.toggle('visually-hidden')
-						}
-						alertBox.scrollIntoView({ block: "end", behavior: "smooth" })
+						ShowMessage({msg: data.msg, alertClass: 'bg-success'})
+						document.querySelector('body')
+							.scrollIntoView({ behavior: "smooth" })
 					}
 				})
 				.catch(err => console.error(err))
@@ -246,9 +246,38 @@
 		upload(e.dataTransfer.files)
 	}
 
-	const alert_buttons = document.querySelector('[data-bs-dismiss="alert"]')
-	alert_buttons.addEventListener('click', function (e) {
-		e.preventDefault()
-		e.path[1].classList.add('visually-hidden')
+	document.querySelector('[data-js="ocultar"]').onclick = async e => {
+		const _id = e.target.dataset.id
+		const Ocultar = await fetch(`/api/empreendimentos/${_id}`, {
+			method: 'PUT',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ status: false })
+		})
+		const Response = await Ocultar.json()
+
+		if(Response.msg) {
+			window.location = '/dashboard/empreendimentos?status=false'
+		}
+	}
+
+	document.querySelector('[data-js="excluir"]').onclick = async e => {
+		const _id = e.target.dataset.id
+		if(confirm('Deseja realmente excluir essa publicação?')) {
+			const Deletar = await fetch(`/api/empreendimentos`, {
+				method: 'DELETE',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ _id })
+			})
+			const Response = await Deletar.json()
+
+			if (Response.msg) {
+				window.location = '/dashboard/empreendimentos/'
+			}
+		}
+	}
+
+	categoriaForm.addEventListener('change', e => {
+		const valor = e.target.value
+		HideCategoria(valor)
 	})
 </script>

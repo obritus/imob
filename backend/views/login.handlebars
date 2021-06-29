@@ -1,5 +1,5 @@
 <div id="box_login">
-	<form action="/dashboard/teste" method="post">
+	<form action="/api/login" method="post">
 		<h1 class="h3 mb-3 fw-normal">Por favor, entre.</h1>
 
 		<div class="form-floating">
@@ -19,3 +19,29 @@
 		<button class="w-100 btn btn-lg btn-primary" type="submit">Entrar</button>
 	</form>
 </div>
+
+<script>
+	document.querySelector('form').addEventListener('submit', async e => {
+		e.preventDefault()
+		const login = e.target[0]
+		const senha = e.target[1]
+		const keep = e.target[2]
+
+		const Login = await fetch('/api/login', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ login, senha, keep })
+		})
+
+		const Response = await Login.json()
+
+		if(Response.auth) {
+			localStorage.setItem('token', Response.token)
+			window.location.href = '/dashboard'
+		} else {
+			console.log('Falha na autenticação.')
+		}
+	})
+</script>

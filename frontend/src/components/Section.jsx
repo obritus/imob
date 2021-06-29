@@ -7,17 +7,21 @@ import api from '../api'
 
 export default class Section extends Component {
 	state = { 
+		default_banner: null,
 		destaques: []
 	}
 
 	render () {
-		const { destaques } = this.state
+		const { default_banner, destaques } = this.state
 		return (
 			<section className="pb-5">
-				<DefaultBanner>
-					<div></div>
-					<SearchBar/>
-				</DefaultBanner>
+				{default_banner
+					? <DefaultBanner db={default_banner}>
+						<SearchBar />
+					 </DefaultBanner>
+					: null
+				}
+				
 				<Container>
 					<h2 className="text-center my-4 text-dark">Destaques</h2>
 					<div className="row">
@@ -40,7 +44,10 @@ export default class Section extends Component {
 		this._asyncRequest = api.GetSettings()
 			.then(response => {
 				this._asyncRequest = null
-				this.setState({ destaques: response.data.destaques })
+				this.setState({
+					default_banner: response.data.default_banner,
+					destaques: response.data.destaques
+				})
 			})
 			.catch(err => console.error(err))
 	}

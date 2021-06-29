@@ -1,5 +1,5 @@
 import React from 'react'
-import { Container, Row, Col } from 'reactstrap'
+import { Row, Col } from 'reactstrap'
 import { FiSearch } from "react-icons/fi"
 import api from '../api/'
 

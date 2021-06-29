@@ -48,7 +48,7 @@ const Hamburger = styled.div`
 `
 const MenuContainer = styled.div`
 	border-radius: 16px;
-	background: #FFF;
+	background: #e0e0e0;
 	position: fixed;
 	top: 16px;
 	right: 16px;

@@ -3,6 +3,7 @@ const router = express.Router()
 const crypto = require('crypto')
 const multer = require('multer')
 const path = require('path')
+const jwt = require('jsonwebtoken')
 
 const Usuario = require('../models/Usuario') //ESTRUTURA DOS USUÁRIOS NO DB
 const Empreendimento = require('../models/Empreendimento') //ESTRUTURA DOS EMPREENDIMENTOS NO DB
@@ -11,6 +12,22 @@ const Bairro = require('../models/Bairro') //ESTRUTURA DOS BAIRROSS NO DB
 const Image = require('../models/Image') //ESTRUTURA DAS IMAGENS NO DB
 const Message = require('../models/Message') //ESTRUTURA DAS MENSAGENS NO DB
 const Setting = require('../models/Setting') //ESTRUTURA DAS CONFIGURAÇÕES NO DB
+
+const autorize = (req, res, next) => {
+	const AuthHeader = req.headers.authorization
+	if (!AuthHeader)
+		return res.status(401).json({ auth: false, msg: 'Não autorizado.' })
+
+	const Token = req.headers.authorization.split(' ')[1]
+	jwt.verify(Token, 'df496ae9b59e2fac25aedcf1feddcb13',
+		(err, decoded) => {
+			if (err) return res.status(500)
+				.json({ auth: false, msg: 'Falha na autorização' })
+
+			req.userId = decoded.id
+			next()
+		})
+}
 
 const upld = {
 	dest: path.resolve(__dirname, '..', 'tmp', 'uploads'),
@@ -126,7 +143,7 @@ router
 			if (key === 'bairro' && query.bairro._id === '') delete query.bairro
 		})
 
-		const limit = (req.query.all) ? 0 : 10
+		const limit = (req.query.all) ? 0 : 15
 		const GetPage = () =>
 			(req.query.page) ? (parseInt(req.query.page) - 1) * limit : 0
 
@@ -166,22 +183,23 @@ router
 	})
 
 	.post('/empreendimentos', (req, res) => {
-		//REMOVER ITENS NULLOS DO REQ.BODY
-		Object.keys(req.body).forEach(item => {
-			if (req.body[item] === '') delete req.body[item]
-		})
+		console.log(req.body)
+		// //REMOVER ITENS NULLOS DO REQ.BODY
+		// Object.keys(req.body).forEach(item => {
+		// 	if (req.body[item] === '') delete req.body[item]
+		// })
 
-		req.body.status = true
+		// req.body.status = true
 
-		new Empreendimento(req.body).save()
-			.then(data => res.json({
-				_id: data._id,
-				msg: 'Empreendimento adicionado com sucesso.'
-			}))
-			.catch(err => {
-				console.error(err)
-				res.json({err, msg: 'Ocorreu um erro ao tentar adicionar o empreendimento.'})
-			})
+		// new Empreendimento(req.body).save()
+		// 	.then(data => res.json({
+		// 		_id: data._id,
+		// 		msg: 'Empreendimento adicionado com sucesso.'
+		// 	}))
+		// 	.catch(err => {
+		// 		console.error(err)
+		// 		res.json({err, msg: 'Ocorreu um erro ao tentar adicionar o empreendimento.'})
+		// 	})
 	})
 
 	.put('/empreendimentos/:id', (req, res) => {
@@ -227,7 +245,7 @@ router
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-	.get('/cidades', (req, res) => {
+	.get('/cidades', autorize, (req, res) => {
 		Cidade
 			.find().sort('name')
 			.populate('bairros', 'name')
@@ -383,7 +401,6 @@ router
 			.catch(err => res.json({ err }))
 	})
 	.put('/settings', (req, res) => {
-		console.log(req.body)
 		Setting
 			.updateOne({}, req.body)
 			.then(data => res.json({ msg: "Alterações salvas.", data }))
@@ -414,6 +431,15 @@ router
 				.toFile(path.resolve(__dirname, '..', 'tmp/', image))
 		})
 		res.send('Okay')
+	})
+
+	.post('/login', (req, res) => {
+		const token = jwt.sign({ id: 1 }, 'NewAccount1')
+		res.json({auth: true, token: token})
+	})
+
+	.post('/logout', (req, res) => {
+		res.json({auth: false, token: null})
 	})
 
 

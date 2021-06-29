@@ -7,7 +7,7 @@
 	<a href="/dashboard/empreendimentos?status=false" class="btn btn-outline-warning" data-id="off">Não publicados</a>
 </div>
 
-<table class="table table-striped table-dark table-hover table-borderless table-sm">
+<table class="table table-striped table-dark table-hover table-borderless">
 	<thead class="table-light">
 		<tr>
 			<th scope="col">Título do Anúncio</th>
@@ -16,7 +16,7 @@
 			<th scope="col">Tipo</th>
 			<th scope="col">Cidade</th>
 			<th scope="col">Bairro</th>
-			<th scope="col">#</th>
+			<th scope="col">Excluir</th>
 		</tr>
 	</thead>
 	<tbody class="d-none"></tbody>
@@ -33,6 +33,34 @@
 </div>
 
 <script>
+	const ShowMessage = ({ msg, alertClass, textClass }) => {
+		const MessageBox = document.querySelector('#message-box div.toast')
+		const MessageText = document.querySelector('#message-text')
+		const Button = document.querySelector('[data-bs-dismiss="toast"]')
+		MessageText.innerHTML = msg
+		MessageBox.classList.remove('show', 'bg-danger', 'bg-success', 'text-light')
+		MessageBox.classList.add(`show`, `${alertClass}`)
+		const RemoveShow = () =>
+			MessageBox.classList.remove(`show`, `${alertClass}`)
+		Button.onclick = () => RemoveShow()
+		MessageBox.onclick = () => RemoveShow()
+	}
+	
+	const Confirm = () => {
+		const ConfirmBox = document.querySelector('.confirm-container')
+		const MessageText = document.querySelector('#message-text')
+		const TrueButton = document.querySelector('button[data-btn="true"]')
+		const FalseButton = document.querySelector('button[data-btn="false"]')
+		ConfirmBox.classList.remove('visible')
+		ConfirmBox.classList.add(`visible`)
+		const RemoveShow = () =>
+			ConfirmBox.classList.remove(`visible`)
+		
+		TrueButton.onclick = () => RemoveShow()
+		FalseButton.onclick = () => RemoveShow()
+		ConfirmBox.onclick = () => RemoveShow()
+	}
+
 	const QuerySearch = document.location.search
 
 	if (QuerySearch.includes('status=false')) {
@@ -119,9 +147,9 @@
 					return empreendimentos.all_on
 				}
 			}
-			if(TotalEmpreendimentos() > 10) {
+			if(TotalEmpreendimentos() > 15) {
 				const PaginateBox = document.querySelector('[data-id="paginate"]')
-				const Pages = Math.ceil(parseInt(TotalEmpreendimentos()) / 10)
+				const Pages = Math.ceil(parseInt(TotalEmpreendimentos()) / 15)
 
 				for(x = 1; x <= Pages; x++) {
 					const Button = document.createElement('a')
@@ -133,5 +161,5 @@
 				}
 			}
 
-		}).catch(err => console.error(err))	
+		}).catch(err => console.error(err))
 </script>

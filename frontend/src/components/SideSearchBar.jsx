@@ -12,26 +12,6 @@ export default class SearchBox extends React.Component {
 		}
 	}
 
-	componentDidMount = () => {
-		// OBTER AS CIDADES ASSIM QUE O SITE CARREGAR
-		this._asyncRequest = api.GetCidades()
-			.then(cidades => {
-				this._asyncRequest = null
-				this.setState({ cidades: cidades.data })
-			})
-			.catch(err => console.error(err))
-		
-		// OBTER OS BAIRROS QUANDO SELECIONAR NA LISTA
-		document.getElementById('cidadeForm')
-			.addEventListener('change', event => {
-				const _id = event.target.value
-				api.GetBairro(_id)
-					.then(bairros => {
-						this.setState({ bairros: bairros.data })
-					})
-			})
-	}
-
 	render() {
 		const { cidades, bairros } = this.state
 		return (
@@ -94,5 +74,25 @@ export default class SearchBox extends React.Component {
 				</form>
 			</div>
 		)
+	}
+
+	componentDidMount = () => {
+		// OBTER AS CIDADES ASSIM QUE O SITE CARREGAR
+		this._asyncRequest = api.GetCidades()
+			.then(cidades => {
+				this._asyncRequest = null
+				this.setState({ cidades: cidades.data })
+			})
+			.catch(err => console.error(err))
+
+		// OBTER OS BAIRROS QUANDO SELECIONAR NA LISTA
+		document.getElementById('cidadeForm')
+			.addEventListener('change', event => {
+				const _id = event.target.value
+				api.GetBairro(_id)
+					.then(bairros => {
+						this.setState({ bairros: bairros.data })
+					})
+			})
 	}
 }

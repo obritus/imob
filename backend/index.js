@@ -3,6 +3,7 @@ const express = require('express')
 const cors = require('cors')
 const handlebars = require('express-handlebars')
 const path = require('path')
+const jwt = require('jsonwebtoken')
 
 const app = express()
 const port = process.env.PORT || 3001
@@ -12,13 +13,7 @@ const api = require('./routes/api')
 const mongoose = require('mongoose')
 const session = require('express-session')
 
-app
-	.use(session({
-		secret: "hash",
-		resave: true,
-		saveUninitialized: true
-	}))
-	
+app	
 	// REQ BODY EXPRESS
 	.use(cors())
 	.use(express.urlencoded({ extended: true }))
@@ -31,7 +26,7 @@ app
 	// ROTAS
 	.use(express.static(path.join(__dirname, 'public')))
 	.use(express.static(path.join(__dirname, 'uploads')))
-	.get('/', (req, res) => res.sendFile('index.html'))
+	.get('/', (req, res) => res.sendStatus(200))
 	.use('/api', api)
 	.use('/dashboard', dashboard)
 
@@ -40,6 +35,6 @@ app
 		mongoose.Promise = global.Promise
 		mongoose.connect(mongooseURL,
 			{ useNewUrlParser: true, useUnifiedTopology: true }, () =>
-				console.log('Conectado ao Banco de Dados')
+				console.log('Conectado ao Banco de Dados', process.env)
 			)
 	})

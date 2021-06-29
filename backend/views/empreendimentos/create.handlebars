@@ -1,8 +1,8 @@
-<p class="m-0 fs-1">Adicionar novo empreendimento</p>
+<p class="m-0 fs-1">Adicionar empreendimento</p>
 <p class="mb-3">Cidades e bairros cadastrados no banco de dados.</p>
 
 {{>_empreendimento_form}}
-<div class="test"></div>
+
 <script>
 	const Cidades = fetch('/api/cidades/')
 
@@ -122,12 +122,7 @@
 						}
 
 						if (data.msg) {
-							const alertBox = document.querySelector('[data-js="alert"]')
-							alertBox.children[0].innerHTML = data.msg
-							if (alertBox.classList.contains('visually-hidden')) {
-								alertBox.classList.toggle('visually-hidden')
-							}
-							alertBox.scrollIntoView({ block: "end", behavior: "smooth" })
+							ShowMessage({ msg: data.msg, alertClass: 'bg-success' })
 						}
 						BlockInputs()
 						ShowImagesBox()
@@ -142,14 +137,21 @@
 									body: JSON.stringify({ default_image: DefaultImageCheck() })
 								})
 									.then(response => response.json())
-									.then(data => console.log('Atualizado:', data))
+									.then(data => {
+										console.log(data)
+										ShowMessage({
+											msg: 'Empreendimento adicionado',
+											alertClass: 'bg-success'
+										})
+										document.querySelector('body')
+											.scrollIntoView({ behavior: "smooth" })
+									})
 							})
 					}
 					if(data.err) {
-						const alertBox = document.querySelector('[data-js="alert"]')
-						alertBox.children[0].innerHTML = "Ocorreu um erro, por favor, verifique as informações digitadas."
-						alertBox.classList.toggle('visually-hidden')
-						alertBox.scrollIntoView({ block: "end", behavior: "smooth" })
+						ShowMessage({ msg: data.err, alertClass: 'bg-danger' })
+						document.querySelector('body')
+							.scrollIntoView({ behavior: "smooth" })
 					}
 				})
 				.catch(err => console.error(err))
@@ -184,9 +186,8 @@
 		upload(e.dataTransfer.files)
 	}
 
-	const alert_buttons = document.querySelector('[data-bs-dismiss="alert"]')
-	alert_buttons.addEventListener('click', function (e) {
-		e.preventDefault()
-		e.path[1].classList.add('visually-hidden')
+	categoriaForm.addEventListener('change', e => {
+		const valor = e.target.value
+		HideCategoria(valor)
 	})
 </script>

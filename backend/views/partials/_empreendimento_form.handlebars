@@ -1,17 +1,12 @@
 <div class="btn-group mb-4" role="group">
 	<button class="btn btn-primary" onclick="javascript:history.back()">Voltar</button>
 {{#if edit}}
-	<a href="#" class="btn btn-primary" data-id="{{_id}}">Ocultar</a>
-	<a href="#" class="btn btn-danger" data-id="{{_id}}">Excluir Publicação</a>
+	<a href="#" class="btn btn-primary" data-id="{{_id}}" data-js="ocultar">Ocultar</a>
+	<a href="#" class="btn btn-danger" data-id="{{_id}}" data-js="excluir">Excluir Publicação</a>
 {{/if}}
 </div>
 
 <div class="row pb-5" id="data">
-	<div class="alert alert-info alert-dismissible fade show visually-hidden my-4" data-js="alert">
-		<p class="m-0 p-0 fw-bold"></p>
-		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-	</div>
-
 	<form action="#" id="form_empreendimento" class="form" data-js="form_empreendimento">
 		<div class="row">
 			<div class="col-md-12">
@@ -46,7 +41,7 @@
 					<label for="priceForm" class="form-label">Preço/Aluguel</label>
 				<div class="input-group mb-3">
 					<span class="input-group-text" id="basic-addon1">R$</span>
-					<input type="number" class="form-control" id="priceForm" name="price" min="0" required>
+					<input type="text" class="form-control" id="priceForm" name="price" min="0" required>
 				</div>
 			</div>
 
@@ -71,25 +66,25 @@
 				</div>
 			</div>
 
-			<div class="col-md-3">
+			<div class="col-md-3" data-categoria="false">
 				<div class="mb-3">
 					<label for="quartosForm" class="form-label">Quartos</label>
 					<input type="number" class="form-control" id="quartosForm" name="quartos" min="0">
 				</div>
 			</div>
-			<div class="col-md-3">
+			<div class="col-md-3" data-categoria="false">
 				<div class="mb-3">
 					<label for="suitesForm" class="form-label">Suítes</label>
 					<input type="number" class="form-control" id="suitesForm" name="suites" min="0">
 				</div>
 			</div>
-			<div class="col-md-3">
+			<div class="col-md-3" data-categoria="false">
 				<div class="mb-3">
 					<label for="banheirosForm" class="form-label">Banheiros</label>
 					<input type="number" class="form-control" id="banheirosForm" name="banheiros" min="0">
 				</div>
 			</div>
-			<div class="col-md-3">
+			<div class="col-md-3" data-categoria="false">
 				<div class="mb-3">
 					<label for="vagasForm" class="form-label">Vagas Garagem</label>
 					<input type="number" class="form-control" id="vagasForm" name="vagas_garagem" min="0">
@@ -103,10 +98,10 @@
 				</div>
 			</div>
 
-			<div class="col-md-12">
-				<div class="form-check mb-3">
+			<div class="col-md-12 mb-3">
+				<div class="form-check">
 					<input class="form-check-input form-lg" type="checkbox" id="statusForm" name="status">
-					<label class="form-check-label" for="statusForm">Online</label>
+					<label class="form-check-label" for="statusForm">Publicado</label>
 				</div>
 			</div>
 
@@ -115,7 +110,7 @@
 				<div class="row">
 					<div class="col-md-12 mb-3">
 						<h4>Fazer upload</h4>
-						<p>Adicione imagens no formato .JPG ou .PNG.</p>
+						<p>Arraste imagens no formato .JPG ou .PNG.</p>
 						<div id="dropZone">
 							<p>Arraste os arquivos para cá.</p>
 						</div>
@@ -134,11 +129,40 @@
 		</div>
 	</form>
 </div>
-<script>
-	categoriaForm.addEventListener('change', function () {
-		console.log(this.value)
-	})
-	priceForm.addEventListener('change', function () {
 
-	})
+<script>
+	const ShowMessage = ({ msg, alertClass, textClass }) => {
+		const MessageBox = document.querySelector('#message-box div.toast')
+		const MessageText = document.querySelector('#message-text')
+		const Button = document.querySelector('[data-bs-dismiss="toast"]')
+		MessageText.innerHTML = msg
+		MessageBox.classList.remove('show', 'bg-danger', 'bg-success', 'text-light')
+		MessageBox.classList.add(`show`, `${alertClass}`)
+		const RemoveShow = () =>
+			MessageBox.classList.remove(`show`, `${alertClass}`)
+		Button.onclick = () => RemoveShow()
+		MessageBox.onclick = () => RemoveShow()
+	}
+
+	const HideCategoria = v => {
+		const categorias = {
+			'3': true,
+			'4': true
+		}
+
+		if (categorias[v]) {
+			document.querySelectorAll('[data-categoria="false"]')
+				.forEach(e => e.classList.add('d-none'))
+			document.querySelectorAll('[data-categoria="false"] input')
+				.forEach(e => e.disabled = true)
+			typeForm.value = 2
+			typeForm.options[0].disabled = true
+		} else {
+			document.querySelectorAll('[data-categoria="false"]')
+				.forEach(e => e.classList.remove('d-none'))
+			document.querySelectorAll('[data-categoria="false"] input')
+				.forEach(e => e.disabled = false)
+			typeForm.options[0].disabled = false
+		}
+	}
 </script>

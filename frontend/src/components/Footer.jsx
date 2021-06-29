@@ -25,15 +25,9 @@ const Facebook = Styled.div`
 	width: 32px;
 	height: 32px;
 `
-const FooterMap = Styled.div`
-	height: 531px;
-	background: url('images/map_footer.jpg') no-repeat 50% 50% #716A76;
-	background-size: cover;
-`
 
 export default () =>
-	<footer>
-		{/* <FooterMap></FooterMap> */}
+	<footer className="mt-auto">
 		<Container className="pt-3 bg-secondary" fluid>
 			<Container>
 				<Row>
