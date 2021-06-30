@@ -11,9 +11,8 @@ const mongooseURL = 'mongodb+srv://britus:Newaccount1@clusterprincipal.an0h9.gcp
 const dashboard = require('./routes/index')
 const api = require('./routes/api')
 const mongoose = require('mongoose')
-const session = require('express-session')
 
-app	
+app
 	// REQ BODY EXPRESS
 	.use(cors())
 	.use(express.urlencoded({ extended: true }))
@@ -35,6 +34,6 @@ app
 		mongoose.Promise = global.Promise
 		mongoose.connect(mongooseURL,
 			{ useNewUrlParser: true, useUnifiedTopology: true }, () =>
-				console.log('Conectado ao Banco de Dados', process.env)
+				console.log('Conectado ao Banco de Dados')
 			)
 	})

@@ -39,6 +39,7 @@
 
 		if(Response.auth) {
 			localStorage.setItem('token', Response.token)
+			document.cookie = `token=${Response.token}; expires=Thu`
 			window.location.href = '/dashboard'
 		} else {
 			console.log('Falha na autenticação.')

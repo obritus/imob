@@ -4,29 +4,41 @@ const crypto = require('crypto')
 const multer = require('multer')
 const path = require('path')
 const jwt = require('jsonwebtoken')
+const axios = require('axios')
 
-const Setting = require('../models/Setting') //CONFIGURAÇÕES DO APP
-const Usuario = require('../models/Usuario') //ESTRUTURA DOS USUÁRIOS NO DB
-const Empreendimento = require('../models/Empreendimento') //EMPREENDIMENTOS
-const Cidade = require('../models/Cidade') //EMPREENDIMENTOS
-const Bairro = require('../models/Bairro') //EMPREENDIMENTOS
-const Message = require('../models/Message') //MENSAGENS
-const Image = require('../models/Image') //IMAGE
+const Empreendimento = require('../models/Empreendimento') //EMPREENDIMENTOS MODEL
+const Setting = require('../models/Setting') //CONFIGURAÇÕES MODEL
+const Usuario = require('../models/Usuario') //USUÁRIOS MODEL
+const Cidade = require('../models/Cidade') //CIDADES MODEL
+const Bairro = require('../models/Bairro') //BAIRROS MODEL
+const Message = require('../models/Message') //MENSAGENS MODEL
+const Image = require('../models/Image') //IMAGENS MODEL
 
 const autorize = (req, res, next) => {
-	const AuthHeader = req.headers.authorization
-	if (!AuthHeader)
-		return res.status(401).json({ auth: false, msg: 'Não autorizado.' })
-	
-	const Token = req.headers.authorization.split(' ')[1]
-	jwt.verify(Token, 'NewAccount1',
-		(err, decoded) => {
-			if (err) return res.status(500)
-				.json({ auth: false, msg: 'Falha na autorização' })
+	console.log(req.headers.cookie.token)
+	// const Cookies = req.headers.cookie.match(/(?:[\s;]|^)token[^=]*=([^;]*)/gi)
 
-			req.userId = decoded.id
+	// const TokenPosition = req.headers.cookie.search('token')
+	// const Cookies = req.headers.cookie.split('; ')
+	// const Token = Cookies[TokenPosition].split('=')[1]
+	
+	// console.log('All Cookies', req.headers.cookie)
+	// console.log('TokenPosition', TokenPosition)
+	// console.log('Cookies', Cookies)
+	// console.log('Token', Token)
+
+	// if (!Token)
+	// 	return res.status(401).json({ auth: false, msg: 'Não autorizado.' })
+	
+	// jwt.verify(Token, 'df496ae9b59e2fac25aedcf1feddcb13',
+	// 	(err, decoded) => {
+	// 		console.log(err)
+	// 		if (err) return res.status(500)
+	// 			.json({ auth: false, msg: 'Falha na autorização' })
+
+	// 		req.userId = decoded.id
 			return next()
-		})
+	// 	})
 }
 
 // -----------------------------------------------------------------------------
@@ -75,7 +87,10 @@ const read_messages = Message.find({ read: false }).countDocuments()
 // -----------------------------------------------------------------------------
 
 module.exports = router
-	.get('/', async (req, res) => {
+	.get('/', autorize, async (req, res) => {
+		
+		
+
 		const empreendimentos = Empreendimento.find().countDocuments()
 		const publicados = Empreendimento.find({ status: true }).countDocuments()
 		const imagens = Image.find().countDocuments()
