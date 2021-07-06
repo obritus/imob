@@ -3,9 +3,15 @@ import { Link } from 'react-router-dom'
 
 import styled from 'styled-components'
 
+const Thumb = ({ _id, default_image }) =>
+	(default_image) ? `${_id}/${default_image.filename}` : 'default_image.jpg'
+
 const BannerFull = styled.div`
-	background: #e47f37 url('${ process.env.REACT_APP_BACKEND_URL }/images/empreendimentos/${ ({_id, img}) => _id + '/' + img }') no-repeat 50% 0;
+	background: #CCC;
+	background-image:
+		${props => "url('" + process.env.REACT_APP_BACKEND_URL + "images/empreendimentos/" + props.src + "')"};
 	background-size: cover;
+	background-position: 50% 50%;
 	height: 500px;
 	margin-top: -50px;
 	display: grid;
@@ -37,7 +43,7 @@ const GetBRL = n => {
 	return new Intl.NumberFormat('pt-BR', options).format(n)
 }
 export default ({children, db}) =>
-	<BannerFull className="container p-0" _id={db._id} img={db.default_image.filename}>
+	<BannerFull className="container p-0" src={Thumb({ _id: db._id, default_image: db.default_image })}>
 		<DetalhesDiv className="d-flex flex-row align-items-end" title={db.title}>
 			<Link to={`/empreendimentos/${db._id}`} title={``}>
 				<h5 className="bg-light text-dark p-3 mb-3 ms-3">{db.title}</h5>

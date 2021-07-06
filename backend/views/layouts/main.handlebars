@@ -28,16 +28,16 @@
 				<a class="nav-link {{#if empreendimentos}}active{{/if}}" href="/dashboard/empreendimentos">Empreendimentos</a>
 				<a class="nav-link {{#if cidades}}active{{/if}}" href="/dashboard/cidades">Cidades</a>
 				<a class="nav-link {{#if usuarios}}active{{/if}}" href="/dashboard/usuarios">Usuários</a>
-				<a class="nav-link {{#if messages}}active{{/if}} position-relative" href="/dashboard/messages">
+				{{!-- <a class="nav-link {{#if messages}}active{{/if}} position-relative" href="/dashboard/messages">
 					Mensagens
 					{{#if messages_read_number}}
 					<span class="position-absolute top-50 start-100 translate-middle badge rounded-pill bg-danger">
 						{{messages_read_number}}<span class="visually-hidden">unread messages</span>
 					</span>
 					{{/if}}
-				</a>
+				</a> --}}
 				<a class="nav-link {{#if settings_page}}active{{/if}}" href="/dashboard/settings">Configurações</a>
-				<a class="nav-link" href="/dashboard/logout">Sair</a>
+				<a class="nav-link" href="#" data-btn="logout">Sair</a>
 			</nav>
 			<footer class="fixed-bottom">
 				<div class="container">
@@ -58,4 +58,13 @@
 	</footer>
 </main>
 </body>
+{{#unless login}}
+<script type="text/javascript">
+document.querySelector('[data-btn="logout"]').addEventListener('click', e => {
+	e.preventDefault()
+	document.cookie = "token=; Max-Age=0;"
+	window.location.href = '/dashboard'
+})
+</script>
+{{/unless}}
 </html>

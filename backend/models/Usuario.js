@@ -3,9 +3,10 @@ const Schema = mongoose.Schema
 
 const Usuario = new Schema(
 	{
-		nome: { type: String, required: true },
+		name: { type: String, required: true },
 		email: { type: String, required: true },
-		senha: { type: String, required: true },
+		login: { type: String, required: true },
+		password: { type: String, required: true, select: false },
 		status: { type: Boolean, required: true },
 		admin: { type: Boolean, required: true }
 	},

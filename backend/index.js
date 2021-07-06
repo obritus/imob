@@ -1,6 +1,7 @@
 require('dotenv')
 const express = require('express')
 const cors = require('cors')
+const cookieParser = require('cookie-parser')
 const handlebars = require('express-handlebars')
 const path = require('path')
 const jwt = require('jsonwebtoken')
@@ -15,6 +16,7 @@ const mongoose = require('mongoose')
 app
 	// REQ BODY EXPRESS
 	.use(cors())
+	.use(cookieParser('df496ae9b59e2fac25aedcf1feddcb13'))
 	.use(express.urlencoded({ extended: true }))
 	.use(express.json())
 

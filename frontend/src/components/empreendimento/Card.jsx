@@ -1,4 +1,10 @@
 import React from "react"
+import styled from "styled-components"
+
+const DataBox = styled.p`
+	font-size: .5em;
+	color: #AAA;
+`
 
 export default props => {
 	const {
@@ -19,6 +25,47 @@ export default props => {
 
 	const toBRL = data => data.
 		toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+
+	const GetDate = d => {
+		const data = new Date(d)
+
+		const meses = [
+			'janeiro',
+			'fevereiro',
+			'março',
+			'abril',
+			'maio',
+			'junho',
+			'julho',
+			'agosto',
+			'setembro',
+			'outubro',
+			'novembro',
+			'dezembro'
+		]
+
+		const dias = [
+			'segunda-feira',
+			'terça-feira',
+			'quarta-feira',
+			'quita-feira',
+			'sexta-feira',
+			'sábado',
+			'domingo',
+		]
+
+		const zero = (arg) => {
+			return ((arg < 10) ? '0' + arg : arg)
+		}
+
+		const diaNome = dias[data.getDay()]
+		const dia = data.getDate()
+		const mes = meses[data.getMonth()]
+		const ano = data.getFullYear()
+		const horas = zero(data.getHours()) + 'h' + zero(data.getMinutes())
+
+		return `${diaNome}, ${dia} de ${mes} de ${ano}, às ${horas}.`
+	}
 
 	const GetType = type => {
 		const tipo = {
@@ -57,6 +104,7 @@ export default props => {
 					<li><strong>cidade:</strong> {cidade.name}</li>
 					<li><strong>bairro:</strong> {bairro.name}</li>
 				</ul>
+				<DataBox>Postado {GetDate(createdAt)}</DataBox>
 			</div>
 		</div>
 	)

@@ -28,7 +28,7 @@ const Facebook = Styled.div`
 
 export default () =>
 	<footer className="mt-auto">
-		<Container className="pt-3 bg-secondary" fluid>
+		<Container className="py-3 bg-secondary" fluid>
 			<Container>
 				<Row>
 					<Col md={4}>

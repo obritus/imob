@@ -14,7 +14,7 @@ export default class Section extends Component {
 	render () {
 		const { default_banner, destaques } = this.state
 		return (
-			<section className="pb-5">
+			<section>
 				{default_banner
 					? <DefaultBanner db={default_banner}>
 						<SearchBar />
@@ -27,9 +27,9 @@ export default class Section extends Component {
 					<div className="row">
 
 						{destaques.length > 0
-							? destaques.map(({_id, type, price, title, default_image}) =>
+							? destaques.map((data) =>
 								<Col className="mb-3" xs={12} sm={4}>
-									<Destaque _id={_id} type={type} title={title} price={price} default_image={default_image} />
+									<Destaque data={data} />
 								</Col>)
 							: null
 						}
