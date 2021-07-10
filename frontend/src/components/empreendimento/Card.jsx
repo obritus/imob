@@ -8,7 +8,6 @@ const DataBox = styled.p`
 
 export default props => {
 	const {
-		_id,
 		title,
 		price,
 		details,
@@ -23,8 +22,8 @@ export default props => {
 		type,
 		vagas_garagem } = props.data
 
-	const toBRL = data => data.
-		toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+	const toBRL = data => data
+		.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
 
 	const GetDate = d => {
 		const data = new Date(d)

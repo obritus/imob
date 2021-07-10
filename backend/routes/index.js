@@ -17,7 +17,7 @@ const autorize = async (req, res, next) => {
 	if (req.cookies.token) {
 		const Token = req.cookies.token
 		
-		jwt.verify(Token, 'df496ae9b59e2fac25aedcf1feddcb13',
+		jwt.verify(Token, process.env.SECRET,
 			(err, decoded) => {
 				if (err) return res.redirect('/dashboard/login')
 				req.user_id = decoded.user_id

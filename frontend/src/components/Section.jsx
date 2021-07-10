@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Container, Spinner, Col } from 'reactstrap'
+import { Container, Col } from 'reactstrap'
 import DefaultBanner from './DefaultBanner'
 import Destaque from './Destaque'
 import SearchBar from './SearchBar'

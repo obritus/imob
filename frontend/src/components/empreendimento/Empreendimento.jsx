@@ -36,7 +36,7 @@ export default class extends Component {
 							}
 						</Col>
 						<Col sm={5} xl={4} className="d-flex py-3" data-js="galeria">
-							<PhotoSwipeGallery items={galeria} thumbnailContent={(item) => <img src={item.thumbnail} width={320} className="img-fluid" />} />
+							<PhotoSwipeGallery items={galeria} thumbnailContent={(item) => <img src={item.thumbnail} width={320} alt="" className="img-fluid" />} />
 						</Col>
 					</Row>
 				</Container>
@@ -47,6 +47,7 @@ export default class extends Component {
 							width="100%"
 							height="320px"
 							frameBorder="0"
+							title="Localização do empreendimento"
 							stylecss="border:0;margin-top:7px"
 							allowFullScreen>
 						</iframe>

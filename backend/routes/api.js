@@ -412,7 +412,7 @@ router
 		if(User) {
 			const token = jwt.sign(
 				{ user_id: User._id },
-				'df496ae9b59e2fac25aedcf1feddcb13',
+				process.env.SECRET,
 				{ expiresIn: Math.round(new Date(new Date().setFullYear(new Date().getFullYear() + 1))) }
 			)
 			const options = {
