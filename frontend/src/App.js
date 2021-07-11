@@ -1,5 +1,5 @@
 import React from 'react'
-import { BrowserRouter as Router, Switch, Route, useLocation } from 'react-router-dom'
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import './app.sass'
 
 import Home from './components/sections/'
@@ -9,14 +9,18 @@ import Empreendimento from './components/empreendimento'
 import NotFound from './components/NotFound'
 import Contato from './components/Contato'
 
+import Painel from './components/painel/'
+
 export default props =>
-	<Router key={Math.random()}>
-		<Switch key={Math.random()}>
-			<Route key={Math.random()} path="/" exact component={Home} />
-			<Route key={Math.random()} path="/sobre" component={Sobre} />
-			<Route key={Math.random()} path="/empreendimentos" exact component={Empreendimentos} />
-			<Route key={Math.random()} path="/empreendimentos/:id" component={Empreendimento} />
-			<Route key={Math.random()} path="/contact" component={Contato} />
-			<Route key={Math.random()} path="*" component={NotFound} />
+	<Router>
+		<Switch>
+			<Route path="/" exact component={Home} />
+			<Route path="/sobre" component={Sobre} />
+			<Route path="/empreendimentos" exact component={Empreendimentos} />
+			<Route path="/empreendimentos/:id" component={Empreendimento} />
+			<Route path="/contact" component={Contato} />
+			<Route path="/painel" exact component={Painel} />
+			<Route path="/painel/*" exact component={Painel} />
+			<Route path="*" component={NotFound} />
 		</Switch>
 	</Router>
