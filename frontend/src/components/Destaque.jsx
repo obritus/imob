@@ -6,21 +6,18 @@ const Box = styled.div`
 	display: grid;
 	width: 100%;
 	height: 240px;
-	background: #CCC;
-	background-image:
-		${props => "url('" + process.env.REACT_APP_BACKEND_URL + "images/empreendimentos/" + props.id + "/" + props.image.filename + "')" || "none"};
-	background-size: cover;
-	background-position: 50% 50%;
-	grid-template-rows: auto 20px 40px 35px;
+	grid-template-rows: auto 40px 35px;
 	align-items: flex-end;
 `
-const Item = styled.div`
-`
-const Type = styled.div`
-	font-size: .8em;
-	text-align: center;
-	width: 100px;
-	background-color: #333;
+const Thumb = ({ _id, default_image }) =>
+	(default_image) ? `${_id}/${default_image.filename}` : 'default_image.jpg'
+
+const ImageHeader = styled.div`
+	display: flex;
+	background: #CCC;
+	background-image:
+		${props => "url('" + process.env.REACT_APP_BACKEND_URL + "images/empreendimentos/" + props.src + "')"};
+	background-size: cover;
 `
 const Price = styled.div`
 	text-align: center;
@@ -35,8 +32,10 @@ const Title = styled.div`
 `
 const Types = {
 	'1': 'Aluguel',
-	'2': 'Venda'
+	'2': 'Venda',
+	'undefined': ''
 }
+
 const GetBRL = n => {
 	const options = {
 		style: 'currency',
@@ -46,12 +45,17 @@ const GetBRL = n => {
 	return new Intl.NumberFormat('pt-BR', options).format(n)
 }
 
-export default props =>
-	<Link to={`/empreendimentos/${props._id}`} className="card-link">
-		<Box id={props._id} image={props.default_image}>
-			<Item></Item>
-			<Type className="bg-light text-dark">{Types[props.type]}</Type>
-			<Price className="bg-warning text-dark">{GetBRL(props.price)}</Price>
-			<Title><p className="text-center p-2 m-0">{props.title}</p></Title>
+export default ({ data }) =>
+	<Link to={`/empreendimentos/${data._id}`} className="card-link">
+		<Box>
+			<ImageHeader className="ratio ratio-16x9" src={Thumb({ _id: data._id, default_image: data.default_image })}>
+				<div className="d-flex flex-row align-items-end">
+					<span className="badge rounded-pill bg-info text-dark ms-2 mb-2">{Types[data.type]}</span>
+					<span className="badge rounded-pill bg-light text-dark ms-2 mb-2">{data.cidade.name}</span>
+					<span className="badge rounded-pill bg-light text-dark ms-2 mb-2">{data.bairro.name}</span>
+				</div>
+			</ImageHeader>
+			<Price className="bg-warning text-dark">{GetBRL(data.price)}</Price>
+			<Title><p className="text-center p-2 m-0">{data.title}</p></Title>
 		</Box>
 	</Link>

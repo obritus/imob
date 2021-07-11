@@ -28,14 +28,14 @@ const Facebook = Styled.div`
 
 export default () =>
 	<footer className="mt-auto">
-		<Container className="pt-3 bg-secondary" fluid>
+		<Container className="py-3 bg-secondary test" fluid>
 			<Container>
 				<Row>
 					<Col md={4}>
 						<Row className="pt-3 pt-sm-0" data-js="contact">
 							<Col className="d-flex justify-content-start">
-								<a href="#" target="_blank"><Instagram className="me-3" /></a>
-								<a href="#" target="_blank"><Facebook /></a>
+								<a href="/" target="_blank"><Instagram className="me-3" /></a>
+								<a href="/" target="_blank"><Facebook /></a>
 							</Col>
 							<Col>
 								<p className="m-0 p-0">+55 73 <strong>9 0000 0000</strong></p>

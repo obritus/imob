@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { Container, Row, Col } from 'reactstrap'
-import queryString from 'query-string'
 import SideSearchBar from '../SideSearchBar'
 import Card from './Card'
 import api from '../../api'
@@ -41,13 +40,13 @@ export default class extends Component {
 					<nav className="py-3">
 						<ul className="pagination justify-content-center">
 							<li className="page-item disabled">
-								<a className="page-link" href="#" tabindex="-1" aria-disabled="true">Anterior</a>
+								<a className="page-link" href="/" tabindex="-1" aria-disabled="true">Anterior</a>
 							</li>
 							<li className="page-item"><a className="page-link" href="?page=1">1</a></li>
 							<li className="page-item"><a className="page-link" href="?page=2">2</a></li>
 							<li className="page-item"><a className="page-link" href="?page=3">3</a></li>
 							<li className="page-item">
-								<a className="page-link" href="#">Próxima</a>
+								<a className="page-link" href="/">Próxima</a>
 							</li>
 						</ul>
 					</nav>
@@ -57,7 +56,6 @@ export default class extends Component {
 	}
 
 	componentDidMount = () => {
-		const query = queryString.parse(this.props.location.search)
 		this._asyncRequest = api.GetEmpreendimentos(document.location.search)
 			.then(
 				empreendimentos => {

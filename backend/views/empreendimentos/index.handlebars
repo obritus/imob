@@ -69,7 +69,7 @@
 		document.querySelector('[data-id="on"]').classList.add('active')
 	}
 
-	const Empreendimentos = fetch(`http://localhost:3001/api/empreendimentos${QuerySearch}`)
+	const Empreendimentos = fetch(`/api/empreendimentos${QuerySearch}`)
 	const Tabela = document.querySelector('tbody')
 	const Spinner = document.querySelector('.spinner')
 

@@ -24,7 +24,7 @@ const autorize = (req, res, next) => {
 			if (err) return res.status(500)
 				.json({ auth: false, msg: 'Falha na autorização' })
 
-			req.userId = decoded.id
+			req.user_id = decoded.user_id
 			next()
 		})
 }
@@ -63,16 +63,6 @@ const upld = {
 router
 	.get('/', (req, res) => {
 		res.sendStatus(200)
-	})
-
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-
-	.get('/usuarios', (req, res) => {
-		Usuario
-			.find()
-			.then(data => res.json(data))
-			.catch(err => res.json({ err }))
 	})
 
 // -----------------------------------------------------------------------------
@@ -183,23 +173,22 @@ router
 	})
 
 	.post('/empreendimentos', (req, res) => {
-		console.log(req.body)
-		// //REMOVER ITENS NULLOS DO REQ.BODY
-		// Object.keys(req.body).forEach(item => {
-		// 	if (req.body[item] === '') delete req.body[item]
-		// })
+		//REMOVER ITENS NULLOS DO REQ.BODY
+		Object.keys(req.body).forEach(item => {
+			if (req.body[item] === '') delete req.body[item]
+		})
 
-		// req.body.status = true
+		req.body.status = true
 
-		// new Empreendimento(req.body).save()
-		// 	.then(data => res.json({
-		// 		_id: data._id,
-		// 		msg: 'Empreendimento adicionado com sucesso.'
-		// 	}))
-		// 	.catch(err => {
-		// 		console.error(err)
-		// 		res.json({err, msg: 'Ocorreu um erro ao tentar adicionar o empreendimento.'})
-		// 	})
+		new Empreendimento(req.body).save()
+			.then(data => res.json({
+				_id: data._id,
+				msg: 'Empreendimento adicionado com sucesso.'
+			}))
+			.catch(err => {
+				console.error(err)
+				res.json({err, msg: 'Ocorreu um erro ao tentar adicionar o empreendimento.'})
+			})
 	})
 
 	.put('/empreendimentos/:id', (req, res) => {
@@ -245,7 +234,7 @@ router
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-	.get('/cidades', autorize, (req, res) => {
+	.get('/cidades', (req, res) => {
 		Cidade
 			.find().sort('name')
 			.populate('bairros', 'name')
@@ -382,8 +371,12 @@ router
 			.populate([
 				{
 					path: "destaques",
-					select: 'title type price',
-					populate: { path: "default_image", select: 'filename'}
+					select: 'title type price cidade bairro',
+					populate: [
+						{ path: "default_image", select: 'filename' },
+						{ path: "cidade", select: 'name' },
+						{ path: "bairro", select: 'name' }
+					]
 				},
 				{
 					path: "default_banner",
@@ -410,36 +403,54 @@ router
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-	.post('/testes', (req, res, next) => {
-		res.redirect('back')
+	.post('/login', async (req, res) => {
+		const login = req.body.login
+		const password = req.body.password
+		const keep = (req.body.keep) ? new Date(new Date().setFullYear(new Date().getFullYear() + 1)) : 0
+
+		const User = await Usuario.findOne({ login, password })
+		if(User) {
+			const token = jwt.sign(
+				{ user_id: User._id },
+				process.env.SECRET,
+				{ expiresIn: Math.round(new Date(new Date().setFullYear(new Date().getFullYear() + 1))) }
+			)
+			const options = {
+				expires: keep,
+			}
+			res.cookie('token', token, options)
+			res.json({auth: true, token})
+		} else {
+			res.json({auth: false, msg: 'Usuário ou senha incorreto(s).'})
+		}
 	})
 
-	.post('/images_teste', multer(upld).array('images', 12), (req, res, next) => {
-		console.log(req.files)
-		res.send('Okay')
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
+	.get('/usuarios', autorize, async (req, res) => {
+		try {
+			const Users = await Usuario.find({})
+			res.json(Users)
+		} catch (error) {
+			console.log(error)
+			res.json({ error: error })
+		}
 	})
 
-	.get('/images_teste', async (req, res, next) => {
-		const sharp = require('sharp')
-		const imagens = ['96fade58b9a09e8f24892b19d8eee884.jpg',
-			'21113d1a004a8246978ab16aada1d061.jpg',
-			'da75bf3f69d3b8ee2def5c55136410bc.jpg']
+	.post('/usuarios', async (req, res) => {
+		try {
+			const Users = await Usuario(req.body)
 
-		imagens.forEach(image => {
-			sharp(path.resolve(__dirname, '..', 'tmp/uploads', image))
-				.resize(180)
-				.toFile(path.resolve(__dirname, '..', 'tmp/', image))
-		})
-		res.send('Okay')
-	})
-
-	.post('/login', (req, res) => {
-		const token = jwt.sign({ id: 1 }, 'NewAccount1')
-		res.json({auth: true, token: token})
-	})
-
-	.post('/logout', (req, res) => {
-		res.json({auth: false, token: null})
+			if (Users.save()) {
+				res.json({add: true})
+			} else {
+				res.json({add: false})
+			}
+		} catch (error) {
+			console.log(error)
+			res.json({ error: error })
+		}
 	})
 
 

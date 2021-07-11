@@ -4,7 +4,6 @@ const crypto = require('crypto')
 const multer = require('multer')
 const path = require('path')
 const jwt = require('jsonwebtoken')
-const axios = require('axios')
 
 const Empreendimento = require('../models/Empreendimento') //EMPREENDIMENTOS MODEL
 const Setting = require('../models/Setting') //CONFIGURAÇÕES MODEL
@@ -14,31 +13,19 @@ const Bairro = require('../models/Bairro') //BAIRROS MODEL
 const Message = require('../models/Message') //MENSAGENS MODEL
 const Image = require('../models/Image') //IMAGENS MODEL
 
-const autorize = (req, res, next) => {
-	console.log(req.headers.cookie.token)
-	// const Cookies = req.headers.cookie.match(/(?:[\s;]|^)token[^=]*=([^;]*)/gi)
-
-	// const TokenPosition = req.headers.cookie.search('token')
-	// const Cookies = req.headers.cookie.split('; ')
-	// const Token = Cookies[TokenPosition].split('=')[1]
-	
-	// console.log('All Cookies', req.headers.cookie)
-	// console.log('TokenPosition', TokenPosition)
-	// console.log('Cookies', Cookies)
-	// console.log('Token', Token)
-
-	// if (!Token)
-	// 	return res.status(401).json({ auth: false, msg: 'Não autorizado.' })
-	
-	// jwt.verify(Token, 'df496ae9b59e2fac25aedcf1feddcb13',
-	// 	(err, decoded) => {
-	// 		console.log(err)
-	// 		if (err) return res.status(500)
-	// 			.json({ auth: false, msg: 'Falha na autorização' })
-
-	// 		req.userId = decoded.id
-			return next()
-	// 	})
+const autorize = async (req, res, next) => {
+	if (req.cookies.token) {
+		const Token = req.cookies.token
+		
+		jwt.verify(Token, process.env.SECRET,
+			(err, decoded) => {
+				if (err) return res.redirect('/dashboard/login')
+				req.user_id = decoded.user_id
+				return next()
+			})
+	} else {
+		return res.redirect('/dashboard/login')
+	}
 }
 
 // -----------------------------------------------------------------------------
@@ -88,15 +75,12 @@ const read_messages = Message.find({ read: false }).countDocuments()
 
 module.exports = router
 	.get('/', autorize, async (req, res) => {
-		
-		
-
-		const empreendimentos = Empreendimento.find().countDocuments()
-		const publicados = Empreendimento.find({ status: true }).countDocuments()
-		const imagens = Image.find().countDocuments()
-		const messages = Message.find().countDocuments()
-		const cidades = Cidade.find().countDocuments()
-		const bairros = Bairro.find().countDocuments()
+		let empreendimentos = Empreendimento.find().countDocuments()
+		let publicados = Empreendimento.find({ status: true }).countDocuments()
+		let imagens = Image.find().countDocuments()
+		let messages = Message.find().countDocuments()
+		let cidades = Cidade.find().countDocuments()
+		let bairros = Bairro.find().countDocuments()
 
 		res.render('index', {
 			title: 'Página Inícial',
@@ -115,7 +99,7 @@ module.exports = router
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-	.get('/empreendimentos', async (req, res) =>
+	.get('/empreendimentos', autorize, async (req, res) =>
 		res.render('empreendimentos', {
 			title: `Empreendimentos`,
 			messages_read_number: await read_messages,
@@ -125,7 +109,7 @@ module.exports = router
 
 // -----------------------------------------------------------------------------
 
-	.get('/empreendimentos/edit/:id', async (req, res) =>
+	.get('/empreendimentos/edit/:id', autorize, async (req, res) =>
 		res.render('empreendimentos/edit', {
 			_id: req.params.id,
 			title: `Editar empreendimento ${req.params.id}`,
@@ -137,7 +121,7 @@ module.exports = router
 
 // -----------------------------------------------------------------------------
 
-	.get('/empreendimentos/create', async (req, res) => {
+	.get('/empreendimentos/create', autorize, async (req, res) => {
 		res.render('empreendimentos/create', {
 			_id: req.params.id,
 			title: 'Adicionar novo empreendimento',
@@ -151,7 +135,7 @@ module.exports = router
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-	.get('/cidades', async (req, res) => {
+	.get('/cidades', autorize, async (req, res) => {
 		const cidade = Cidade.find().lean().sort('name')
 		return res.render('cidades', {
 			title: `Cidades`,
@@ -166,7 +150,7 @@ module.exports = router
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-	.get('/usuarios', async (req, res) => {
+	.get('/usuarios', autorize, async (req, res) => {
 		const usuario = Usuario.find().lean().sort('name')
 		const data = {
 			usuario: await usuario,
@@ -181,7 +165,7 @@ module.exports = router
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-	.get('/messages', async (req, res) => {
+	.get('/messages', autorize, async (req, res) => {
 		const message = Message.find().lean().sort('createdAt')
 		const data = {
 			message: await message,
@@ -196,7 +180,7 @@ module.exports = router
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-	.get('/settings', async (req, res) => {
+	.get('/settings', autorize, async (req, res) => {
 		const ObterSettings = Setting.findOne().lean()
 			.populate([
 				{
@@ -225,15 +209,5 @@ module.exports = router
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-	.get('/login', async (req, res) => {
-		res.render('login', {
-			login: true,
-			title: 'Entrar'
-		})
-	})
-	.post('/teste', (req, res) => {
-		res.json(req.body)
-	})
-	.get('/logout', (req, res) => {
-		res.redirect('/')
-	})
+	.get('/login', (req, res) =>
+		res.render('login', { title: 'Entrar', login: true }))
